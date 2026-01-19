@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![MindCare AI Landing Page](/screenshots/landing-page.png)
+![MindCare AI Landing Page](https://github.com/shashwatkarna/mindcareai/blob/main/public/screenshots/landing-page.png)
 
 <br />
 
