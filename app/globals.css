@@ -1,0 +1,244 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Cool light theme */
+  --background: 0 0% 98%;
+  --foreground: 225 30% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 225 30% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 225 30% 10%;
+  --primary: 200 100% 50%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 180 100% 45%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 220 13% 91%;
+  --muted-foreground: 220 9% 46%;
+  --accent: 270 100% 55%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 220 13% 91%;
+  --input: 220 13% 95%;
+  --ring: 200 100% 50%;
+  --chart-1: 200 100% 50%;
+  --chart-2: 180 100% 45%;
+  --chart-3: 270 100% 55%;
+  --chart-4: 160 100% 45%;
+  --chart-5: 220 70% 50%;
+  --radius: 0.5rem;
+  --sidebar: 0 0% 98%;
+  --sidebar-foreground: 225 30% 10%;
+  --sidebar-primary: 200 100% 50%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 180 100% 45%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-border: 220 13% 91%;
+  --sidebar-ring: 200 100% 50%;
+}
+
+.dark {
+  /* Cool dark theme */
+  --background: 225 25% 8%;
+  --foreground: 210 40% 96%;
+  --card: 225 25% 13%;
+  --card-foreground: 210 40% 96%;
+  --popover: 225 25% 13%;
+  --popover-foreground: 210 40% 96%;
+  --primary: 200 100% 55%;
+  --primary-foreground: 225 25% 8%;
+  --secondary: 180 100% 50%;
+  --secondary-foreground: 225 25% 8%;
+  --muted: 225 20% 35%;
+  --muted-foreground: 210 20% 70%;
+  --accent: 270 100% 60%;
+  --accent-foreground: 225 25% 8%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 225 25% 8%;
+  --border: 225 20% 25%;
+  --input: 225 20% 20%;
+  --ring: 200 100% 55%;
+  --chart-1: 200 100% 55%;
+  --chart-2: 180 100% 50%;
+  --chart-3: 270 100% 60%;
+  --chart-4: 160 100% 50%;
+  --chart-5: 220 70% 55%;
+  --sidebar: 225 25% 8%;
+  --sidebar-foreground: 210 40% 96%;
+  --sidebar-primary: 200 100% 55%;
+  --sidebar-primary-foreground: 225 25% 8%;
+  --sidebar-accent: 180 100% 50%;
+  --sidebar-accent-foreground: 225 25% 8%;
+  --sidebar-border: 225 20% 25%;
+  --sidebar-ring: 200 100% 55%;
+}
+
+@theme inline {
+  --font-sans: "Geist", "Geist Fallback";
+  --font-mono: "Geist Mono", "Geist Mono Fallback";
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: calc(var(--radius));
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 6px);
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Smooth animations */
+@layer utilities {
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  .animate-slide-in-up {
+    animation: slideInUp 0.5s ease-out;
+  }
+
+  .animate-slide-in-down {
+    animation: slideInDown 0.5s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.4s ease-out;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes scroll {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-scroll {
+    animation: scroll 100s linear infinite;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Hide Next.js Dev Tools */
+nextjs-portal,
+#next-route-announcer,
+[data-nextjs-toast],
+div[class*="nextjs-toast"],
+div[data-nextjs-dialog-overlay] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
