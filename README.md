@@ -33,9 +33,9 @@ Take a peek inside MindCare AI.
 
 | **Features Overview** | **Pricing Plans** |
 |:---:|:---:|
-| ![Features](/screenshots/features.png) | ![Pricing](/screenshots/pricing.png) |
+| ![Features](https://github.com/shashwatkarna/mindcareai/blob/main/public/screenshots/features.png) | ![Pricing](https://github.com/shashwatkarna/mindcareai/blob/main/public/screenshots/pricing.png) |
 | **About Us** | **Secure Login** |
-| ![About](/screenshots/about.png) | ![Login](/screenshots/login.png) |
+| ![About](https://github.com/shashwatkarna/mindcareai/blob/main/public/screenshots/about.png) | ![Login](https://github.com/shashwatkarna/mindcareai/blob/main/public/screenshots/login.png) |
 
 ## ✨ Features
 
