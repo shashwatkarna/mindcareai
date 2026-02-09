@@ -13,6 +13,7 @@ const navItems = [
   { label: "Mood Tracker", href: "/dashboard/mood", icon: "😊" },
   { label: "Exercises (Premium)", href: "/dashboard/exercises", icon: "🧘" },
   { label: "Appointments", href: "/dashboard/appointments", icon: "📅" },
+  { label: "MindSpace AI", href: "/dashboard/chatbot", icon: "🧠" },
   { label: "Resources", href: "/dashboard/resources", icon: "📚" },
   { label: "Profile", href: "/dashboard/profile", icon: "⚙️" },
 ]
