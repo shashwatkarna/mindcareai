@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Moon, Sun, Bell, User, LogOut, Settings, Flame } from "lucide-react"
+import { Moon, Sun, Bell, User, LogOut, Settings, Flame, Sparkles } from "lucide-react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
@@ -25,8 +25,16 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 
+import { SoundscapesPlayer } from "@/components/dashboard/soundscapes-player"
+import { FileText } from "lucide-react"
+
 interface HeaderProps {
-  userProfile?: any
+  userProfile?: {
+    full_name?: string
+    email?: string
+    avatar_url?: string
+    is_premium?: boolean
+  }
   streak?: number
 }
 
@@ -91,6 +99,9 @@ export function Header({ userProfile, streak = 0 }: HeaderProps) {
         {/* Right: Actions & Profile */}
         <div className="flex items-center gap-2 sm:gap-4 ml-auto">
 
+          {/* Soundscapes Player (New) */}
+          <SoundscapesPlayer />
+
           {/* Streak Indicator */}
           <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-full text-sm font-medium border border-orange-500/20">
             <Flame className="w-4 h-4 fill-orange-500" />
@@ -116,19 +127,33 @@ export function Header({ userProfile, streak = 0 }: HeaderProps) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                <Avatar className="h-9 w-9 border border-border">
+                <Avatar className={`h-9 w-9 border ${userProfile?.is_premium ? "border-yellow-500 border-2" : "border-border"}`}>
                   <AvatarImage src={userProfile?.avatar_url} alt={userProfile?.full_name || "User"} />
                   <AvatarFallback>{userProfile?.full_name?.[0] || "U"}</AvatarFallback>
                 </Avatar>
+                {userProfile?.is_premium && (
+                  <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
+                  </span>
+                )}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-bold leading-none">{userProfile?.full_name || "User"}</p>
+                  <p className="text-sm font-bold leading-none flex items-center gap-2">
+                    {userProfile?.full_name || "User"}
+                    {userProfile?.is_premium && <Sparkles className="w-3 h-3 text-yellow-500 fill-yellow-500" />}
+                  </p>
                   <p className="text-xs leading-none text-muted-foreground">
                     {userProfile?.email || "user@example.com"}
                   </p>
+                  {userProfile?.is_premium && (
+                    <span className="text-[10px] font-medium text-yellow-600 dark:text-yellow-400 bg-yellow-500/10 px-1 py-0.5 rounded w-fit">
+                      Premium Member
+                    </span>
+                  )}
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
@@ -142,6 +167,12 @@ export function Header({ userProfile, streak = 0 }: HeaderProps) {
                 <Link href="/dashboard/settings" className="cursor-pointer w-full flex items-center">
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Settings</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/mood/report" className="cursor-pointer w-full flex items-center">
+                  <FileText className="mr-2 h-4 w-4" />
+                  <span>Mood Report</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />

@@ -24,14 +24,21 @@ export default async function DashboardLayout({ children }: { children: React.Re
     userProfile = {
       ...profile,
       email: user.email,
-      full_name: displayName
+      full_name: displayName,
+      is_premium: true // Temporary testing override
     }
   }
 
   return (
-    <div className="flex h-screen bg-background text-foreground transition-colors duration-300">
+    <div className="flex h-screen bg-background text-foreground transition-colors duration-300 relative overflow-hidden">
+      {/* Ambient Background Blobs */}
+      <div className="fixed inset-0 -z-10 pointer-events-none">
+        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl opacity-50 animate-pulse"></div>
+        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-secondary/5 rounded-full blur-3xl opacity-50 animate-pulse [animation-delay:2s]"></div>
+      </div>
+
       <Sidebar />
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col flex-1 relative z-10">
         <Header userProfile={userProfile} streak={streak} />
         <main className="flex-1 overflow-auto p-4 md:p-6">{children}</main>
       </div>

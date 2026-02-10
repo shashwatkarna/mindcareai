@@ -61,12 +61,24 @@ export function JournalList({ entries }: { entries: JournalEntry[] }) {
     )
   }
 
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
+
+  const toggleExpand = (id: string) => {
+    const newExpanded = new Set(expandedIds)
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id)
+    } else {
+      newExpanded.add(id)
+    }
+    setExpandedIds(newExpanded)
+  }
+
   return (
     <div className="space-y-4">
       {entries.map((entry) => (
-        <Card key={entry.id} className="p-6 border-[#e0d9d3] bg-white hover:shadow-md transition-shadow">
+        <Card key={entry.id} className="p-6 border-[#e0d9d3] bg-white hover:shadow-md transition-shadow transition-all duration-300">
           <div className="flex items-start justify-between gap-4">
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 cursor-pointer" onClick={() => toggleExpand(entry.id)}>
               <div className="flex items-center gap-2">
                 <span className="text-2xl">{getMoodEmoji(entry.mood)}</span>
                 <div className="flex-1 min-w-0">
@@ -74,7 +86,12 @@ export function JournalList({ entries }: { entries: JournalEntry[] }) {
                   <p className="text-xs text-[#6b6b6b]">{new Date(entry.created_at).toLocaleDateString()}</p>
                 </div>
               </div>
-              <p className="text-sm text-[#6b6b6b] mt-3 line-clamp-2">{entry.content}</p>
+              <div className={`text-sm text-[#6b6b6b] mt-3 whitespace-pre-wrap transition-all duration-300 ${expandedIds.has(entry.id) ? "" : "line-clamp-2"}`}>
+                {entry.content}
+              </div>
+              {!expandedIds.has(entry.id) && (
+                <p className="text-xs text-[#8b7355] mt-2 font-medium">Click to read more...</p>
+              )}
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
               {entry.mood_score && (
@@ -83,14 +100,21 @@ export function JournalList({ entries }: { entries: JournalEntry[] }) {
                   <p className="text-xs text-[#6b6b6b]">Score</p>
                 </div>
               )}
+              {/* Edit Button (Placeholder) */}
+              <Link href={`/dashboard/journal/${entry.id}/edit`}>
+                <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700"> Edit </Button>
+              </Link>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => handleDelete(entry.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(entry.id);
+                }}
                 disabled={deletingId === entry.id}
                 className="text-red-600 hover:text-red-700"
               >
-                Delete
+                {deletingId === entry.id ? "Deleting..." : "Delete"}
               </Button>
             </div>
           </div>

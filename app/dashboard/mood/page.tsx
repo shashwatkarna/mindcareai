@@ -5,6 +5,7 @@ import { MoodTracker } from "@/components/mood/mood-tracker"
 import { MoodHistory } from "@/components/mood/mood-history"
 import { MoodCharts } from "@/components/mood/mood-charts"
 import { MoodInsights } from "@/components/mood/mood-insights"
+import { HiddenLotus } from "@/components/gamification/hidden-lotus"
 
 export const metadata = {
   title: "Mood Tracker - MindCare AI",
@@ -64,7 +65,10 @@ export default async function MoodPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-[#3d3d3d]">Mood Tracker</h1>
+          <h1 className="text-3xl font-bold text-[#3d3d3d] flex items-center gap-2">
+            Mood Tracker
+            <span className="inline-block transform translate-y-1"><HiddenLotus id="lotus_mood" /></span>
+          </h1>
           <p className="text-[#6b6b6b] mt-1">Monitor your emotional patterns over time</p>
         </div>
       </div>

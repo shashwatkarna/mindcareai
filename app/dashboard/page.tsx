@@ -2,6 +2,8 @@ import { redirect } from "next/navigation"
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import { DashboardOverview } from "@/components/dashboard/overview"
+import { HiddenLotus } from "@/components/gamification/hidden-lotus"
+import { Greeting } from "@/components/dashboard/greeting"
 
 export const metadata = {
   title: "Dashboard - MindCare AI",
@@ -50,7 +52,8 @@ export default async function DashboardPage() {
     redirect("/auth/login")
   }
 
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single()
+  const { data: profileData } = await supabase.from("profiles").select("*").eq("id", user.id).single()
+  const profile = { ...profileData, is_premium: true } // Temporary testing override
 
   // Fetch stats concurrently
   const [moodResult, journalResult, assessmentResult, appointmentResult] = await Promise.all([
@@ -69,8 +72,11 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Welcome back, {profile?.full_name || user.full_name || "User"}</h1>
+      <div className="relative">
+        <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
+          <Greeting name={profile?.full_name || user.full_name || "User"} />
+          <span className="inline-block"><HiddenLotus id="lotus_dashboard" /></span>
+        </h1>
         <p className="text-muted-foreground mt-1">Here&apos;s your wellness snapshot for today</p>
       </div>
 

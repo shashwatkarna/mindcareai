@@ -2,6 +2,7 @@
 
 import { Navbar } from "@/components/layout/navbar"
 import { Footer } from "@/components/layout/footer"
+import { HiddenLotus } from "@/components/gamification/hidden-lotus"
 
 export default function AboutPage() {
     return (
@@ -9,10 +10,11 @@ export default function AboutPage() {
             <Navbar />
             <main className="flex-1 bg-background">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-                    <div className="space-y-6 text-center mb-16 animate-fade-in">
+                    <div className="space-y-6 text-center mb-16 animate-fade-in relative">
                         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Our Mission</h1>
-                        <p className="text-xl text-muted-foreground">
+                        <p className="text-xl text-muted-foreground flex items-center justify-center gap-2">
                             Democratizing mental health access through technology, privacy, and compassion.
+                            <HiddenLotus id="lotus_about" />
                         </p>
                     </div>
 

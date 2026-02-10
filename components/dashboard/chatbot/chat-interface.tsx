@@ -129,10 +129,10 @@ export function ChatInterface() {
     };
 
     return (
-        <div className="flex flex-col h-[calc(100vh-8rem)] gap-4 max-w-5xl mx-auto w-full">
-            <div className="flex items-center justify-between mb-2">
+        <div className="flex flex-col h-[calc(100vh-6rem)] w-full max-w-none px-6">
+            <div className="flex items-center justify-between mb-4">
                 <div>
-                    <h1 className="text-2xl font-bold">🧠 MindSpace AI</h1>
+                    <h1 className="text-2xl font-bold">🧠 MindCare AI</h1>
                     <p className="text-muted-foreground text-sm">Your empathetic mental health companion</p>
                 </div>
                 <div className="flex gap-2">
@@ -164,7 +164,7 @@ export function ChatInterface() {
                             {messages.length === 0 && (
                                 <div className="text-center text-muted-foreground mt-20">
                                     <div className="text-4xl mb-4">👋</div>
-                                    <h3 className="text-lg font-medium mb-2">Welcome to MindSpace</h3>
+                                    <h3 className="text-lg font-medium mb-2">Welcome to MindCare</h3>
                                     <p className="max-w-sm mx-auto">
                                         I'm here to listen and support you. Share what's on your mind—I'm ready to help.
                                     </p>
@@ -191,8 +191,8 @@ export function ChatInterface() {
                                     >
                                         <div
                                             className={`px-4 py-2.5 rounded-2xl shadow-sm text-sm whitespace-pre-wrap ${msg.role === "user"
-                                                    ? "bg-primary text-primary-foreground rounded-tr-none"
-                                                    : "bg-muted text-foreground rounded-tl-none border border-border"
+                                                ? "bg-primary text-primary-foreground rounded-tr-none"
+                                                : "bg-muted text-foreground rounded-tl-none border border-border"
                                                 } ${msg.isCrisis ? "border-red-500 bg-red-50 dark:bg-red-950/30" : ""}`}
                                         >
                                             {msg.role === "assistant" && msg.isCrisis && (
@@ -262,7 +262,7 @@ export function ChatInterface() {
             </Card>
 
             <div className="text-center text-xs text-muted-foreground/60">
-                MindSpace AI is a supportive companion, not a replacement for professional therapy.
+                MindCare AI is a supportive companion, not a replacement for professional therapy.
             </div>
         </div>
     );
