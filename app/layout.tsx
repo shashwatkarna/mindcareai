@@ -1,3 +1,5 @@
+import { GoogleAnalytics } from "@next/third-parties/google"
+import Clarity from "@/components/clarity"
 import type React from "react"
 import type { Metadata } from "next"
 import { Outfit } from "next/font/google"
@@ -44,6 +46,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         >
           {children}
         </ThemeProvider>
+        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+        )}
+        <Clarity />
       </body>
     </html>
   )
