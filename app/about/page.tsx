@@ -2,7 +2,7 @@
 
 import { Navbar } from "@/components/layout/navbar"
 import { Footer } from "@/components/layout/footer"
-import { HiddenLotus } from "@/components/gamification/hidden-lotus"
+// HiddenLotus removed
 
 export default function AboutPage() {
     return (
@@ -14,7 +14,7 @@ export default function AboutPage() {
                         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Our Mission</h1>
                         <p className="text-xl text-muted-foreground flex items-center justify-center gap-2">
                             Democratizing mental health access through technology, privacy, and compassion.
-                            <HiddenLotus id="lotus_about" />
+
                         </p>
                     </div>
 

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation"
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import { DashboardOverview } from "@/components/dashboard/overview"
-import { HiddenLotus } from "@/components/gamification/hidden-lotus"
+
 import { Greeting } from "@/components/dashboard/greeting"
 
 export const metadata = {
@@ -75,7 +75,7 @@ export default async function DashboardPage() {
       <div className="relative">
         <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
           <Greeting name={profile?.full_name || user.full_name || "User"} />
-          <span className="inline-block"><HiddenLotus id="lotus_dashboard" /></span>
+
         </h1>
         <p className="text-muted-foreground mt-1">Here&apos;s your wellness snapshot for today</p>
       </div>

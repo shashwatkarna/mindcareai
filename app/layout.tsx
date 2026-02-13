@@ -40,8 +40,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`${outfit.className} antialiased`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="dark"
           disableTransitionOnChange
         >
           {children}

@@ -25,7 +25,10 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 
-import { SoundscapesPlayer } from "@/components/dashboard/soundscapes-player"
+
+import { StreakDisplay } from "@/components/dashboard/streak-display"
+import { NotificationCenter } from "@/components/dashboard/notification-center"
+import { NotificationData } from "@/actions/notifications"
 import { FileText } from "lucide-react"
 
 interface HeaderProps {
@@ -35,10 +38,14 @@ interface HeaderProps {
     avatar_url?: string
     is_premium?: boolean
   }
-  streak?: number
+  streakData?: {
+    streak: number
+    history: string[]
+  }
+  notificationData?: NotificationData
 }
 
-export function Header({ userProfile, streak = 0 }: HeaderProps) {
+export function Header({ userProfile, streakData = { streak: 0, history: [] }, notificationData = { hasLoggedMood: false, hasJournaled: false, streak: 0 } }: HeaderProps) {
   const [isDark, setIsDark] = useState(false)
   const pathname = usePathname()
 
@@ -99,20 +106,15 @@ export function Header({ userProfile, streak = 0 }: HeaderProps) {
         {/* Right: Actions & Profile */}
         <div className="flex items-center gap-2 sm:gap-4 ml-auto">
 
-          {/* Soundscapes Player (New) */}
-          <SoundscapesPlayer />
+
 
           {/* Streak Indicator */}
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-full text-sm font-medium border border-orange-500/20">
-            <Flame className="w-4 h-4 fill-orange-500" />
-            <span>{streak} Day Streak</span>
-          </div>
+          {/* Streak Indicator */}
+          <StreakDisplay streak={streakData.streak} history={streakData.history} />
 
           {/* Notifications */}
-          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full relative">
-            <Bell className="h-5 w-5 text-muted-foreground" />
-            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-background"></span>
-          </Button>
+          {/* Notifications */}
+          <NotificationCenter data={notificationData} />
 
           {/* Theme Toggle */}
           <button

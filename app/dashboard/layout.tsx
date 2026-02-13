@@ -3,17 +3,20 @@ import { Sidebar } from "@/components/dashboard/sidebar"
 import { Header } from "@/components/dashboard/header"
 import { createClient } from "@/lib/supabase/server"
 import { getUserStreak, getUserProfile } from "@/actions/dashboard"
+import { getNotificationData, NotificationData } from "@/actions/notifications"
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   let userProfile = null
-  let streak = 0
+  let streakData = { streak: 0, history: [] as string[] }
+  let notificationData: NotificationData = { hasLoggedMood: false, hasJournaled: false, streak: 0 }
 
   if (user) {
     const profile = await getUserProfile(user.id)
-    streak = await getUserStreak(user.id)
+    streakData = await getUserStreak(user.id)
+    notificationData = await getNotificationData(user.id)
 
     // Improved name resolution
     let displayName = "User"
@@ -39,7 +42,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
       <Sidebar />
       <div className="flex flex-col flex-1 relative z-10">
-        <Header userProfile={userProfile} streak={streak} />
+        <Header userProfile={userProfile} streakData={streakData} notificationData={notificationData} />
         <main className="flex-1 overflow-auto p-4 md:p-6">{children}</main>
       </div>
     </div>

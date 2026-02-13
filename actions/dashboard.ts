@@ -19,6 +19,20 @@ export async function getUserStreak(userId: string) {
         .eq("user_id", userId)
         .order("created_at", { ascending: false })
 
+    // Fetch dates from assessments
+    const { data: assessments } = await supabase
+        .from("assessments")
+        .select("created_at")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+
+    // Fetch dates from appointments
+    const { data: appointments } = await supabase
+        .from("appointments")
+        .select("created_at")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+
     const dates = new Set<string>()
 
     moodLogs?.forEach((log) => {
@@ -29,16 +43,25 @@ export async function getUserStreak(userId: string) {
         dates.add(new Date(entry.created_at).toISOString().split("T")[0])
     })
 
-    const sortedDates = Array.from(dates).sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
+    assessments?.forEach((assessment) => {
+        dates.add(new Date(assessment.created_at).toISOString().split("T")[0])
+    })
 
-    if (sortedDates.length === 0) return 0
+    appointments?.forEach((appointment) => {
+        dates.add(new Date(appointment.created_at).toISOString().split("T")[0])
+    })
+
+    const sortedDates = Array.from(dates).sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
+    const history = sortedDates.slice(0, 30)
+
+    if (sortedDates.length === 0) return { streak: 0, history: [] }
 
     const today = new Date().toISOString().split("T")[0]
     const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0]
 
     // If the last activity wasn't today or yesterday, streak is 0
     if (sortedDates[0] !== today && sortedDates[0] !== yesterday) {
-        return 0
+        return { streak: 0, history }
     }
 
     let streak = 0
@@ -47,9 +70,6 @@ export async function getUserStreak(userId: string) {
     for (let i = 0; i < sortedDates.length; i++) {
         const dateToCheck = new Date(sortedDates[i])
 
-        // Check if expected date matches actual date
-        // (This simple logic works if dates are consecutive dates without gaps)
-        // Actually simpler: iterate and check difference
         if (i === 0) {
             streak = 1
             continue
@@ -66,7 +86,7 @@ export async function getUserStreak(userId: string) {
         }
     }
 
-    return streak
+    return { streak, history }
 }
 
 export async function getDailyAffirmation() {
