@@ -44,7 +44,7 @@ export async function POST(request: Request) {
             responses,
             score,
             risk_level,
-        }).select()
+        }).select().single()
 
         if (error) {
             console.error("Supabase insert error:", error)

@@ -16,13 +16,13 @@ export function AssessmentsList({ assessments }: { assessments: Assessment[] }) 
   const getRiskColor = (level: string | null) => {
     switch (level) {
       case "high":
-        return "bg-red-100 text-red-800"
+        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
       case "moderate":
-        return "bg-yellow-100 text-yellow-800"
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
       case "low":
-        return "bg-green-100 text-green-800"
+        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
       default:
-        return "bg-gray-100 text-gray-800"
+        return "bg-muted text-muted-foreground"
     }
   }
 
@@ -32,34 +32,38 @@ export function AssessmentsList({ assessments }: { assessments: Assessment[] }) 
 
   if (assessments.length === 0) {
     return (
-      <Card className="p-12 border-[#e0d9d3] bg-white text-center">
-        <p className="text-[#6b6b6b]">No assessments yet. Start your first assessment to begin tracking.</p>
+      <Card className="p-12 border-dashed border-2 text-center shadow-none bg-muted/20">
+        <p className="text-muted-foreground">No assessments yet. Start your first assessment to begin tracking.</p>
         <Link href="/dashboard/assessments/new">
-          <button className="mt-4 px-4 py-2 bg-[#8b7355] text-white rounded-md hover:bg-[#6b5344]">Start Now</button>
+          <button className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors">Start Now</button>
         </Link>
       </Card>
     )
   }
 
   return (
-    <div className="space-y-4">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {assessments.map((assessment) => (
         <Link key={assessment.id} href={`/dashboard/assessments/${assessment.id}`}>
-          <Card className="p-6 border-[#e0d9d3] bg-white hover:shadow-md cursor-pointer transition-shadow">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <h3 className="font-semibold text-[#3d3d3d]">{formatType(assessment.assessment_type)}</h3>
-                <p className="text-sm text-[#6b6b6b] mt-1">{new Date(assessment.created_at).toLocaleDateString()}</p>
+          <Card className="p-5 border-border shadow-sm hover:shadow-md hover:border-primary/50 transition-all cursor-pointer bg-card/50 backdrop-blur-sm">
+            <div className="flex flex-col h-full justify-between gap-4">
+              <div>
+                <div className="flex justify-between items-start mb-2">
+                  <Badge variant="outline" className="capitalize text-muted-foreground">
+                    {formatType(assessment.assessment_type)}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground">{new Date(assessment.created_at).toLocaleDateString()}</span>
+                </div>
+                {/* <h3 className="font-semibold text-foreground text-lg">{formatType(assessment.assessment_type)}</h3> */}
               </div>
-              <div className="flex items-center gap-4">
-                {assessment.score !== null && (
-                  <div className="text-right">
-                    <p className="text-2xl font-bold text-[#8b7355]">{assessment.score}</p>
-                    <p className="text-xs text-[#6b6b6b]">Score</p>
-                  </div>
-                )}
+
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-3xl font-bold text-primary">{assessment.score ?? "-"}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Score</p>
+                </div>
                 {assessment.risk_level && (
-                  <Badge className={getRiskColor(assessment.risk_level)}>{assessment.risk_level}</Badge>
+                  <Badge className={getRiskColor(assessment.risk_level)} variant="secondary">{assessment.risk_level}</Badge>
                 )}
               </div>
             </div>

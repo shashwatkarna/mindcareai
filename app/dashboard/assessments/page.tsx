@@ -4,6 +4,7 @@ import { cookies } from "next/headers"
 import { AssessmentsList } from "@/components/assessments/assessments-list"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { AssessmentChart } from "@/components/assessments/assessment-chart"
 
 export const metadata = {
   title: "Assessments - MindCare AI",
@@ -58,19 +59,31 @@ export default async function AssessmentsPage() {
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
 
+  // Normalize scores to 0-100 for chart if needed, or just pass raw if consistent
+  // The current AssessmentForm calculates 0-100 score.
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-[#3d3d3d]">Assessments</h1>
-          <p className="text-[#6b6b6b] mt-1">Complete mental health assessments to track your wellbeing</p>
+          <h1 className="text-3xl font-bold text-foreground">Assessments</h1>
+          <p className="text-muted-foreground mt-1">Track your mental wellbeing over time</p>
         </div>
         <Link href="/dashboard/assessments/new">
-          <Button className="bg-[#8b7355] hover:bg-[#6b5344] text-white">New Assessment</Button>
+          <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+            Start New Assessment
+          </Button>
         </Link>
       </div>
 
-      <AssessmentsList assessments={assessments || []} />
+      {assessments && assessments.length > 0 && (
+        <AssessmentChart assessments={assessments} />
+      )}
+
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Recent History</h2>
+        <AssessmentsList assessments={assessments || []} />
+      </div>
     </div>
   )
 }

@@ -34,7 +34,7 @@ export async function POST(request: Request) {
         })
 
         const body = await request.json()
-        const { title, content, mood, mood_score, is_private } = body
+        const { title, content, mood, mood_score, is_private, tags } = body
 
         const { data, error } = await supabase.from("journal_entries").insert({
             user_id: userId,
@@ -42,7 +42,8 @@ export async function POST(request: Request) {
             content,
             mood,
             mood_score,
-            is_private
+            is_private,
+            tags
         }).select()
 
         if (error) {

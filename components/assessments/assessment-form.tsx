@@ -4,9 +4,11 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
+import { Progress } from "@/components/ui/progress"
+import { ArrowLeft, ArrowRight, Check, CheckCircle2, ChevronRight, Loader2 } from "lucide-react"
 
 const assessments = {
   depression: {
@@ -59,6 +61,7 @@ interface AssessmentFormProps {
 
 export function AssessmentForm({ userId }: AssessmentFormProps) {
   const [selectedAssessment, setSelectedAssessment] = useState<keyof typeof assessments | null>(null)
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [responses, setResponses] = useState<{ [key: number]: number }>({})
   const [isLoading, setIsLoading] = useState(false)
   const [showResults, setShowResults] = useState(false)
@@ -66,16 +69,27 @@ export function AssessmentForm({ userId }: AssessmentFormProps) {
 
   if (!selectedAssessment) {
     return (
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {Object.entries(assessments).map(([key, assessment]) => (
           <Card
             key={key}
-            className="p-6 border-[#e0d9d3] bg-white cursor-pointer hover:shadow-md transition-shadow"
+            className="group relative overflow-hidden border-border hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer cursor-pointer"
             onClick={() => setSelectedAssessment(key as keyof typeof assessments)}
           >
-            <h3 className="font-semibold text-[#3d3d3d]">{assessment.name}</h3>
-            <p className="text-sm text-[#6b6b6b] mt-2">{assessment.description}</p>
-            <p className="text-xs text-[#8b7355] mt-4 font-medium">{assessment.questions.length} questions</p>
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <CardHeader>
+              <CardTitle className="flex justify-between items-start">
+                {assessment.name}
+                <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+              </CardTitle>
+              <CardDescription>{assessment.description}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground bg-secondary/50 p-2 rounded-md w-fit">
+                <CheckCircle2 className="w-4 h-4" />
+                {assessment.questions.length} questions
+              </div>
+            </CardContent>
           </Card>
         ))}
       </div>
@@ -84,13 +98,34 @@ export function AssessmentForm({ userId }: AssessmentFormProps) {
 
   const currentAssessment = assessments[selectedAssessment]
   const totalQuestions = currentAssessment.questions.length
-  const answeredQuestions = Object.keys(responses).length
+  const currentQuestion = currentAssessment.questions[currentQuestionIndex]
+  const progress = ((currentQuestionIndex) / totalQuestions) * 100
 
-  const handleResponseChange = (questionIndex: number, value: number) => {
+  const handleResponseChange = (value: number) => {
     setResponses((prev) => ({
       ...prev,
-      [questionIndex]: value,
+      [currentQuestionIndex]: value,
     }))
+  }
+
+  const handleNext = () => {
+    if (responses[currentQuestionIndex] === undefined) return
+
+    if (currentQuestionIndex < totalQuestions - 1) {
+      setCurrentQuestionIndex(prev => prev + 1)
+    } else {
+      handleSubmit()
+    }
+  }
+
+  const handlePrevious = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(prev => prev - 1)
+    } else {
+      setSelectedAssessment(null)
+      setResponses({})
+      setCurrentQuestionIndex(0)
+    }
   }
 
   const calculateScore = () => {
@@ -105,22 +140,13 @@ export function AssessmentForm({ userId }: AssessmentFormProps) {
   }
 
   const getRiskLevel = (score: number) => {
-    if (selectedAssessment === "depression" || selectedAssessment === "anxiety") {
-      if (score >= 70) return "high"
-      if (score >= 40) return "moderate"
-      return "low"
-    }
+    // Simplified risk logic for demo
     if (score >= 70) return "high"
     if (score >= 40) return "moderate"
     return "low"
   }
 
   const handleSubmit = async () => {
-    if (answeredQuestions !== totalQuestions) {
-      alert("Please answer all questions before submitting")
-      return
-    }
-
     setIsLoading(true)
     try {
       const score = getScore()
@@ -139,120 +165,93 @@ export function AssessmentForm({ userId }: AssessmentFormProps) {
         }),
       })
 
-      const data = await response.json()
+      const result = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to submit assessment")
+        throw new Error(result.error || "Failed to submit assessment")
       }
 
-      setShowResults(true)
-      setTimeout(() => {
-        router.push("/dashboard/assessments")
-      }, 3000)
+      //   setShowResults(true)
+      //   setTimeout(() => {
+      router.push(`/dashboard/assessments/${result.data.id}`)
+      //   }, 1000)
     } catch (error) {
       console.error("Error submitting assessment:", error)
       alert("Failed to save assessment")
-    } finally {
       setIsLoading(false)
     }
   }
 
-  if (showResults) {
-    const score = getScore()
-    const riskLevel = getRiskLevel(score)
-
-    return (
-      <Card className="p-8 border-[#e0d9d3] bg-white text-center max-w-md mx-auto">
-        <h2 className="text-2xl font-bold text-[#3d3d3d]">Assessment Complete</h2>
-        <div className="mt-6 space-y-4">
-          <div>
-            <p className="text-[#6b6b6b]">Your Score</p>
-            <p className="text-4xl font-bold text-[#8b7355]">{score}</p>
-          </div>
-          <div>
-            <p className="text-[#6b6b6b]">Risk Level</p>
-            <p
-              className={`text-lg font-semibold ${riskLevel === "high" ? "text-red-600" : riskLevel === "moderate" ? "text-yellow-600" : "text-green-600"
-                }`}
-            >
-              {riskLevel.charAt(0).toUpperCase() + riskLevel.slice(1)}
-            </p>
-          </div>
-          <p className="text-sm text-[#6b6b6b] mt-6">Redirecting to assessments...</p>
-        </div>
-      </Card>
-    )
-  }
-
   return (
-    <Card className="border-[#e0d9d3] bg-white max-w-2xl">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle>{currentAssessment.name}</CardTitle>
-            <CardDescription>{currentAssessment.description}</CardDescription>
-          </div>
-          <button
-            onClick={() => setSelectedAssessment(null)}
-            className="text-[#8b7355] hover:underline text-sm font-medium"
-          >
-            Change
-          </button>
-        </div>
-        <div className="mt-4 bg-[#f5f3f0] rounded-full h-2 w-full">
-          <div
-            className="bg-[#8b7355] h-2 rounded-full transition-all"
-            style={{ width: `${(answeredQuestions / totalQuestions) * 100}%` }}
-          />
-        </div>
-        <p className="text-xs text-[#6b6b6b] mt-2">
-          Question {answeredQuestions + 1} of {totalQuestions}
-        </p>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {currentAssessment.questions.map((question, index) => (
-          <div key={index} className="space-y-3">
-            <p className="font-medium text-[#3d3d3d]">{question}</p>
-            <RadioGroup
-              value={responses[index]?.toString() || ""}
-              onValueChange={(value) => handleResponseChange(index, Number.parseInt(value))}
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="0" id={`q${index}-0`} />
-                <Label htmlFor={`q${index}-0`} className="font-normal text-[#6b6b6b] cursor-pointer">
-                  Not at all
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="1" id={`q${index}-1`} />
-                <Label htmlFor={`q${index}-1`} className="font-normal text-[#6b6b6b] cursor-pointer">
-                  Several days
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="2" id={`q${index}-2`} />
-                <Label htmlFor={`q${index}-2`} className="font-normal text-[#6b6b6b] cursor-pointer">
-                  More than half the days
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="3" id={`q${index}-3`} />
-                <Label htmlFor={`q${index}-3`} className="font-normal text-[#6b6b6b] cursor-pointer">
-                  Nearly every day
-                </Label>
-              </div>
-            </RadioGroup>
-          </div>
-        ))}
+    <Card className="border-border shadow-lg max-w-2xl mx-auto overflow-hidden">
+      <div className="w-full bg-secondary h-2 sticky top-0">
+        <div
+          className="bg-primary h-full transition-all duration-500 ease-in-out"
+          style={{ width: `${((currentQuestionIndex + 1) / totalQuestions) * 100}%` }}
+        />
+      </div>
 
-        <Button
-          onClick={handleSubmit}
-          disabled={isLoading || answeredQuestions !== totalQuestions}
-          className="w-full bg-[#8b7355] hover:bg-[#6b5344] text-white mt-6"
+      <CardHeader>
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+            Question {currentQuestionIndex + 1} of {totalQuestions}
+          </span>
+          <span className="text-xs text-muted-foreground">
+            {currentAssessment.name}
+          </span>
+        </div>
+        <CardTitle className="text-xl md:text-2xl leading-relaxed">
+          {currentQuestion}
+        </CardTitle>
+      </CardHeader>
+
+      <CardContent className="space-y-6 pt-4 min-h-[300px] flex flex-col justify-center">
+        <RadioGroup
+          value={responses[currentQuestionIndex]?.toString() || ""}
+          onValueChange={(value) => handleResponseChange(Number.parseInt(value))}
+          className="space-y-3"
         >
-          {isLoading ? "Submitting..." : "Submit Assessment"}
-        </Button>
+          {[
+            { value: 0, label: "Not at all" },
+            { value: 1, label: "Several days" },
+            { value: 2, label: "More than half the days" },
+            { value: 3, label: "Nearly every day" },
+          ].map((option) => (
+            <div key={option.value}
+              className={`flex items-center space-x-3 p-4 rounded-lg border-2 cursor-pointer transition-all ${responses[currentQuestionIndex] === option.value
+                ? "border-primary bg-primary/5 shadow-sm"
+                : "border-muted hover:border-primary/50 hover:bg-secondary/50"
+                }`}
+              onClick={() => handleResponseChange(option.value)}
+            >
+              <RadioGroupItem value={option.value.toString()} id={`opt-${option.value}`} />
+              <Label htmlFor={`opt-${option.value}`} className="font-medium cursor-pointer flex-1">
+                {option.label}
+              </Label>
+            </div>
+          ))}
+        </RadioGroup>
       </CardContent>
+
+      <CardFooter className="flex justify-between border-t bg-secondary/20 p-6">
+        <Button variant="ghost" onClick={handlePrevious} disabled={isLoading}>
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back
+        </Button>
+        <Button
+          onClick={handleNext}
+          disabled={isLoading || responses[currentQuestionIndex] === undefined}
+          className="min-w-[120px]"
+        >
+          {isLoading ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : currentQuestionIndex === totalQuestions - 1 ? (
+            <>Finish <Check className="w-4 h-4 ml-2" /></>
+          ) : (
+            <>Next <ArrowRight className="w-4 h-4 ml-2" /></>
+          )}
+        </Button>
+      </CardFooter>
     </Card>
   )
 }

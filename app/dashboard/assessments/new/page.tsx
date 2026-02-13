@@ -51,10 +51,10 @@ export default async function NewAssessmentPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-[#3d3d3d]">Start Assessment</h1>
-        <p className="text-[#6b6b6b] mt-1">Choose an assessment to help track your mental health</p>
+    <div className="max-w-4xl mx-auto py-8">
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl font-bold tracking-tight">Start Assessment</h1>
+        <p className="text-muted-foreground mt-2">Choose an assessment to help track your mental health</p>
       </div>
 
       <AssessmentForm userId={user.id} />
