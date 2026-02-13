@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Mail, MapPin, Phone } from "lucide-react"
+import { ConversationalForm } from "@/components/contact/conversational-form"
 
 export default function ContactPage() {
     return (
@@ -28,8 +29,8 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-lg">Email Us</h3>
-                                        <p className="text-muted-foreground">support@mindcare.ai</p>
-                                        <p className="text-muted-foreground">partners@mindcare.ai</p>
+                                        <a href="mailto:shashwatkarna.07@gmail.com" className="text-muted-foreground hover:text-primary block transition-colors">shashwatkarna.07@gmail.com</a>
+                                        <a href="mailto:busykainbox@gmail.com" className="text-muted-foreground hover:text-primary block transition-colors">busykainbox@gmail.com</a>
                                     </div>
                                 </div>
 
@@ -39,8 +40,8 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-lg">Call Us</h3>
-                                        <p className="text-muted-foreground">+1 (888) 123-4567</p>
-                                        <p className="text-xs text-muted-foreground">Mon-Fri 9am-6pm EST</p>
+                                        <a href="tel:+919971374395" className="text-muted-foreground hover:text-primary transition-colors">+91 9971374395</a>
+                                        <p className="text-xs text-muted-foreground">Mon-Fri 9am-6pm IST</p>
                                     </div>
                                 </div>
 
@@ -50,46 +51,15 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-lg">Office</h3>
-                                        <p className="text-muted-foreground">123 Wellness Way</p>
-                                        <p className="text-muted-foreground">San Francisco, CA 94105</p>
+                                        <p className="text-muted-foreground">Sector-18, Noida</p>
+                                        <p className="text-muted-foreground">India</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-card border border-border rounded-2xl p-8 shadow-sm animate-slide-in-up [animation-delay:200ms]">
-                            <h2 className="text-2xl font-bold mb-6">Send a Message</h2>
-                            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium">First Name</label>
-                                        <Input placeholder="Jane" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium">Last Name</label>
-                                        <Input placeholder="Doe" />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium">Email</label>
-                                    <Input type="email" placeholder="jane@example.com" />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium">Subject</label>
-                                    <Input placeholder="How can we help?" />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium">Message</label>
-                                    <Textarea placeholder="Tell us more..." className="h-32" />
-                                </div>
-
-                                <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
-                                    Send Message
-                                </Button>
-                            </form>
+                        <div className="h-full flex flex-col justify-center animate-slide-in-up [animation-delay:200ms]">
+                            <ConversationalForm />
                         </div>
                     </div>
 
