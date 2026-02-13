@@ -45,7 +45,7 @@ export function Sidebar() {
 
   return (
     <div
-      className={`${isCollapsed ? "w-20" : "w-72"} bg-card/95 backdrop-blur-xl border-r border-border flex flex-col shadow-2xl transition-all duration-300 ease-in-out relative z-50`}
+      className={`${isCollapsed ? "w-20" : "w-72"} bg-card/95 backdrop-blur-xl border-r border-border flex flex-col shadow-2xl transition-all duration-300 ease-in-out relative z-50 h-full`}
     >
       {/* Collapse Toggle Button */}
       <button

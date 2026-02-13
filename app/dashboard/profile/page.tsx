@@ -52,14 +52,16 @@ export default async function ProfilePage() {
 
   const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single()
 
+  const nameChangeCount = user.user_metadata?.name_change_count || 0
+
   return (
-    <div className="max-w-2xl">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-[#3d3d3d]">Profile Settings</h1>
-        <p className="text-[#6b6b6b] mt-1">Manage your account information</p>
+    <div className="max-w-4xl mx-auto py-8">
+      <div className="mb-8 text-center sm:text-left">
+        <h1 className="text-3xl font-bold tracking-tight">Account Settings</h1>
+        <p className="text-muted-foreground mt-2">Manage your personal profile and preferences.</p>
       </div>
 
-      <ProfileForm initialData={profile} />
+      <ProfileForm initialData={profile} userId={userId} initialNameChangeCount={nameChangeCount} />
     </div>
   )
 }

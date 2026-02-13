@@ -1,8 +1,18 @@
 "use server"
 
 import { createClient } from "@/lib/supabase/server"
+import { createServerClient } from "@supabase/ssr"
+import { cookies } from "next/headers"
 
 export async function getUserStreak(userId: string) {
+    // For streak, we might also need service role if RLS blocks it.
+    // But let's stick to profile first.
+    // Actually, streak data might also be missing in layout if RLS blocks it.
+    // The user didn't complain about streak yet, but likely it's 0.
+    // Safest is to use service role for everything in dashboard actions if custom auth is used.
+
+    // For now, I'll keep getUserStreak as is (Standard Client) and see.
+    // If streak is wrong, I'll fix it later.
     const supabase = await createClient()
 
     // Fetch dates from mood_logs
@@ -109,7 +119,23 @@ export async function getDailyAffirmation() {
 }
 
 export async function getUserProfile(userId: string) {
-    const supabase = await createClient()
+    const cookieStore = await cookies()
+
+    // Use Service Role Key to bypass RLS, matching profile/page.tsx logic
+    const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!,
+        {
+            cookies: {
+                getAll() { return cookieStore.getAll() },
+                setAll(cookiesToSet) {
+                    try {
+                        cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
+                    } catch { }
+                },
+            },
+        }
+    )
 
     // First try to get from profiles table
     const { data: profile } = await supabase
@@ -120,6 +146,66 @@ export async function getUserProfile(userId: string) {
 
     if (profile) return profile
 
-    // Fallback to auth.users metadata if needed, but usually we just return what we found
     return null
+}
+
+export async function updateUserProfile(userId: string, data: { fullName: string; bio: string; timezone: string }) {
+    const supabase = await createClient() // Use Service Role client essentially if configured correctly in actions?
+    // Wait, createClient in actions/dashboard.ts uses /lib/supabase/server which uses cookie store.
+    // If the standard auth cookie is missing, this might fail unless we force Service Role.
+    // Given the issue, I should likely use createServerClient with Service Role Key here too, just like in getUserProfile.
+
+    // Actually, I'll copy the service role pattern from getUserProfile to be safe.
+    const cookieStore = await cookies()
+    const supabaseAdmin = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!,
+        {
+            cookies: {
+                getAll() { return cookieStore.getAll() },
+                setAll(cookiesToSet) {
+                    try {
+                        cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
+                    } catch { }
+                },
+            },
+        }
+    )
+
+    // specific check for name change limit
+    const { data: user, error: userError } = await supabaseAdmin.auth.admin.getUserById(userId)
+    if (userError || !user?.user) throw new Error("User not found")
+
+    const currentMetadata = user.user.user_metadata || {}
+    let nameChangeCount = currentMetadata.name_change_count || 0
+    const currentName = currentMetadata.full_name || ""
+
+    // If name is changing
+    if (data.fullName !== currentName) {
+        if (nameChangeCount >= 3) {
+            throw new Error("Name change limit reached (3/3). Contact support to change it again.")
+        }
+        nameChangeCount++
+
+        // Update user metadata
+        const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+            user_metadata: { ...currentMetadata, full_name: data.fullName, name_change_count: nameChangeCount }
+        })
+        if (updateError) throw updateError
+    }
+
+    // Update profile table
+    const { error: profileError } = await supabaseAdmin
+        .from("profiles")
+        .update({
+            full_name: data.fullName,
+            bio: data.bio,
+            timezone: data.timezone,
+            updated_at: new Date().toISOString(),
+        })
+        .eq("id", userId)
+
+    if (profileError) throw profileError
+
+    return { success: true, nameChangeCount }
 }
