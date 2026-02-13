@@ -32,7 +32,7 @@ const faqs = [
 
 export function FAQSection() {
     return (
-        <section className="py-24 bg-background">
+        <section className="py-24 bg-[#FBF4EE] dark:bg-transparent transition-colors duration-500">
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 className="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
                 <Accordion type="single" collapsible className="w-full">

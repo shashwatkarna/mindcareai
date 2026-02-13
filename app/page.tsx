@@ -15,7 +15,7 @@ export default function HomePage() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-16 pb-32">
+      <section className="relative overflow-hidden pt-16 pb-32 bg-[#EED9C4] dark:bg-transparent transition-colors duration-500">
         {/* Background blobs */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 overflow-hidden pointer-events-none">
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl opacity-50 animate-float"></div>
@@ -63,7 +63,7 @@ export default function HomePage() {
       <PersonalityTest />
 
       {/* Features Grid */}
-      <section className="py-24 bg-muted/30">
+      <section className="py-24 bg-[#F4E7D9] dark:bg-muted/10 transition-colors duration-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20 animate-fade-in">
             <h2 className="text-4xl font-bold mb-4 tracking-tight">Complete Mental Health Toolset</h2>
@@ -96,7 +96,7 @@ export default function HomePage() {
       </section>
 
       {/* Benefits / Split Section */}
-      <section className="py-24">
+      <section className="py-24 bg-[#F8EDE3] dark:bg-transparent transition-colors duration-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-8 animate-slide-in-up">
@@ -156,7 +156,7 @@ export default function HomePage() {
       <Testimonials />
 
       {/* CTA Section */}
-      <section className="py-24 border-t border-border animate-fade-in bg-primary/5">
+      <section className="py-24 border-t border-border animate-fade-in bg-[#FEFAF8] dark:bg-primary/5 transition-colors duration-500">
         <div className="max-w-3xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl sm:text-5xl font-bold mb-6">Start Your Journey Today</h2>
           <p className="text-xl text-muted-foreground mb-8">

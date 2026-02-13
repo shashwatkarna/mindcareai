@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, User, Mail, MessageSquare, Check, Loader2 } from "lucide-react";
+import { Send, User, Loader2, MessageCircle, X, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,7 +18,17 @@ type Message = {
 
 type Step = "name" | "email" | "subject" | "message" | "completed";
 
-export function ConversationalForm() {
+interface ConversationalFormProps {
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    initialSubject?: string;
+}
+
+export function ConversationalForm({ open, onOpenChange, initialSubject }: ConversationalFormProps) {
+    const [internalIsOpen, setInternalIsOpen] = useState(false);
+    const isOpen = open !== undefined ? open : internalIsOpen;
+    const setIsOpen = onOpenChange || setInternalIsOpen;
+
     const [messages, setMessages] = useState<Message[]>([
         {
             id: "intro-1",
@@ -29,7 +39,7 @@ export function ConversationalForm() {
             id: "intro-2",
             sender: "bot",
             text: "I can help you get in touch with our team. What should I call you?",
-            isTyping: true, // Simulate typing delay for the second message
+            isTyping: true,
         },
     ]);
     const [currentStep, setCurrentStep] = useState<Step>("name");
@@ -49,10 +59,18 @@ export function ConversationalForm() {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
-    }, [messages]);
+    }, [messages, isOpen]);
+
+    // Handle initial subject
+    useEffect(() => {
+        if (initialSubject && isOpen && currentStep === "name") {
+            setFormData(prev => ({ ...prev, subject: initialSubject }));
+        }
+    }, [initialSubject, isOpen, currentStep]);
 
     // Handle typing simulation
     useEffect(() => {
+        if (!isOpen) return;
         const typingMessage = messages.find(m => m.isTyping);
         if (typingMessage) {
             const timer = setTimeout(() => {
@@ -60,7 +78,7 @@ export function ConversationalForm() {
             }, 800);
             return () => clearTimeout(timer);
         }
-    }, [messages]);
+    }, [messages, isOpen]);
 
 
     const handleInputSubmit = async (e?: React.FormEvent) => {
@@ -87,11 +105,16 @@ export function ConversationalForm() {
             case "email":
                 if (!validateEmail(userMessage.text as string)) {
                     addBotMessage("Hmm, that doesn't look like a valid email. Could you try again?");
-                    // Don't advance step
                 } else {
                     setFormData((prev) => ({ ...prev, email: userMessage.text as string }));
-                    addBotMessage("Got it. What is this regarding? (Subject)");
-                    setCurrentStep("subject");
+                    // If we have an initial subject, skip the subject question or auto-fill it
+                    if (formData.subject) {
+                        addBotMessage(`Got it. I see you're contacting us about "${formData.subject}". Please type your message below.`);
+                        setCurrentStep("message");
+                    } else {
+                        addBotMessage("Got it. What is this regarding? (Subject)");
+                        setCurrentStep("subject");
+                    }
                 }
                 break;
 
@@ -104,16 +127,12 @@ export function ConversationalForm() {
             case "message":
                 const finalMessage = userMessage.text as string;
                 setFormData((prev) => ({ ...prev, message: finalMessage }));
-                // Trigger submission immediately
                 await handleSubmit({ ...formData, message: finalMessage });
                 break;
         }
     };
 
     const addBotMessage = (text: string) => {
-        // Add a dummy "typing" message first? Or just delay.
-        // For simplicity, we add it with isTyping: true (if we had logic for that) or just add it.
-        // Let's simulate a small delay before showing the bot message
         setTimeout(() => {
             setMessages((prev) => [
                 ...prev,
@@ -128,14 +147,13 @@ export function ConversationalForm() {
 
     const handleSubmit = async (data: typeof formData) => {
         setIsSubmitting(true);
-        // Add a temporary "Sending..." message
         setMessages((prev) => [...prev, { id: "sending", sender: "bot", text: "Sending your message...", isTyping: true }]);
 
         try {
             const result = await submitContactMessage(data);
 
             if (result.success) {
-                setMessages((prev) => prev.filter(m => m.id !== "sending")); // Remove sending
+                setMessages((prev) => prev.filter(m => m.id !== "sending"));
                 addBotMessage("Message sent successfully! We'll be in touch soon. ✅");
                 setCurrentStep("completed");
                 toast.success("Message sent!");
@@ -143,7 +161,7 @@ export function ConversationalForm() {
                 setMessages((prev) => prev.filter(m => m.id !== "sending"));
                 addBotMessage("Oh no, something went wrong. Please try again later.");
                 toast.error(result.error || "Failed to send");
-                setIsSubmitting(false); // Allow retry? or just validation fail
+                setIsSubmitting(false);
             }
         } catch (error) {
             setMessages((prev) => prev.filter(m => m.id !== "sending"));
@@ -152,17 +170,73 @@ export function ConversationalForm() {
         }
     };
 
+    const resetChat = () => {
+        setMessages([
+            {
+                id: "intro-1",
+                sender: "bot",
+                text: "Hi there! I'm the MindCare AI assistant. 👋",
+            },
+            {
+                id: "intro-2",
+                sender: "bot",
+                text: "I can help you get in touch with our team. What should I call you?",
+                isTyping: true,
+            },
+        ]);
+        setCurrentStep("name");
+        setFormData({ name: "", email: "", subject: initialSubject || "", message: "" });
+        setIsSubmitting(false);
+    };
+
+    if (!isOpen) {
+        return (
+            <motion.div
+                layoutId="chat-container"
+                className="w-full max-w-md mx-auto aspect-video sm:aspect-[4/3] max-h-[400px] flex items-center justify-center"
+            >
+                <div
+                    onClick={() => setIsOpen(true)}
+                    className="group relative cursor-pointer"
+                >
+                    <div className="absolute -inset-1 bg-gradient-to-r from-primary to-purple-600 rounded-full blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+                    <div className="relative h-24 sm:h-32 px-8 sm:px-12 bg-card border border-border rounded-full flex items-center gap-4 sm:gap-6 shadow-xl hover:scale-105 transition-transform">
+                        <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-primary/10 flex items-center justify-center">
+                            <MessageCircle className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+                        </div>
+                        <div className="text-left">
+                            <h3 className="font-bold text-lg sm:text-2xl">Chat with Us</h3>
+                            <p className="text-sm text-muted-foreground">Click to start conversation</p>
+                        </div>
+                        <Sparkles className="h-5 w-5 text-yellow-500 animate-pulse ml-2" />
+                    </div>
+                </div>
+            </motion.div>
+        )
+    }
+
     return (
-        <div className="w-full max-w-md mx-auto h-[600px] border border-border rounded-2xl overflow-hidden bg-card shadow-sm flex flex-col">
+        <motion.div
+            layoutId="chat-container"
+            className="w-full h-full flex flex-col border-none bg-transparent"
+        >
             {/* Header */}
-            <div className="p-4 border-b bg-muted/30 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <User className="h-6 w-6 text-primary" />
+            <div className="p-4 border-b bg-muted/30 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <User className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                        <h3 className="font-semibold text-sm">MindCare Assistant</h3>
+                        <p className="text-xs text-muted-foreground flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                            Online
+                        </p>
+                    </div>
                 </div>
-                <div>
-                    <h3 className="font-semibold">MindCare Assistant</h3>
-                    <p className="text-xs text-muted-foreground">Always here to help</p>
-                </div>
+                <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-8 w-8 rounded-full">
+                    <X className="h-4 w-4" />
+                </Button>
             </div>
 
             {/* Chat Area */}
@@ -180,13 +254,13 @@ export function ConversationalForm() {
                             className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
                         >
                             <div
-                                className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${message.sender === "user"
-                                        ? "bg-primary text-primary-foreground rounded-tr-none"
-                                        : "bg-muted/50 text-foreground rounded-tl-none border border-border/50"
+                                className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${message.sender === "user"
+                                    ? "bg-primary text-primary-foreground rounded-tr-none"
+                                    : "bg-muted/50 text-foreground rounded-tl-none border border-border/50"
                                     }`}
                             >
                                 {message.isTyping ? (
-                                    <span className="flex gap-1 h-5 items-center">
+                                    <span className="flex gap-1 h-5 items-center px-1">
                                         <span className="w-1.5 h-1.5 bg-current rounded-full animate-bounce [animation-delay:-0.3s]"></span>
                                         <span className="w-1.5 h-1.5 bg-current rounded-full animate-bounce [animation-delay:-0.15s]"></span>
                                         <span className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"></span>
@@ -201,8 +275,8 @@ export function ConversationalForm() {
             </div>
 
             {/* Input Area */}
-            {currentStep !== "completed" && (
-                <div className="p-4 border-t bg-background">
+            {currentStep !== "completed" ? (
+                <div className="p-3 border-t bg-background">
                     <form
                         onSubmit={handleInputSubmit}
                         className="flex items-end gap-2"
@@ -218,7 +292,7 @@ export function ConversationalForm() {
                                         handleInputSubmit();
                                     }
                                 }}
-                                className="min-h-[60px] resize-none"
+                                className="min-h-[50px] max-h-[100px] resize-none py-3"
                                 disabled={isSubmitting}
                                 autoFocus
                             />
@@ -233,6 +307,7 @@ export function ConversationalForm() {
                                 onChange={(e) => setInputText(e.target.value)}
                                 disabled={isSubmitting}
                                 autoFocus
+                                className="h-12"
                             />
                         )}
 
@@ -240,21 +315,19 @@ export function ConversationalForm() {
                             type="submit"
                             size="icon"
                             disabled={!inputText.trim() || isSubmitting}
-                            className="shrink-0 rounded-full h-10 w-10"
+                            className="shrink-0 rounded-full h-10 w-10 mb-1"
                         >
                             {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                         </Button>
                     </form>
                 </div>
-            )}
-
-            {currentStep === "completed" && (
+            ) : (
                 <div className="p-4 border-t bg-background text-center">
-                    <Button onClick={() => window.location.reload()} variant="outline" size="sm">
+                    <Button onClick={resetChat} variant="outline" size="sm" className="w-full">
                         Start New Conversation
                     </Button>
                 </div>
             )}
-        </div>
+        </motion.div>
     );
 }

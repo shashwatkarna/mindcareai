@@ -61,7 +61,7 @@ const testimonials = [
 
 export function Testimonials() {
     return (
-        <section className="py-24 bg-background overflow-hidden">
+        <section className="py-24 bg-[#FEFAF8] dark:bg-transparent overflow-hidden transition-colors duration-500">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 text-center">
                 <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">Trusted by Thousands</h2>
                 <p className="text-xl text-muted-foreground">

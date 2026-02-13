@@ -108,7 +108,7 @@ export function PersonalityTest() {
     if (activeQuestions.length === 0) return null // Loading state
 
     return (
-        <section className="py-24 bg-primary/5">
+        <section className="py-24 bg-[#F1E0CE] dark:bg-transparent transition-colors duration-500">
             <div className="max-w-4xl mx-auto px-4 text-center">
                 <h2 className="text-3xl font-bold mb-8">Discover Your Wellness Archetype</h2>
                 <Card className="max-w-xl mx-auto p-8 relative overflow-hidden border-primary/20 bg-background/50 backdrop-blur-sm shadow-xl min-h-[400px] flex flex-col justify-center">
