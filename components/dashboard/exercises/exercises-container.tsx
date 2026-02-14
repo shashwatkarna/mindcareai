@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { useSearchParams } from "next/navigation"
 import { BreathingTool } from "@/components/dashboard/exercises/breathing-tool"
 import { SoundscapesFocus } from "@/components/dashboard/exercises/soundscapes-focus"
 import { WorryJar } from "@/components/dashboard/exercises/worry-jar"
@@ -20,7 +21,15 @@ interface ExercisesContainerProps {
 type ToolType = "breathing" | "soundscapes" | "worry-jar" | "affirmations" | "grounding" | "bubble-pop" | "gratitude" | "yoga" | null
 
 export function ExercisesContainer({ isPremium }: ExercisesContainerProps) {
+    const searchParams = useSearchParams()
     const [activeTool, setActiveTool] = useState<ToolType>(null)
+
+    useEffect(() => {
+        const toolParam = searchParams.get('tool')
+        if (toolParam && ["breathing", "soundscapes", "worry-jar", "affirmations", "grounding", "bubble-pop", "gratitude", "yoga"].includes(toolParam)) {
+            setActiveTool(toolParam as ToolType)
+        }
+    }, [searchParams])
 
     const tools = [
         {

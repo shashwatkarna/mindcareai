@@ -62,12 +62,9 @@ export default async function AppointmentsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-[#3d3d3d]">Appointments</h1>
-          <p className="text-[#6b6b6b] mt-1">Schedule and manage your therapy sessions</p>
+          <h1 className="text-3xl font-bold text-foreground">Appointments</h1>
+          <p className="text-muted-foreground mt-1">Schedule and manage your therapy sessions</p>
         </div>
-        <Link href="/dashboard/appointments/new">
-          <Button className="bg-[#8b7355] hover:bg-[#6b5344] text-white">Schedule Appointment</Button>
-        </Link>
       </div>
 
       <AppointmentsList appointments={appointments || []} />

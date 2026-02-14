@@ -3,9 +3,12 @@
 import { useState } from "react"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
-import { Card } from "@/components/ui/card"
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Calendar, Clock, Video, Phone, User, CheckCircle2, XCircle, Plus } from "lucide-react"
+import { format } from "date-fns"
 
 interface Appointment {
   id: string
@@ -37,31 +40,25 @@ export function AppointmentsList({ appointments }: { appointments: Appointment[]
     }
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "scheduled":
-        return "bg-blue-100 text-blue-800"
-      case "completed":
-        return "bg-green-100 text-green-800"
-      case "cancelled":
-        return "bg-gray-100 text-gray-800"
-      case "rescheduled":
-        return "bg-yellow-100 text-yellow-800"
-      default:
-        return "bg-gray-100 text-gray-800"
+  const getStatusBadge = (status: string, isPast: boolean) => {
+    if (status === 'cancelled') {
+      return <Badge variant="destructive" className="bg-destructive/10 text-destructive border-destructive/20 hover:bg-destructive/20">Cancelled</Badge>
     }
+    if (status === 'completed' || isPast) {
+      return <Badge className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20 hover:bg-green-500/20">Completed</Badge>
+    }
+    if (status === 'rescheduled') {
+      return <Badge className="bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20 hover:bg-orange-500/20">Rescheduled</Badge>
+    }
+    return <Badge className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 hover:bg-blue-500/20">Scheduled</Badge>
   }
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case "video":
-        return "📹"
-      case "phone":
-        return "📞"
-      case "in-person":
-        return "🏥"
-      default:
-        return "📅"
+      case "video": return <Video className="w-4 h-4" />
+      case "phone": return <Phone className="w-4 h-4" />
+      case "in-person": return <User className="w-4 h-4" />
+      default: return <Calendar className="w-4 h-4" />
     }
   }
 
@@ -69,88 +66,146 @@ export function AppointmentsList({ appointments }: { appointments: Appointment[]
     return new Date(scheduledAt) > new Date()
   }
 
-  // Separate upcoming and past appointments
-  const upcomingAppointments = appointments.filter((a) => isUpcoming(a.scheduled_at))
-  const pastAppointments = appointments.filter((a) => !isUpcoming(a.scheduled_at))
+  // Filter logic: Upcoming = Future AND Not Cancelled
+  const upcomingAppointments = appointments.filter((a) => isUpcoming(a.scheduled_at) && a.status !== 'cancelled')
+  // Past = Past OR Cancelled
+  const pastAppointments = appointments.filter((a) => !isUpcoming(a.scheduled_at) || a.status === 'cancelled')
 
   if (appointments.length === 0) {
     return (
-      <Card className="p-12 border-[#e0d9d3] bg-white text-center">
-        <p className="text-[#6b6b6b]">No appointments scheduled yet. Book your first session to get started.</p>
+      <div className="text-center py-16 px-4 border border-dashed border-border rounded-xl bg-card/50">
+        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
+          <Calendar className="w-8 h-8" />
+        </div>
+        <h3 className="text-xl font-bold text-foreground">No appointments yet</h3>
+        <p className="text-muted-foreground mt-2 max-w-sm mx-auto">
+          Book your first session with one of our specialists to start your journey.
+        </p>
         <Link href="/dashboard/appointments/new">
-          <button className="mt-4 px-4 py-2 bg-[#8b7355] text-white rounded-md hover:bg-[#6b5344]">Schedule Now</button>
+          <Button className="mt-6 bg-primary hover:bg-primary/90 text-primary-foreground">
+            <Plus className="w-4 h-4 mr-2" /> Book Appointment
+          </Button>
         </Link>
+      </div>
+    )
+  }
+
+  const AppointmentCard = ({ appointment }: { appointment: Appointment }) => {
+    const isPast = !isUpcoming(appointment.scheduled_at)
+    const showCancel = appointment.status === 'scheduled' && !isPast
+
+    return (
+      <Card className="group overflow-hidden border border-border shadow-sm hover:shadow-md transition-all duration-300 bg-card">
+        <CardHeader className="p-4 sm:p-6 bg-muted/40 border-b border-border flex flex-row items-center justify-between space-y-0">
+          <div className="flex items-center gap-4">
+            <div className={`p-2.5 rounded-full ring-1 ring-inset shadow-sm
+                  ${appointment.appointment_type === 'video' ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 ring-indigo-500/20' :
+                appointment.appointment_type === 'phone' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 ring-emerald-500/20' : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 ring-amber-500/20'}
+              `}>
+              {getTypeIcon(appointment.appointment_type)}
+            </div>
+            <div>
+              <h4 className="font-bold text-foreground text-lg">{appointment.title}</h4>
+              <div className="flex items-center text-sm text-muted-foreground font-medium">
+                {appointment.appointment_type.charAt(0).toUpperCase() + appointment.appointment_type.slice(1)} Session
+              </div>
+            </div>
+          </div>
+          {getStatusBadge(appointment.status, isPast)}
+        </CardHeader>
+
+        <CardContent className="p-5 grid gap-y-3 gap-x-6 sm:grid-cols-2">
+          <div className="flex items-center gap-2.5 text-sm text-foreground/80">
+            <Calendar className="w-4 h-4 text-primary" />
+            <span className="font-semibold">{format(new Date(appointment.scheduled_at), "EEEE, MMMM do, yyyy")}</span>
+          </div>
+          <div className="flex items-center gap-2.5 text-sm text-foreground/80">
+            <Clock className="w-4 h-4 text-primary" />
+            <span className="font-semibold">{format(new Date(appointment.scheduled_at), "h:mm a")} ({appointment.duration_minutes}m)</span>
+          </div>
+
+          {appointment.notes && appointment.notes.includes("Assigned Specialist:") && (
+            <div className="flex items-center gap-2.5 text-sm text-foreground sm:col-span-2 bg-primary/5 p-2 rounded-md border border-primary/10">
+              <User className="w-4 h-4 text-primary" />
+              <span className="font-medium">
+                {appointment.notes.split("Assigned Specialist:")[1].split("]")[0].trim()}
+              </span>
+            </div>
+          )}
+        </CardContent>
+
+        {(showCancel || appointment.status === 'completed' || isPast) && (
+          <CardFooter className="p-4 bg-muted/20 flex justify-end gap-3 border-t border-border">
+            {showCancel && (
+              <>
+                <Button variant="outline" size="sm" className="text-destructive border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
+                  onClick={() => handleCancel(appointment.id)}
+                  disabled={cancelingId === appointment.id}
+                >
+                  {cancelingId === appointment.id ? "Canceling..." : "Cancel Appointment"}
+                </Button>
+                {appointment.appointment_type === 'video' && (
+                  <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
+                    <Video className="w-3.5 h-3.5" /> Join Call
+                  </Button>
+                )}
+              </>
+            )}
+
+            {/* Show "View Summary" for past/completed/cancelled events if pertinent (optional) */}
+            {(appointment.status === 'completed' || isPast) && appointment.status !== 'cancelled' && (
+              <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400 bg-green-500/10 px-3 py-1.5 rounded-full border border-green-500/20">
+                <CheckCircle2 className="w-4 h-4" />
+                <span className="font-medium">Session Completed</span>
+              </div>
+            )}
+
+            {appointment.status === 'cancelled' && (
+              <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 px-3 py-1.5 rounded-full border border-destructive/20">
+                <XCircle className="w-4 h-4" />
+                <span className="font-medium">Cancelled</span>
+              </div>
+            )}
+          </CardFooter>
+        )}
       </Card>
     )
   }
 
   return (
-    <div className="space-y-8">
-      {upcomingAppointments.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-[#3d3d3d]">Upcoming Appointments</h3>
-          {upcomingAppointments.map((appointment) => (
-            <Card key={appointment.id} className="p-6 border-[#e0d9d3] bg-white hover:shadow-md transition-shadow">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-2xl">{getTypeIcon(appointment.appointment_type)}</span>
-                    <div>
-                      <h4 className="font-semibold text-[#3d3d3d]">{appointment.title}</h4>
-                      <p className="text-sm text-[#6b6b6b]">{new Date(appointment.scheduled_at).toLocaleString()}</p>
-                    </div>
-                  </div>
-                  {appointment.description && <p className="text-sm text-[#6b6b6b] mb-2">{appointment.description}</p>}
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <Badge className="bg-[#f5f3f0] text-[#3d3d3d]">{appointment.appointment_type}</Badge>
-                    <span className="text-xs text-[#6b6b6b]">{appointment.duration_minutes} minutes</span>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-2 flex-shrink-0">
-                  <Badge className={getStatusColor(appointment.status)}>{appointment.status}</Badge>
-                  {appointment.status === "scheduled" && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleCancel(appointment.id)}
-                      disabled={cancelingId === appointment.id}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      Cancel
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
+    <Tabs defaultValue="upcoming" className="w-full">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+        <TabsList className="bg-muted p-1 border border-border">
+          <TabsTrigger value="upcoming" className="px-6 py-2 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-foreground font-medium">Upcoming</TabsTrigger>
+          <TabsTrigger value="past" className="px-6 py-2 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-foreground font-medium">Past & History</TabsTrigger>
+        </TabsList>
+        <Link href="/dashboard/appointments/new">
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm">
+            <Plus className="w-4 h-4 mr-2" /> Book New Session
+          </Button>
+        </Link>
+      </div>
 
-      {pastAppointments.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-[#3d3d3d]">Past Appointments</h3>
-          {pastAppointments.map((appointment) => (
-            <Card key={appointment.id} className="p-6 border-[#e0d9d3] bg-[#f9f7f5] opacity-75">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-2xl">{getTypeIcon(appointment.appointment_type)}</span>
-                    <div>
-                      <h4 className="font-semibold text-[#3d3d3d]">{appointment.title}</h4>
-                      <p className="text-sm text-[#6b6b6b]">{new Date(appointment.scheduled_at).toLocaleString()}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <Badge className="bg-[#e0d9d3] text-[#3d3d3d]">{appointment.appointment_type}</Badge>
-                    <span className="text-xs text-[#6b6b6b]">{appointment.duration_minutes} minutes</span>
-                  </div>
-                </div>
-                <Badge className={getStatusColor(appointment.status)}>{appointment.status}</Badge>
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
-    </div>
+      <TabsContent value="upcoming" className="space-y-6 animate-in fade-in-50 slide-in-from-bottom-2">
+        {upcomingAppointments.length === 0 ? (
+          <div className="text-center py-16 border-2 border-dashed border-border rounded-xl bg-card/50">
+            <p className="text-muted-foreground text-lg">No upcoming sessions scheduled.</p>
+            <p className="text-sm text-muted-foreground/80">Time to take care of yourself.</p>
+          </div>
+        ) : (
+          upcomingAppointments.map(app => <AppointmentCard key={app.id} appointment={app} />)
+        )}
+      </TabsContent>
+
+      <TabsContent value="past" className="space-y-6 animate-in fade-in-50 slide-in-from-bottom-2">
+        {pastAppointments.length === 0 ? (
+          <div className="text-center py-16 border-2 border-dashed border-border rounded-xl bg-card/50">
+            <p className="text-muted-foreground text-lg">No past appointment history.</p>
+          </div>
+        ) : (
+          pastAppointments.map(app => <AppointmentCard key={app.id} appointment={app} />)
+        )}
+      </TabsContent>
+    </Tabs>
   )
 }
