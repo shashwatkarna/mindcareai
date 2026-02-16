@@ -108,26 +108,28 @@ export function PersonalityTest() {
     if (activeQuestions.length === 0) return null // Loading state
 
     return (
-        <section className="py-24 bg-[#F1E0CE] dark:bg-transparent transition-colors duration-500">
-            <div className="max-w-4xl mx-auto px-4 text-center">
-                <h2 className="text-3xl font-bold mb-8">Discover Your Wellness Archetype</h2>
-                <Card className="max-w-xl mx-auto p-8 relative overflow-hidden border-primary/20 bg-background/50 backdrop-blur-sm shadow-xl min-h-[400px] flex flex-col justify-center">
+        <section className="py-24 bg-[#0A0118] relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-purple-900/10 to-transparent" />
+
+            <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
+                <h2 className="text-3xl font-bold mb-8 text-white">Discover Your Wellness Archetype</h2>
+                <Card className="max-w-xl mx-auto p-8 relative overflow-hidden border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl min-h-[400px] flex flex-col justify-center">
                     {/* Decorative elements */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-bl-full -mr-8 -mt-8"></div>
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-bl-full -mr-8 -mt-8 blur-2xl"></div>
 
                     {isAnalyzing ? (
-                        <div className="flex flex-col items-center justify-center space-y-4 animate-fade-in">
-                            <Sparkles className="w-12 h-12 text-primary animate-spin-slow" />
+                        <div className="flex flex-col items-center justify-center space-y-4 animate-fade-in text-white">
+                            <Sparkles className="w-12 h-12 text-purple-400 animate-spin-slow" />
                             <h3 className="text-xl font-semibold">Analyzing your responses...</h3>
-                            <p className="text-muted-foreground">Consulting mental wellness patterns</p>
+                            <p className="text-gray-400">Consulting mental wellness patterns</p>
                         </div>
                     ) : !result ? (
-                        <div className="relative z-10 animate-fade-in">
-                            <div className="mb-8">
-                                <span className="text-muted-foreground text-sm uppercase tracking-wider font-semibold">
+                        <div className="relative z-10 animate-fade-in text-left">
+                            <div className="mb-8 text-center">
+                                <span className="text-purple-400 text-sm uppercase tracking-wider font-semibold">
                                     Question {currentQ + 1} of {activeQuestions.length}
                                 </span>
-                                <h3 className="text-2xl font-bold mt-4">{activeQuestions[currentQ].text}</h3>
+                                <h3 className="text-2xl font-bold mt-4 text-white">{activeQuestions[currentQ].text}</h3>
                             </div>
 
                             <div className="space-y-4">
@@ -135,22 +137,22 @@ export function PersonalityTest() {
                                     <Button
                                         key={idx}
                                         variant="outline"
-                                        className="w-full text-lg h-16 justify-between group hover:border-primary hover:bg-primary/5 transition-all"
+                                        className="w-full text-lg h-16 justify-between group border-white/10 bg-white/5 text-white hover:bg-white/10 hover:border-purple-500/50 transition-all rounded-xl"
                                         onClick={() => handleAnswer(option.type)}
                                     >
                                         {option.label}
-                                        <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-primary" />
+                                        <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-purple-400" />
                                     </Button>
                                 ))}
                             </div>
                         </div>
                     ) : (
                         <div className="relative z-10 animate-scale-in text-center">
-                            <div className="text-6xl mb-6 animate-float">{result.icon}</div>
-                            <h3 className="text-3xl font-bold text-primary mb-2">{result.title}</h3>
-                            <p className="text-xl text-muted-foreground mb-8">{result.desc}</p>
+                            <div className="text-6xl mb-6 animate-float filter drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]">{result.icon}</div>
+                            <h3 className="text-3xl font-bold text-white mb-2">{result.title}</h3>
+                            <p className="text-xl text-gray-400 mb-8">{result.desc}</p>
 
-                            <Button onClick={startNewGame} variant="outline" className="gap-2">
+                            <Button onClick={startNewGame} variant="outline" className="gap-2 border-white/10 text-white hover:bg-white/10">
                                 <RefreshCw className="w-4 h-4" /> Try with new questions
                             </Button>
                         </div>

@@ -61,18 +61,20 @@ const testimonials = [
 
 export function Testimonials() {
     return (
-        <section className="py-24 bg-[#FEFAF8] dark:bg-transparent overflow-hidden transition-colors duration-500">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 text-center">
-                <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">Trusted by Thousands</h2>
-                <p className="text-xl text-muted-foreground">
+        <section className="py-24 bg-[#0A0118] overflow-hidden relative">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.1),transparent_70%)]" />
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 text-center relative z-10">
+                <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4 text-white">Trusted by Thousands</h2>
+                <p className="text-xl text-gray-400">
                     See what our community has to say about their journey with MindCare AI.
                 </p>
             </div>
 
-            <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
-                {/* Gradient Masks for smooth fade effect */}
-                <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-32 bg-gradient-to-r from-background to-transparent"></div>
-                <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-32 bg-gradient-to-l from-background to-transparent"></div>
+            <div className="relative flex w-full flex-col items-center justify-center overflow-hidden z-10">
+                {/* Gradient Masks */}
+                <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-32 bg-gradient-to-r from-[#0A0118] to-transparent"></div>
+                <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-32 bg-gradient-to-l from-[#0A0118] to-transparent"></div>
 
                 <div className="flex w-full overflow-hidden py-4">
                     <div className="flex min-w-full shrink-0 gap-6 animate-scroll hover:[animation-play-state:paused] pl-6">
@@ -93,9 +95,9 @@ export function Testimonials() {
 
 function TestimonialCard({ name, role, company, content }: { name: string; role: string; company: string; content: string }) {
     return (
-        <Card className="w-[350px] shrink-0 p-6 border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-colors">
+        <Card className="w-[350px] shrink-0 p-6 border-white/10 bg-white/5 backdrop-blur-md hover:border-purple-500/30 transition-colors shadow-xl">
             <div className="flex items-start gap-4 mb-4">
-                <div className="rounded-full overflow-hidden border border-border w-12 h-12 shrink-0">
+                <div className="rounded-full overflow-hidden border border-white/10 w-12 h-12 shrink-0 ring-2 ring-purple-500/20">
                     <img
                         src={`https://ui-avatars.com/api/?name=${name.replace(" ", "+")}&background=random`}
                         alt={name}
@@ -103,11 +105,11 @@ function TestimonialCard({ name, role, company, content }: { name: string; role:
                     />
                 </div>
                 <div>
-                    <h3 className="font-semibold text-sm">{name}</h3>
-                    <p className="text-xs text-muted-foreground">{role} at {company}</p>
+                    <h3 className="font-semibold text-sm text-white">{name}</h3>
+                    <p className="text-xs text-gray-400">{role} at {company}</p>
                 </div>
             </div>
-            <p className="text-sm text-foreground/80 leading-relaxed italic">"{content}"</p>
+            <p className="text-sm text-gray-300 leading-relaxed italic">"{content}"</p>
         </Card>
     )
 }

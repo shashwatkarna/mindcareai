@@ -5,6 +5,7 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
+import { AnimatedLogo } from "@/components/ui/animated-logo"
 import {
   ChevronLeft,
   ChevronRight,
@@ -56,18 +57,14 @@ export function Sidebar() {
       </button>
 
       <div className={`p-6 border-b border-border/50 flex items-center ${isCollapsed ? "justify-center px-2" : ""}`}>
-        <div className="flex items-center gap-3 transition-all duration-300">
+        {isCollapsed ? (
           <div className="relative shrink-0 group">
             <div className="absolute inset-0 bg-primary/30 blur-xl rounded-full animate-pulse group-hover:bg-primary/50 transition-colors" />
             <img src="/logo.png" alt="MindCare AI" className="w-12 h-12 object-contain drop-shadow-xl relative z-10" />
           </div>
-          {!isCollapsed && (
-            <div className="overflow-hidden animate-fade-in pl-1">
-              <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600 tracking-tight whitespace-nowrap">MindCare AI</h1>
-              <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold whitespace-nowrap">Wellness Companion</p>
-            </div>
-          )}
-        </div>
+        ) : (
+          <AnimatedLogo size="lg" showSubtitle={true} />
+        )}
       </div>
 
       <TooltipProvider delayDuration={0}>

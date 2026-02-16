@@ -7,6 +7,7 @@ import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import { useTheme } from "next-themes"
 import { motion, AnimatePresence } from "framer-motion"
+import { AnimatedLogo } from "@/components/ui/animated-logo"
 
 export function Navbar() {
     const { theme, setTheme } = useTheme()
@@ -50,27 +51,13 @@ export function Navbar() {
                 animate={{ y: 0 }}
                 transition={{ duration: 0.5 }}
                 className={`fixed left-0 right-0 z-50 transition-all duration-500 ease-in-out ${scrolled
-                        ? "top-4 mx-auto w-[92%] max-w-5xl rounded-full bg-background/60 backdrop-blur-xl border border-border/40 shadow-xl"
-                        : "top-0 w-full bg-transparent border-b border-transparent"
+                    ? "top-4 mx-auto w-[92%] max-w-5xl rounded-full bg-background/60 backdrop-blur-xl border border-border/40 shadow-xl"
+                    : "top-0 w-full bg-transparent border-b border-transparent"
                     }`}
             >
                 <div className="px-6 md:px-8 h-16 md:h-20 flex items-center justify-between">
                     {/* Logo Section */}
-                    <div className="flex items-center gap-3">
-                        <Link href="/" className="flex items-center gap-3 group">
-                            <div className="relative">
-                                <div className="absolute inset-0 bg-primary/30 rounded-full blur-xl opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                <img
-                                    src="/logo.png"
-                                    alt="MindCare AI"
-                                    className="w-9 h-9 md:w-10 md:h-10 object-contain relative z-10 transition-transform group-hover:scale-110 duration-300"
-                                />
-                            </div>
-                            <span className="font-bold text-xl md:text-2xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">
-                                MindCare AI
-                            </span>
-                        </Link>
-                    </div>
+                    <AnimatedLogo href="/" size="md" />
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center gap-1">

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindCare AI - OG Image Preview</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        .card {
+            width: 1200px;
+            height: 630px;
+            background: linear-gradient(135deg, #1a103c 0%, #2d1b69 50%, #4c1d95 100%);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+        }
+        
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: #8B5CF6;
+            top: -100px;
+            left: -100px;
+        }
+        
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: #EC4899;
+            bottom: -150px;
+            right: -150px;
+        }
+        
+        .content {
+            z-index: 10;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .logo {
+            font-size: 100px;
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin: 0;
+            letter-spacing: -2px;
+        }
+        
+        .tagline {
+            font-size: 32px;
+            font-weight: 500;
+            color: #E9D5FF;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+        
+        .url-badge {
+            margin-top: 40px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 12px 30px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.2);
+            font-family: monospace;
+            font-size: 24px;
+            color: #e0e7ff;
+        }
+        
+        .brain-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.5));
+        }
+
+        /* Grid overlay */
+        .grid {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="grid"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        
+        <div class="content">
+            <div class="brain-icon">🧠</div>
+            <h1 class="logo">MindCare AI</h1>
+            <div class="tagline">Your Private Mental Wellness Companion</div>
+            <div class="url-badge">itsmindcareai.vercel.app</div>
+        </div>
+    </div>
+</body>
+</html>
