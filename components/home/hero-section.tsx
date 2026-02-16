@@ -21,7 +21,6 @@ export function HeroSection() {
                 <div className="absolute top-[-20%] left-[-10%] w-[700px] h-[700px] bg-purple-600/20 rounded-full blur-[120px] mix-blend-screen animate-pulse-slow" />
                 <div className="absolute top-[20%] right-[-10%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[100px] mix-blend-screen animate-pulse-slow delay-1000" />
                 <div className="absolute bottom-[0%] left-[20%] w-[500px] h-[500px] bg-pink-600/10 rounded-full blur-[100px] mix-blend-screen animate-pulse-slow delay-2000" />
-                <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] mix-blend-overlay"></div>
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-10">

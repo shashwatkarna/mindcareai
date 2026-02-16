@@ -15,9 +15,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
   let streakData = { streak: 0, history: [] as string[] }
   let notificationData: NotificationData = { hasLoggedMood: false, hasJournaled: false, streak: 0 }
 
-  console.log("DEBUG: Dashboard Layout Rendered")
-  console.log("DEBUG: Supabase Auth User ID:", user?.id)
-
   let mindcareUserId = null
   const cookieStore = await cookies()
   const sessionToken = cookieStore.get("mindcare_session")?.value
@@ -25,9 +22,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
     try {
       const decoded = Buffer.from(sessionToken, "base64").toString()
       mindcareUserId = decoded.split(":")[0]
-      console.log("DEBUG: MindCare Session User ID:", mindcareUserId)
     } catch (e) {
-      console.log("DEBUG: Failed to decode mindcare_session")
+      // Silent failure
     }
   }
 
