@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { VisitorCounter } from "@/components/layout/visitor-counter"
 
 export function Footer({ home = false }: { home?: boolean }) {
     const footerClass = home
@@ -59,6 +60,9 @@ export function Footer({ home = false }: { home?: boolean }) {
                         <Link href="https://www.linkedin.com/in/shashwatkarna/" className="hover:text-primary transition-colors">LinkedIn</Link>
                         <Link href="https://www.instagram.com/karn_shashwat/" className="hover:text-primary transition-colors">Instagram</Link>
                     </div>
+                </div>
+                <div className="mt-8 flex justify-center">
+                    <VisitorCounter />
                 </div>
             </div>
         </footer>

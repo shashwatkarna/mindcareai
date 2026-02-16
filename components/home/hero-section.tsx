@@ -17,10 +17,10 @@ export function HeroSection() {
         <section ref={containerRef} className="relative min-h-screen w-full overflow-hidden bg-[#0A0118] text-white pt-24 pb-0 flex flex-col justify-center">
 
             {/* Dynamic Background */}
-            <div className="absolute inset-0 w-full h-full">
-                <div className="absolute top-[-20%] left-[-10%] w-[700px] h-[700px] bg-purple-600/20 rounded-full blur-[120px] mix-blend-screen animate-pulse-slow" />
-                <div className="absolute top-[20%] right-[-10%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[100px] mix-blend-screen animate-pulse-slow delay-1000" />
-                <div className="absolute bottom-[0%] left-[20%] w-[500px] h-[500px] bg-pink-600/10 rounded-full blur-[100px] mix-blend-screen animate-pulse-slow delay-2000" />
+            <div className="absolute inset-0 w-full h-full transform-gpu">
+                <div className="absolute top-[-20%] left-[-10%] w-[700px] h-[700px] bg-purple-600/20 rounded-full blur-[60px] md:blur-[120px] mix-blend-screen animate-pulse-slow will-change-transform" />
+                <div className="absolute top-[20%] right-[-10%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[50px] md:blur-[100px] mix-blend-screen animate-pulse-slow delay-1000 will-change-transform" />
+                <div className="absolute bottom-[0%] left-[20%] w-[500px] h-[500px] bg-pink-600/10 rounded-full blur-[50px] md:blur-[100px] mix-blend-screen animate-pulse-slow delay-2000 will-change-transform" />
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-10">
@@ -83,9 +83,9 @@ export function HeroSection() {
             {/* 3D Dashboard Preview */}
             <motion.div
                 style={{ y: y1, opacity }}
-                className="relative z-10 max-w-6xl mx-auto px-4 perspective-[2000px]"
+                className="relative z-10 max-w-6xl mx-auto px-4 perspective-[2000px] will-change-transform"
             >
-                <div className="relative group transform-gpu rotate-x-12 hover:rotate-x-0 transition-transform duration-1000 ease-out">
+                <div className="relative group transform-gpu rotate-x-12 hover:rotate-x-0 transition-transform duration-1000 ease-out will-change-transform">
 
                     {/* Main Dashboard UI Mockup */}
                     <div className="relative bg-[#1A103C] rounded-2xl border border-white/10 shadow-[0_50px_100px_-20px_rgba(139,92,246,0.3)] overflow-hidden aspect-[16/10]">
