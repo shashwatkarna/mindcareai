@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
+import { revalidatePath } from "next/cache"
 
 export async function POST(request: Request) {
     try {
@@ -48,6 +49,10 @@ export async function POST(request: Request) {
             console.error("Supabase insert error:", error)
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
+
+        // Revalidate dashboard to update streak
+        revalidatePath("/dashboard")
+        revalidatePath("/dashboard/mood")
 
         return NextResponse.json({ success: true, data }, { status: 200 })
 

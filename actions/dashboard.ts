@@ -75,22 +75,28 @@ export async function getUserStreak(userId: string) {
     }
 
     let streak = 0
-    let currentDate = new Date(sortedDates[0])
 
     for (let i = 0; i < sortedDates.length; i++) {
-        const dateToCheck = new Date(sortedDates[i])
-
         if (i === 0) {
             streak = 1
             continue
         }
 
-        const diffTime = Math.abs(currentDate.getTime() - dateToCheck.getTime())
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+        // Get the previous date in the sorted array
+        const prevDate = new Date(sortedDates[i - 1])
+        const currentDate = new Date(sortedDates[i])
+
+        // Calculate the difference in days by comparing date strings
+        const prevDateStr = sortedDates[i - 1]
+        const currentDateStr = sortedDates[i]
+
+        // Parse dates and get the difference in days
+        const prevTime = new Date(prevDateStr + 'T00:00:00').getTime()
+        const currentTime = new Date(currentDateStr + 'T00:00:00').getTime()
+        const diffDays = Math.round((prevTime - currentTime) / (1000 * 60 * 60 * 24))
 
         if (diffDays === 1) {
             streak++
-            currentDate = dateToCheck
         } else {
             break
         }

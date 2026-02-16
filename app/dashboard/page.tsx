@@ -56,11 +56,17 @@ export default async function DashboardPage() {
   const profile = { ...profileData, is_premium: true } // Temporary testing override
 
   // Fetch stats concurrently
-  const [moodResult, journalResult, assessmentResult, appointmentResult] = await Promise.all([
+  const [moodResult, journalResult, assessmentResult, appointmentResult, recentMoods, recentJournals, recentAssessments, recentAppointments] = await Promise.all([
     supabase.from("mood_logs").select("*", { count: "exact", head: true }).eq("user_id", userId),
     supabase.from("journal_entries").select("*", { count: "exact", head: true }).eq("user_id", userId),
     supabase.from("assessments").select("*", { count: "exact", head: true }).eq("user_id", userId),
     supabase.from("appointments").select("*", { count: "exact", head: true }).eq("user_id", userId),
+    // Fetch recent mood logs for trend chart (last 7 days)
+    supabase.from("mood_logs").select("mood, intensity, created_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(30),
+    // Fetch recent activity
+    supabase.from("journal_entries").select("title, created_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(3),
+    supabase.from("assessments").select("created_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(3),
+    supabase.from("appointments").select("appointment_date, created_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(3),
   ])
 
   const stats = {
@@ -69,6 +75,14 @@ export default async function DashboardPage() {
     assessments: assessmentResult.count || 0,
     appointments: appointmentResult.count || 0,
   }
+
+  // Prepare recent activity
+  const recentActivity = [
+    ...(recentMoods.data || []).map(m => ({ type: 'mood', data: m, timestamp: m.created_at })),
+    ...(recentJournals.data || []).map(j => ({ type: 'journal', data: j, timestamp: j.created_at })),
+    ...(recentAssessments.data || []).map(a => ({ type: 'assessment', data: a, timestamp: a.created_at })),
+    ...(recentAppointments.data || []).map(a => ({ type: 'appointment', data: a, timestamp: a.created_at })),
+  ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).slice(0, 5)
 
   return (
     <div className="space-y-6">
@@ -101,7 +115,12 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      <DashboardOverview userId={user.id} stats={stats} />
+      <DashboardOverview
+        userId={user.id}
+        stats={stats}
+        moodLogs={recentMoods.data || []}
+        recentActivity={recentActivity}
+      />
     </div>
   )
 }

@@ -166,8 +166,8 @@ export function MoodTracker({ userId }: MoodTrackerProps) {
                 onClick={() => setSelectedMood(mood.name)}
                 disabled={isLoading}
                 className={`p-3 rounded-xl flex flex-col items-center justify-center transition-all ${selectedMood === mood.name
-                    ? `ring-2 ring-primary scale-105 ${mood.color}`
-                    : "bg-secondary/50 hover:bg-secondary opacity-70 hover:opacity-100"
+                  ? `ring-2 ring-primary scale-105 ${mood.color}`
+                  : "bg-secondary/50 hover:bg-secondary opacity-70 hover:opacity-100"
                   }`}
               >
                 <span className="text-2xl mb-1 filter drop-shadow-sm">{mood.emoji}</span>
@@ -191,8 +191,8 @@ export function MoodTracker({ userId }: MoodTrackerProps) {
                 type="button"
                 onClick={() => setIntensity(level.value)}
                 className={`py-2 px-4 rounded-lg text-sm font-medium transition-all border ${intensity === level.value
-                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                    : "bg-background text-foreground border-border hover:bg-secondary"
+                  ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                  : "bg-background text-foreground border-border hover:bg-secondary"
                   }`}
               >
                 {level.label}
@@ -215,8 +215,8 @@ export function MoodTracker({ userId }: MoodTrackerProps) {
                   onClick={() => handleActivityToggle(act.id)}
                   disabled={isLoading}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${isSelected
-                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                      : "bg-background text-foreground border-border hover:bg-secondary"
+                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                    : "bg-background text-foreground border-border hover:bg-secondary"
                     }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
