@@ -84,7 +84,7 @@ export function Testimonials() {
                         ))}
                         {/* Duplicate Set for Seamless Loop */}
                         {testimonials.map((testimonial, i) => (
-                            <TestimonialCard key={`dup-${i}`} {...testimonial} />
+                            <TestimonialCard key={`dup-${i}`} {...testimonial} ariaHidden={true} />
                         ))}
                     </div>
                 </div>
@@ -93,9 +93,9 @@ export function Testimonials() {
     )
 }
 
-function TestimonialCard({ name, role, company, content }: { name: string; role: string; company: string; content: string }) {
+function TestimonialCard({ name, role, company, content, ariaHidden }: { name: string; role: string; company: string; content: string, ariaHidden?: boolean }) {
     return (
-        <Card className="w-[350px] shrink-0 p-6 border-white/10 bg-white/5 backdrop-blur-md hover:border-purple-500/30 transition-colors shadow-xl">
+        <Card className="w-[350px] shrink-0 p-6 border-white/10 bg-white/5 backdrop-blur-md hover:border-purple-500/30 transition-colors shadow-xl" aria-hidden={ariaHidden}>
             <div className="flex items-start gap-4 mb-4">
                 <div className="rounded-full overflow-hidden border border-white/10 w-12 h-12 shrink-0 ring-2 ring-purple-500/20">
                     <img
@@ -105,8 +105,8 @@ function TestimonialCard({ name, role, company, content }: { name: string; role:
                     />
                 </div>
                 <div>
-                    <h3 className="font-semibold text-sm text-white">{name}</h3>
-                    <p className="text-xs text-gray-400">{role} at {company}</p>
+                    <p className="font-semibold text-sm text-white m-0">{name}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{role} at {company}</p>
                 </div>
             </div>
             <p className="text-sm text-gray-300 leading-relaxed italic">"{content}"</p>

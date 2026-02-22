@@ -13,12 +13,18 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://itsmindcareai.verce
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "MindCare AI - Your Private Mental Health & Wellness Companion",
+    default: "MindCare AI | AI Mental Health & Wellness Tracker",
     template: "%s | MindCare AI"
   },
-  description: "Transform your mental wellness journey with MindCare AI. Track moods, journal privately, access AI-powered insights, and take mental health assessments. Your secure, judgment-free space for mental health support.",
+  alternates: {
+    canonical: siteUrl,
+  },
+  description: "Transform your wellness journey with MindCare AI. Experience secure, AI-powered mood tracking, private journaling, and personalized clinical insights.",
   keywords: [
+    "MindCare",
     "MindCare AI",
+    "MindCareAI",
+    "MindCare AI mental health",
     "mental health tracker",
     "mental wellness app",
     "mood tracking",
@@ -30,9 +36,7 @@ export const metadata: Metadata = {
     "mental health assessment",
     "wellness tracking",
     "self-care app",
-    "mental health tools",
-    "therapy support",
-    "emotional wellness"
+    "therapy support"
   ],
   authors: [{ name: "MindCare AI Team" }],
   creator: "MindCare AI",
@@ -46,24 +50,18 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: siteUrl,
-    title: "MindCare AI - Your Private Mental Health & Wellness Companion",
-    description: "Transform your mental wellness journey with AI-powered mood tracking, private journaling, and personalized mental health insights. Secure, private, and built for you.",
+    title: "MindCare AI | AI Mental Health & Wellness Tracker",
+    description: "Transform your wellness journey with MindCare AI. Experience secure, AI-powered mood tracking, private journaling, and personalized clinical insights.",
     siteName: "MindCare AI",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "MindCare AI - Mental Health & Wellness Platform",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "MindCare AI - Your Private Mental Health & Wellness Companion",
-    description: "Transform your mental wellness journey with AI-powered mood tracking, private journaling, and personalized mental health insights.",
-    images: ["/og-image.png"],
+    title: "MindCare AI | AI Mental Health & Wellness Tracker",
+    description: "Transform your wellness journey with MindCare AI. Experience secure, AI-powered mood tracking, private journaling, and personalized clinical insights.",
     creator: "@MindCareAI",
+  },
+  other: {
+    "og:logo": `${siteUrl}/logo.png`,
   },
   robots: {
     index: true,
@@ -148,6 +146,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         />
       </head>
       <body className={`${outfit.className} antialiased`}>
+        <div style={{ display: 'none' }} dangerouslySetInnerHTML={{ __html: `<!--\n  So you came here do you wanna know a secret, analyze this website properly you'll find it\n  Once again Thank you for visiting us give us a star on our github repo\n-->` }} />
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

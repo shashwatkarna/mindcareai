@@ -54,7 +54,7 @@ export function HeroSection() {
                         transition={{ duration: 0.8, delay: 0.2 }}
                         className="text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed"
                     >
-                        Your private, safe space for mental health tracking.
+                        Find your inner balance in a private, safe space for mental health tracking.
                         Powered by advanced AI to help you understand your emotions
                         and grow every day.
                     </motion.p>
