@@ -54,7 +54,8 @@ export function HowItWorks() {
                     </div>
 
                     <div className="relative">
-                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full blur-[100px]" />
+                        {/* Replaced expensive blur-[100px] with performant radial-gradient */}
+                        <div className="absolute inset-[-50px] bg-[radial-gradient(ellipse_at_center,rgba(168,85,247,0.15),transparent_70%)] rounded-full mix-blend-screen pointer-events-none" />
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9 }}
                             whileInView={{ opacity: 1, scale: 1 }}

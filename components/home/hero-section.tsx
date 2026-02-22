@@ -18,9 +18,10 @@ export function HeroSection() {
 
             {/* Dynamic Background */}
             <div className="absolute inset-0 w-full h-full transform-gpu">
-                <div className="absolute top-[-20%] left-[-10%] w-[700px] h-[700px] bg-purple-600/20 rounded-full blur-[60px] md:blur-[120px] mix-blend-screen animate-pulse-slow will-change-transform" />
-                <div className="absolute top-[20%] right-[-10%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[50px] md:blur-[100px] mix-blend-screen animate-pulse-slow delay-1000 will-change-transform" />
-                <div className="absolute bottom-[0%] left-[20%] w-[500px] h-[500px] bg-pink-600/10 rounded-full blur-[50px] md:blur-[100px] mix-blend-screen animate-pulse-slow delay-2000 will-change-transform" />
+                {/* Background blobs with performant radial-gradients instead of blur() filters */}
+                <div className="absolute top-[-20%] left-[-10%] w-[700px] h-[700px] bg-[radial-gradient(circle_at_center,rgba(147,51,234,0.15),transparent_60%)] mix-blend-screen animate-pulse-slow will-change-transform" />
+                <div className="absolute top-[20%] right-[-10%] w-[600px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(37,99,235,0.1),transparent_60%)] mix-blend-screen animate-pulse-slow delay-1000 will-change-transform" />
+                <div className="absolute bottom-[0%] left-[20%] w-[500px] h-[500px] bg-[radial-gradient(circle_at_center,rgba(219,39,119,0.1),transparent_60%)] mix-blend-screen animate-pulse-slow delay-2000 will-change-transform" />
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-10">
@@ -150,22 +151,24 @@ export function HeroSection() {
                     </div>
 
                     {/* Floating Elements (Parallax) */}
-                    <motion.div style={{ y: y2 }} className="absolute -right-20 top-20 w-64 p-4 rounded-xl bg-[#1A103C]/90 backdrop-blur-xl border border-white/10 shadow-2xl skew-x-12 z-20 hidden lg:block">
+                    <motion.div style={{ y: y2 }} className="absolute -right-20 top-20 w-64 p-4 rounded-xl bg-[#1A103C] border border-white/10 shadow-2xl skew-x-12 z-20 hidden lg:block">
                         <div className="flex items-center gap-3 mb-3">
-                            <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
-                                <ShieldCheck className="w-5 h-5 text-green-400" />
+                            <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+                                <span className="text-xl">✨</span>
                             </div>
-                            <div>
-                                <div className="text-sm font-semibold text-white">Mood Improved</div>
-                                <div className="text-xs text-gray-400">+15% vs last week</div>
-                            </div>
+                            <div className="text-sm font-medium text-white">Focus Improved</div>
                         </div>
-                        <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
-                            <div className="h-full w-[70%] bg-green-500 rounded-full" />
+                        <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
+                            <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: "75%" }}
+                                transition={{ duration: 1, delay: 1 }}
+                                className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
+                            />
                         </div>
                     </motion.div>
 
-                    <motion.div style={{ y: useTransform(scrollY, [0, 500], [0, -80]) }} className="absolute -left-10 bottom-40 w-56 p-4 rounded-xl bg-[#1A103C]/90 backdrop-blur-xl border border-white/10 shadow-2xl -skew-x-6 z-20 hidden lg:block">
+                    <motion.div style={{ y: useTransform(scrollY, [0, 500], [0, -80]) }} className="absolute -left-10 bottom-40 w-56 p-4 rounded-xl bg-[#1A103C] border border-white/10 shadow-2xl -skew-x-6 z-20 hidden lg:block">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center">
                                 <Zap className="w-5 h-5 text-yellow-400" />
