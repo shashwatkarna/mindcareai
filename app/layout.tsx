@@ -53,12 +53,21 @@ export const metadata: Metadata = {
     title: "MindCare AI | AI Mental Health & Wellness Tracker",
     description: "Transform your wellness journey with MindCare AI. Experience secure, AI-powered mood tracking, private journaling, and personalized clinical insights.",
     siteName: "MindCare AI",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "MindCare AI Official Logo",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "MindCare AI | AI Mental Health & Wellness Tracker",
     description: "Transform your wellness journey with MindCare AI. Experience secure, AI-powered mood tracking, private journaling, and personalized clinical insights.",
     creator: "@MindCareAI",
+    images: ["/og-image.png"],
   },
   other: {
     "og:logo": `${siteUrl}/logo.png`,
