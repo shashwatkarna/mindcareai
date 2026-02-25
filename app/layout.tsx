@@ -73,6 +73,9 @@ export const metadata: Metadata = {
   other: {
     "og:logo": `${siteUrl}/logo.png`,
   },
+  verification: {
+    google: "lEKd39QapkV0CqMIQBz9Ijnqw4tSdB7QmQ3E3-CIToA",
+  },
   robots: {
     index: true,
     follow: true,
