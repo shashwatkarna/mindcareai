@@ -4,6 +4,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Outfit } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
+import { CookieConsent } from "@/components/layout/cookie-consent"
 import "./globals.css"
 
 const outfit = Outfit({ subsets: ["latin"] })
@@ -153,6 +154,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
+        {process.env.NEXT_PUBLIC_ADSENSE_ID && (
+          <script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_ID}`}
+            crossOrigin="anonymous"
+          />
+        )}
       </head>
       <body className={`${outfit.className} antialiased`}>
         <div style={{ display: 'none' }} dangerouslySetInnerHTML={{ __html: `<!--\n  So you came here do you wanna know a secret, analyze this website properly you'll find it\n  Once again Thank you for visiting us give us a star on our github repo\n-->` }} />
@@ -166,6 +174,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
         )}
+        <CookieConsent />
         <Clarity />
       </body>
     </html>
