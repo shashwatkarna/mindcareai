@@ -13,6 +13,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://itsmindcareai.verce
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  applicationName: "MindCare AI",
   title: {
     default: "MindCare AI | AI Mental Health & Wellness Tracker",
     template: "%s | MindCare AI"
@@ -111,6 +112,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   const structuredData = {
     "@context": "https://schema.org",
     "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://itsmindcareai.vercel.app'}/#website`,
+        "url": process.env.NEXT_PUBLIC_SITE_URL || 'https://itsmindcareai.vercel.app',
+        "name": "MindCare AI",
+        "publisher": {
+          "@id": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://itsmindcareai.vercel.app'}/#organization`
+        }
+      },
       {
         "@type": "Organization",
         "@id": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://itsmindcareai.vercel.app'}/#organization`,

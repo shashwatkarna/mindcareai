@@ -1,6 +1,6 @@
 {
-  "name": "My Awesome Website",
-  "short_name": "Website",
+  "name": "MindCare AI",
+  "short_name": "MindCare",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -13,7 +13,7 @@
       "type": "image/png"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
+  "theme_color": "#0A0118",
+  "background_color": "#0A0118",
   "display": "standalone"
 }
