@@ -25,6 +25,13 @@ export function Navbar({ home = false }: { home?: boolean }) {
         return () => window.removeEventListener("scroll", handleScroll)
     }, [])
 
+    // Force dark mode strictly on the homepage, ignoring any saved light mode preference
+    useEffect(() => {
+        if (home && mounted && theme !== "dark") {
+            setTheme("dark")
+        }
+    }, [home, mounted, theme, setTheme])
+
     const isActive = (path: string) => pathname === path
 
     const navLinks = [
@@ -86,21 +93,23 @@ export function Navbar({ home = false }: { home?: boolean }) {
 
                     {/* Desktop Actions */}
                     <div className="hidden md:flex items-center gap-4">
-                        <button
-                            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                            className="p-2 rounded-full hover:bg-muted transition-colors duration-200 text-muted-foreground hover:text-foreground active:scale-95"
-                            aria-label="Toggle theme"
-                        >
-                            {mounted ? (
-                                theme === "dark" ? (
-                                    <Sun className="w-5 h-5 text-yellow-500 transition-all" />
+                        {!home && (
+                            <button
+                                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                                className="p-2 rounded-full hover:bg-muted transition-colors duration-200 text-muted-foreground hover:text-foreground active:scale-95"
+                                aria-label="Toggle theme"
+                            >
+                                {mounted ? (
+                                    theme === "dark" ? (
+                                        <Sun className="w-5 h-5 text-yellow-500 transition-all" />
+                                    ) : (
+                                        <Moon className="w-5 h-5 text-indigo-600 transition-all" />
+                                    )
                                 ) : (
-                                    <Moon className="w-5 h-5 text-indigo-600 transition-all" />
-                                )
-                            ) : (
-                                <div className="w-5 h-5" />
-                            )}
-                        </button>
+                                    <div className="w-5 h-5" />
+                                )}
+                            </button>
+                        )}
 
                         <Link href="/auth/login">
                             <Button variant="ghost" className="text-sm font-medium hover:bg-transparent hover:text-primary transition-colors">
@@ -124,12 +133,14 @@ export function Navbar({ home = false }: { home?: boolean }) {
 
                     {/* Mobile Menu Toggle */}
                     <div className="md:hidden flex items-center gap-4">
-                        <button
-                            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                            className="p-2 rounded-full hover:bg-muted transition-colors duration-200 text-muted-foreground"
-                        >
-                            {mounted && (theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />)}
-                        </button>
+                        {!home && (
+                            <button
+                                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                                className="p-2 rounded-full hover:bg-muted transition-colors duration-200 text-muted-foreground"
+                            >
+                                {mounted && (theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />)}
+                            </button>
+                        )}
 
                         <button
                             onClick={() => setIsOpen(!isOpen)}

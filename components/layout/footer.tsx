@@ -46,9 +46,9 @@ export function Footer({ home = false }: { home?: boolean }) {
                     <div>
                         <h4 className={`font-semibold mb-4 ${headingClass}`}>Legal</h4>
                         <ul className={`space-y-2 text-sm ${textClass}`}>
-                            <li><Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
-                            <li><Link href="#" className="hover:text-primary transition-colors">Terms of Service</Link></li>
-                            <li><Link href="#" className="hover:text-primary transition-colors">Cookie Policy</Link></li>
+                            <li><Link href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
+                            <li><Link href="/terms" className="hover:text-primary transition-colors">Terms of Service</Link></li>
+                            <li><Link href="/cookies" className="hover:text-primary transition-colors">Cookie Policy</Link></li>
                         </ul>
                     </div>
                 </div>
