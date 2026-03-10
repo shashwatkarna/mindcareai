@@ -30,7 +30,7 @@ export function Footer({ home = false }: { home?: boolean }) {
                         <ul className={`space-y-2 text-sm ${textClass}`}>
                             <li><Link href="/features" className="hover:text-primary transition-colors">Features</Link></li>
                             <li><Link href="/pricing" className="hover:text-primary transition-colors">Pricing</Link></li>
-                            <li><Link href="#" className="hover:text-primary transition-colors">For Therapists</Link></li>
+                            <li><Link href="/for-therapists" className="hover:text-primary transition-colors">For Therapists</Link></li>
                         </ul>
                     </div>
 
@@ -38,7 +38,7 @@ export function Footer({ home = false }: { home?: boolean }) {
                         <h4 className={`font-semibold mb-4 ${headingClass}`}>Company</h4>
                         <ul className={`space-y-2 text-sm ${textClass}`}>
                             <li><Link href="/about" className="hover:text-primary transition-colors">About Us</Link></li>
-                            <li><Link href="/contact" className="hover:text-primary transition-colors">Careers</Link></li>
+                            <li><Link href="/careers" className="hover:text-primary transition-colors">Careers</Link></li>
                             <li><Link href="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
                         </ul>
                     </div>
