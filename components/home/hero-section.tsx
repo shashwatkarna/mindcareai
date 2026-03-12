@@ -11,7 +11,10 @@ export function HeroSection() {
     const { scrollY } = useScroll()
     const y1 = useTransform(scrollY, [0, 500], [0, 100])
     const y2 = useTransform(scrollY, [0, 500], [0, -50])
+    // Hoisted out of JSX — was being re-created on every render
+    const y3 = useTransform(scrollY, [0, 500], [0, -80])
     const opacity = useTransform(scrollY, [0, 800], [1, 0]) // Fades out slower
+
 
     return (
         <section ref={containerRef} className="relative min-h-screen w-full overflow-hidden bg-[#0A0118] text-white pt-24 pb-0 flex flex-col justify-center">
@@ -168,7 +171,7 @@ export function HeroSection() {
                         </div>
                     </motion.div>
 
-                    <motion.div style={{ y: useTransform(scrollY, [0, 500], [0, -80]) }} className="absolute -left-10 bottom-40 w-56 p-4 rounded-xl bg-[#1A103C] border border-white/10 shadow-2xl -skew-x-6 z-20 hidden lg:block">
+                    <motion.div style={{ y: y3 }} className="absolute -left-10 bottom-40 w-56 p-4 rounded-xl bg-[#1A103C] border border-white/10 shadow-2xl -skew-x-6 z-20 hidden lg:block">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center">
                                 <Zap className="w-5 h-5 text-yellow-400" />

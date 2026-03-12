@@ -122,8 +122,17 @@
     @apply border-border outline-ring/50;
   }
 
+  html {
+    /* Smooth scrolling for anchor links (e.g. #features, #how-it-works) */
+    scroll-behavior: smooth;
+    /* Account for fixed navbar height (80px) so headings aren't hidden under it */
+    scroll-padding-top: 5rem;
+  }
+
   body {
     @apply bg-background text-foreground;
+    /* Prevent rubbery scroll bounce on mobile and scroll chaining */
+    overscroll-behavior: none;
   }
 }
 

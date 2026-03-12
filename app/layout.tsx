@@ -7,7 +7,11 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { CookieConsent } from "@/components/layout/cookie-consent"
 import "./globals.css"
 
-const outfit = Outfit({ subsets: ["latin"] })
+const outfit = Outfit({
+  subsets: ["latin"],
+  display: "swap",
+  preload: true,
+})
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://itsmindcareai.vercel.app'
 
@@ -163,6 +167,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Preconnect to Google Fonts CDN to reduce font load latency */}
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
