@@ -29,15 +29,6 @@ export function HeroSection() {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-10">
                 <div className="text-center max-w-4xl mx-auto mb-16">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm font-medium backdrop-blur-md mb-8 hover:bg-white/10 transition-colors cursor-default"
-                    >
-                        <Sparkles className="w-4 h-4 text-purple-400" />
-                        <span className="text-purple-100">AI-Powered Mental Wellness</span>
-                    </motion.div>
 
                     {/* Headline with Gradient */}
                     <motion.h1

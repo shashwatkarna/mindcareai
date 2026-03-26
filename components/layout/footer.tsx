@@ -16,10 +16,10 @@ export function Footer({ home = false }: { home?: boolean }) {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                     <div className="space-y-4">
-                        <div className="flex items-center gap-2">
+                        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity w-fit">
                             <img src="/logo.png" alt="MindCare AI" className="w-8 h-8 object-contain" />
                             <span className={`font-bold text-lg ${headingClass}`}>MindCare AI</span>
-                        </div>
+                        </Link>
                         <p className={`text-sm ${textClass} leading-relaxed`}>
                             Empowering your mental wellness journey through technology, privacy, and compassionate design.
                         </p>

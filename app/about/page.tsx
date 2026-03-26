@@ -3,6 +3,7 @@
 import { Navbar } from "@/components/layout/navbar"
 import { Footer } from "@/components/layout/footer"
 import { motion } from "framer-motion"
+import { Github, Linkedin } from "lucide-react"
 
 export default function AboutPage() {
     return (
@@ -82,9 +83,9 @@ export default function AboutPage() {
                             <h2 className="text-3xl font-bold mb-10 text-white text-center">Meet Our Team</h2>
                             <div className="grid md:grid-cols-3 gap-8">
                                 {[
-                                    { name: "Shashwat Karna", role: "CEO" },
-                                    { name: "Jyoti Sutradhar", role: "CEO" },
-                                    { name: "Manjul Sharma", role: "CEO" }
+                                    { name: "Shashwat Karna", role: "Full Stack Developer", github: "https://github.com/shashwatkarna", linkedin: "https://linkedin.com/in/shashwatkarna" },
+                                    { name: "Jyoti Sutradhar", role: "Frontend Developer", github: "https://github.com/jsutradhar76", linkedin: "https://linkedin.com/in/jyoti-sutradhar-9b075525a" },
+                                    { name: "Manjul Sharma", role: "Backend Developer", github: "https://github.com", linkedin: "https://linkedin.com/in/manjul-sharma-08960825a" }
                                 ].map((member, i) => (
                                     <motion.div
                                         key={i}
@@ -100,7 +101,12 @@ export default function AboutPage() {
                                         <h3 className="text-lg font-bold text-white mb-1">{member.name}</h3>
                                         <p className="text-sm text-purple-400 font-medium mb-4">{member.role}</p>
                                         <div className="flex gap-4 opacity-60 group-hover:opacity-100 transition-opacity">
-                                            {/* Social Links would go here */}
+                                            <a href={member.github} target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 rounded-full hover:bg-black transition-colors text-white">
+                                                <Github className="w-5 h-5" />
+                                            </a>
+                                            <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 rounded-full hover:bg-blue-600 transition-colors text-white">
+                                                <Linkedin className="w-5 h-5" />
+                                            </a>
                                         </div>
                                     </motion.div>
                                 ))}

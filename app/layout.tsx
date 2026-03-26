@@ -5,6 +5,7 @@ import type { Metadata } from "next"
 import { Outfit } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import { CookieConsent } from "@/components/layout/cookie-consent"
+import { BackToTop } from "@/components/ui/back-to-top"
 import "./globals.css"
 
 const outfit = Outfit({
@@ -196,6 +197,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         )}
         <CookieConsent />
         <Clarity />
+        <BackToTop />
       </body>
     </html>
   )
