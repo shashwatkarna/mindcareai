@@ -78,46 +78,20 @@ export function DailyQuote() {
             transition={{ delay: 1.1, duration: 0.5 }}
             whileHover={{ y: -2 }}
         >
-            <Card className="border border-white/10 bg-gradient-to-r from-white/5 via-white/[0.02] to-transparent backdrop-blur-xl relative overflow-hidden shadow-lg">
+            <Card className="border border-white/10 bg-gradient-to-r from-white/5 via-white/[0.02] to-transparent relative overflow-hidden shadow-lg">
                 {/* Subtle gradient background */}
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-pink-500/5 opacity-50" />
 
-                {/* Small floating quote mark */}
-                <motion.div
-                    className="absolute top-2 right-3 opacity-5"
-                    animate={{
-                        rotate: [0, 5, 0],
-                        scale: [1, 1.05, 1]
-                    }}
-                    transition={{
-                        duration: 4,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                    }}
-                >
+                <div className="absolute top-2 right-3 opacity-5">
                     <Quote size={40} className="text-primary" />
-                </motion.div>
+                </div>
 
                 <div className="relative z-10 p-4 md:p-5">
                     <div className="flex items-start gap-3">
                         {/* Compact icon */}
-                        <motion.div
-                            className="p-2 bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-sm rounded-lg shadow-md border border-white/10 shrink-0"
-                            animate={{
-                                boxShadow: [
-                                    "0 0 10px rgba(139,92,246,0.2)",
-                                    "0 0 20px rgba(139,92,246,0.4)",
-                                    "0 0 10px rgba(139,92,246,0.2)",
-                                ]
-                            }}
-                            transition={{
-                                duration: 3,
-                                repeat: Infinity,
-                                ease: "easeInOut"
-                            }}
-                        >
+                        <div className="p-2 bg-gradient-to-br from-white/15 to-white/5 rounded-lg shadow-[0_0_15px_rgba(139,92,246,0.2)] border border-white/10 shrink-0">
                             <Quote className="w-4 h-4 text-primary drop-shadow-[0_0_6px_rgba(139,92,246,0.6)]" />
-                        </motion.div>
+                        </div>
 
                         <div className="flex-1 min-w-0">
                             {/* Category badge - smaller */}

@@ -139,17 +139,12 @@ export function DashboardOverview({ userId, stats, moodLogs, recentActivity }: D
       >
         <Card className="border border-white/10 bg-gradient-to-br from-white/5 via-white/[0.02] to-transparent backdrop-blur-xl overflow-hidden relative shadow-2xl">
           {/* Animated gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-secondary/10 opacity-50 animate-pulse" />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-secondary/10 opacity-30 transform-gpu will-change-opacity" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(120,119,198,0.1),rgba(255,255,255,0))]" />
 
           <CardHeader className="relative">
             <CardTitle className="text-lg flex items-center gap-2">
-              <motion.div
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-              >
-                <Sparkles className="w-5 h-5 text-primary drop-shadow-[0_0_8px_rgba(139,92,246,0.5)]" />
-              </motion.div>
+              <Sparkles className="w-5 h-5 text-primary drop-shadow-[0_0_8px_rgba(139,92,246,0.5)]" />
               <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                 Quick Actions
               </span>
@@ -213,17 +208,9 @@ export function DashboardOverview({ userId, stats, moodLogs, recentActivity }: D
                 "shadow-[0_8px_16px_rgba(0,0,0,0.4)]",
                 hoveredStat === i && cn("border-white/30 shadow-2xl", stat.glowColor)
               )}>
-                {/* Glow effect on hover */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  animate={hoveredStat === i ? {
-                    background: [
-                      "radial-gradient(circle at 0% 0%, rgba(139,92,246,0.2), transparent)",
-                      "radial-gradient(circle at 100% 100%, rgba(139,92,246,0.2), transparent)",
-                      "radial-gradient(circle at 0% 0%, rgba(139,92,246,0.2), transparent)",
-                    ]
-                  } : {}}
-                  transition={{ duration: 3, repeat: Infinity }}
+                {/* Glow effect on hover (GPU Accelerated) */}
+                <div
+                  className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(139,92,246,0.2),transparent)] opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform-gpu will-change-opacity pointer-events-none"
                 />
 
                 <CardContent className="p-6 relative">
@@ -405,31 +392,16 @@ export function DashboardOverview({ userId, stats, moodLogs, recentActivity }: D
           "border border-white/20 bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-xl overflow-hidden relative shadow-2xl",
           insight.gradient
         )}>
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer" />
-          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -mr-48 -mt-48" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl -ml-48 -mb-48" />
+          <div className="absolute top-[-30%] right-[-15%] w-[600px] h-[600px] bg-[radial-gradient(circle_at_center,var(--color-primary)_0%,transparent_50%)] opacity-[0.05] pointer-events-none transform-gpu" />
+          <div className="absolute bottom-[-30%] left-[-15%] w-[600px] h-[600px] bg-[radial-gradient(circle_at_center,var(--color-secondary)_0%,transparent_50%)] opacity-[0.05] pointer-events-none transform-gpu" />
 
           <CardContent className="p-8 relative">
             <div className="flex flex-col md:flex-row items-start gap-6">
-              <motion.div
-                className="p-5 bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-sm rounded-3xl border border-white/20 shadow-2xl"
-                animate={{
-                  scale: [1, 1.05, 1],
-                  rotate: [0, 3, -3, 0],
-                  boxShadow: [
-                    "0 0 20px rgba(139,92,246,0.3)",
-                    "0 0 40px rgba(139,92,246,0.5)",
-                    "0 0 20px rgba(139,92,246,0.3)",
-                  ]
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
+              <div
+                className="p-5 bg-gradient-to-br from-white/20 to-white/5 rounded-3xl border border-white/20 shadow-[0_0_30px_rgba(139,92,246,0.4)]"
               >
                 <InsightIcon className="w-10 h-10 text-primary drop-shadow-[0_0_12px_rgba(139,92,246,0.8)]" />
-              </motion.div>
+              </div>
               <div className="flex-1 space-y-4">
                 <h3 className="font-bold bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent text-2xl">
                   {insight.title}

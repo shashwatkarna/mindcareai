@@ -53,8 +53,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <div className="flex h-screen bg-background text-foreground transition-colors duration-300 relative overflow-hidden print:overflow-visible print:h-auto">
       {/* Ambient Background Blobs - Hide on print */}
       <div className="fixed inset-0 -z-10 pointer-events-none print:hidden">
-        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl opacity-50 animate-pulse"></div>
-        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-secondary/5 rounded-full blur-3xl opacity-50 animate-pulse [animation-delay:2s]"></div>
+        <div className="absolute top-[-30%] right-[-15%] w-[1000px] h-[1000px] bg-[radial-gradient(circle_at_center,var(--color-primary)_0%,transparent_50%)] opacity-5 animate-pulse transform-gpu"></div>
+        <div className="absolute bottom-[-30%] left-[-15%] w-[1000px] h-[1000px] bg-[radial-gradient(circle_at_center,var(--color-secondary)_0%,transparent_50%)] opacity-5 animate-pulse [animation-delay:2s] transform-gpu"></div>
       </div>
 
       <div className="print:hidden h-full flex-shrink-0">
