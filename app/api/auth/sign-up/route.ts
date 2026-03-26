@@ -44,7 +44,45 @@ export async function POST(request: Request) {
     }
 
     if (existingUser) {
-      return NextResponse.json({ error: "Username already exists" }, { status: 400 })
+      // Generate unique cute usernames
+      const baseUsername = username.replace(/[0-9]/g, '').slice(0, 8);
+      
+      const adjectives = ["Zen", "Calm", "Happy", "Mindful", "Gentle", "Brave", "Kind", "Cozy", "Quiet", "Bright", "Soft"];
+      const nouns = ["Panda", "Owl", "Cloud", "Breeze", "River", "Moon", "Star", "Leaf", "Wave", "Lotus", "Fox", "Bear"];
+      
+      const getRandomWord = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)];
+      
+      const potentialSuggestions = [
+        `${baseUsername}_${getRandomWord(nouns).toLowerCase()}`,
+        `${getRandomWord(adjectives)}${getRandomWord(nouns)}`,
+        `${getRandomWord(adjectives)}${baseUsername}`,
+        `${getRandomWord(nouns)}_${Math.floor(Math.random() * 99) + 1}`,
+        `${getRandomWord(adjectives)}${Math.floor(Math.random() * 99) + 1}`
+      ];
+
+      // Remove duplicates
+      const uniqueSuggestions = Array.from(new Set(potentialSuggestions));
+
+      // Make sure we only check valid suggestions
+      const validSuggestions = uniqueSuggestions.filter(s => s.length >= 3 && s !== username);
+
+      // Check which ones are already taken
+      const { data: takenUsernamesData } = await supabase
+        .from("users")
+        .select("username")
+        .in("username", validSuggestions);
+
+      const takenUsernames = takenUsernamesData?.map(user => user.username.toLowerCase()) || [];
+
+      // Filter to available ones, keeping top 3
+      const availableSuggestions = validSuggestions
+        .filter(s => !takenUsernames.includes(s.toLowerCase()))
+        .slice(0, 3);
+
+      return NextResponse.json({ 
+        error: "Username is already taken", 
+        suggestions: availableSuggestions 
+      }, { status: 400 })
     }
 
     // Hash password

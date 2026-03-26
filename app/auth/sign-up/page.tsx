@@ -19,6 +19,7 @@ export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [agreeToTerms, setAgreeToTerms] = useState(false)
+  const [suggestions, setSuggestions] = useState<string[]>([])
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
@@ -26,6 +27,7 @@ export default function SignUpPage() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setSuggestions([])
 
     // Validation
     if (!username.trim()) {
@@ -72,6 +74,9 @@ export default function SignUpPage() {
 
       if (!response.ok) {
         setError(data.error || "Sign up failed")
+        if (data.suggestions && data.suggestions.length > 0) {
+          setSuggestions(data.suggestions)
+        }
         return
       }
 
@@ -82,6 +87,12 @@ export default function SignUpPage() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const applySuggestion = (suggestion: string) => {
+    setUsername(suggestion)
+    setSuggestions([])
+    setError(null)
   }
 
   return (
@@ -124,10 +135,37 @@ export default function SignUpPage() {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     disabled={isLoading}
-                    className="border-white/10 bg-black/20 text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:bg-white/5 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 h-11"
+                    className="font-audiowide border-white/10 bg-black/20 text-white placeholder:font-sans placeholder:text-gray-600 focus:border-purple-500/50 focus:bg-white/5 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 h-11"
                     required
                   />
-                  <p className="text-xs text-gray-500">3+ characters, letters and numbers only</p>
+                  <div className="flex justify-between items-start pt-1">
+                    <p className="text-xs text-gray-500">3+ characters, letters and numbers only</p>
+                  </div>
+                  
+                  {/* Suggestions UI (Aetheric Glass Design System by Stitch) */}
+                  {suggestions.length > 0 && (
+                    <div className="mt-4 animate-slide-in-up bg-[#1c1a24]/60 backdrop-blur-2xl shadow-[0_20px_60px_-15px_rgba(93,33,223,0.2)] rounded-2xl p-4 border border-[#494456]/30 relative overflow-hidden group/popup">
+                      
+                      {/* Inner Glow Effect */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#5d21df]/5 to-[#00a7f1]/5 pointer-events-none opacity-50 group-hover/popup:opacity-100 transition-opacity duration-500"></div>
+                      
+                      <p className="mb-3 font-semibold flex gap-2 items-center text-[10px] uppercase tracking-[0.1em] text-[#cdbdff] relative z-10">
+                        Use this
+                      </p>
+                      <div className="flex flex-wrap gap-2.5 relative z-10">
+                        {suggestions.map((s, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            onClick={() => applySuggestion(s)}
+                            className="text-xs font-audiowide bg-[#36333e]/40 hover:bg-[#5d21df]/20 hover:border-[#cdbdff]/30 hover:shadow-[inset_0_0_0_1px_rgba(205,189,255,0.3)] transition-all duration-300 border border-[#494456]/20 rounded-lg px-3.5 py-2 text-[#e6e0ee] cursor-pointer"
+                          >
+                            {s}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid gap-2">
@@ -139,7 +177,7 @@ export default function SignUpPage() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     disabled={isLoading}
-                    className="border-white/10 bg-black/20 text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:bg-white/5 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 h-11"
+                    className="font-audiowide border-white/10 bg-black/20 text-white placeholder:font-sans placeholder:text-gray-600 focus:border-purple-500/50 focus:bg-white/5 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 h-11"
                   />
                 </div>
 
@@ -153,7 +191,7 @@ export default function SignUpPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       disabled={isLoading}
-                      className="border-white/10 bg-black/20 text-white placeholder:text-gray-600 pr-10 focus:border-purple-500/50 focus:bg-white/5 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 h-11"
+                      className="font-audiowide border-white/10 bg-black/20 text-white placeholder:font-sans placeholder:text-gray-600 pr-10 focus:border-purple-500/50 focus:bg-white/5 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 h-11"
                       required
                     />
                     <button
@@ -176,7 +214,7 @@ export default function SignUpPage() {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       disabled={isLoading}
-                      className="border-white/10 bg-black/20 text-white placeholder:text-gray-600 pr-10 focus:border-purple-500/50 focus:bg-white/5 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 h-11"
+                      className="font-audiowide border-white/10 bg-black/20 text-white placeholder:font-sans placeholder:text-gray-600 pr-10 focus:border-purple-500/50 focus:bg-white/5 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 h-11"
                       required
                     />
                     <button
@@ -242,8 +280,8 @@ export default function SignUpPage() {
         {/* Right Side Branding & Notice (Order 2 on Desktop) */}
         <div className="text-center md:text-left animate-slide-in-down flex flex-col items-center md:items-start order-1 md:order-2 pl-0 md:pl-8">
           <Link href="/" className="inline-flex flex-col md:flex-row items-center md:items-start gap-5 group cursor-pointer mb-4 md:mb-10 hover:opacity-90 transition-opacity">
-            <div className="h-14 w-14 md:h-16 md:w-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-purple-500/40 transition-all duration-500 group-hover:scale-105">
-              <Sparkles className="w-7 h-7 md:w-8 md:h-8 text-white" />
+            <div className="h-14 w-14 md:h-16 md:w-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-purple-500/40 transition-all duration-500 group-hover:scale-105 backdrop-blur-sm">
+              <img src="/logo.png" alt="MindCare AI Logo" className="w-8 h-8 md:w-10 md:h-10 object-contain drop-shadow-md" />
             </div>
             <div className="flex flex-col justify-center">
               <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300 tracking-tight">Join MindCare</h1>

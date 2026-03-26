@@ -2,7 +2,7 @@ import { GoogleAnalytics } from "@next/third-parties/google"
 import Clarity from "@/components/clarity"
 import type React from "react"
 import type { Metadata } from "next"
-import { Outfit } from "next/font/google"
+import { Outfit, Audiowide } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import { CookieConsent } from "@/components/layout/cookie-consent"
 import { BackToTop } from "@/components/ui/back-to-top"
@@ -12,6 +12,13 @@ const outfit = Outfit({
   subsets: ["latin"],
   display: "swap",
   preload: true,
+})
+
+const audiowide = Audiowide({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-audiowide",
+  display: "swap",
 })
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://itsmindcareai.vercel.app'
@@ -183,7 +190,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           />
         )}
       </head>
-      <body className={`${outfit.className} antialiased`}>
+      <body className={`${outfit.className} ${audiowide.variable} antialiased`}>
         <div style={{ display: 'none' }} dangerouslySetInnerHTML={{ __html: `<!--\n  So you came here do you wanna know a secret, analyze this website properly you'll find it\n  Once again Thank you for visiting us give us a star on our github repo\n-->` }} />
         <ThemeProvider
           attribute="class"

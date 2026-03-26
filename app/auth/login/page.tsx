@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Eye, EyeOff, Sparkles, ArrowLeft } from "lucide-react"
+import { Eye, EyeOff, Sparkles, ArrowLeft, ShieldCheck } from "lucide-react"
 
 export default function LoginPage() {
   const [username, setUsername] = useState("")
@@ -81,7 +81,7 @@ export default function LoginPage() {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     disabled={isLoading}
-                    className="border-white/10 bg-black/20 text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:bg-white/5 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 h-11"
+                    className="font-audiowide border-white/10 bg-black/20 text-white placeholder:font-sans placeholder:text-gray-600 focus:border-purple-500/50 focus:bg-white/5 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 h-11"
                     required
                     autoComplete="username"
                   />
@@ -97,7 +97,7 @@ export default function LoginPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       disabled={isLoading}
-                      className="border-white/10 bg-black/20 text-white placeholder:text-gray-600 pr-10 focus:border-purple-500/50 focus:bg-white/5 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 h-11"
+                      className="font-audiowide border-white/10 bg-black/20 text-white placeholder:font-sans placeholder:text-gray-600 pr-10 focus:border-purple-500/50 focus:bg-white/5 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 h-11"
                       required
                       autoComplete="current-password"
                     />
@@ -144,8 +144,8 @@ export default function LoginPage() {
         {/* Right Side Branding & Notice (Order 2 on Desktop) */}
         <div className="text-center md:text-left animate-slide-in-down flex flex-col items-center md:items-start order-1 md:order-2 pl-0 md:pl-8">
           <Link href="/" className="inline-flex flex-col md:flex-row items-center md:items-start gap-5 group cursor-pointer mb-4 md:mb-10 hover:opacity-90 transition-opacity">
-            <div className="h-14 w-14 md:h-16 md:w-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-purple-500/40 transition-all duration-500 group-hover:scale-105">
-              <Sparkles className="w-7 h-7 md:w-8 md:h-8 text-white" />
+            <div className="h-14 w-14 md:h-16 md:w-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-purple-500/40 transition-all duration-500 group-hover:scale-105 backdrop-blur-sm">
+              <img src="/logo.png" alt="MindCare AI Logo" className="w-8 h-8 md:w-10 md:h-10 object-contain drop-shadow-md" />
             </div>
             <div className="flex flex-col justify-center">
               <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300 tracking-tight">Welcome Back</h1>
@@ -158,7 +158,7 @@ export default function LoginPage() {
             <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/10 to-purple-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
             <div className="flex items-start gap-4 relative z-10">
               <div className="p-3 bg-purple-500/20 rounded-xl shrink-0 shadow-inner">
-                <Sparkles className="w-6 h-6 text-purple-400 animate-pulse" />
+                <ShieldCheck className="w-6 h-6 text-purple-400 animate-pulse" />
               </div>
               <div className="pt-0.5">
                 <strong className="text-purple-400 block mb-2 text-base tracking-wide font-semibold">Your Safe Space</strong>
