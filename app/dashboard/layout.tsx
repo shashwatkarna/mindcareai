@@ -2,8 +2,9 @@ import type React from "react"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { Header } from "@/components/dashboard/header"
 import { createClient } from "@/lib/supabase/server"
-import { getUserStreak, getUserProfile } from "@/actions/dashboard"
+import { getUserProfile } from "@/actions/dashboard"
 import { getNotificationData, NotificationData } from "@/actions/notifications"
+import { UserTour } from "@/components/dashboard/tour"
 
 import { cookies } from "next/headers"
 
@@ -12,7 +13,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const { data: { user } } = await supabase.auth.getUser()
 
   let userProfile = null
-  let streakData = { streak: 0, history: [] as string[] }
   let notificationData: NotificationData = { hasLoggedMood: false, hasJournaled: false, streak: 0 }
 
   let mindcareUserId = null
@@ -31,7 +31,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   if (effectiveUserId) {
     const profile = await getUserProfile(effectiveUserId)
-    streakData = await getUserStreak(effectiveUserId)
     notificationData = await getNotificationData(effectiveUserId)
 
     // Improved name resolution
@@ -63,9 +62,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
       <div className="flex flex-col flex-1 relative z-10 print:w-full print:h-full print:absolute print:inset-0 print:z-50">
         <div className="print:hidden">
-          <Header userProfile={userProfile} streakData={streakData} notificationData={notificationData} />
+          <Header userProfile={userProfile} notificationData={notificationData} />
         </div>
         <main className="flex-1 overflow-auto p-4 md:p-6 print:overflow-visible print:p-0 print:m-0">{children}</main>
+        <UserTour />
       </div>
     </div>
   )

@@ -2,7 +2,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { DailyQuote } from "@/components/dashboard/daily-quote"
 import { Smile, BookOpen, Calendar, FileText, TrendingUp, Clock, Sparkles, Zap, Heart, Target } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
@@ -131,8 +130,10 @@ export function DashboardOverview({ userId, stats, moodLogs, recentActivity }: D
 
   return (
     <div className="space-y-6">
+
       {/* Quick Actions - Glassmorphism */}
       <motion.div
+        id="tour-quick-actions"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
@@ -188,7 +189,7 @@ export function DashboardOverview({ userId, stats, moodLogs, recentActivity }: D
       </motion.div>
 
       {/* Stats Grid - Glassmorphism with 3D Depth */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div id="tour-stats-grid" className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {statCards.map((stat, i) => (
           <motion.div
             key={stat.label}
@@ -252,6 +253,7 @@ export function DashboardOverview({ userId, stats, moodLogs, recentActivity }: D
         <div className="space-y-6">
           {/* Enhanced Mood Trend Chart */}
           <motion.div
+            id="tour-mood-trend"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
@@ -312,12 +314,59 @@ export function DashboardOverview({ userId, stats, moodLogs, recentActivity }: D
             </Card>
           </motion.div>
 
-          {/* Daily Quote Section - Below Mood Trend */}
-          <DailyQuote />
+          {/* Compact Wellness Champion Insight with Quote Integrated */}
+          <motion.div
+            id="tour-wellness-champion"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+            whileHover={{ y: -4 }}
+          >
+            <Card className={cn(
+              "border border-white/20 bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-xl overflow-hidden relative shadow-xl hover:border-white/30 transition-all",
+              insight.gradient
+            )}>
+              <div className="absolute top-[-50%] right-[-20%] w-[200px] h-[200px] bg-[radial-gradient(circle_at_center,var(--color-primary)_0%,transparent_50%)] opacity-20 pointer-events-none transform-gpu" />
+              
+              <CardContent className="p-4 relative">
+                <div className="flex gap-4 mb-3">
+                  <div className="p-2.5 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 shadow-inner shrink-0 glow-sm h-fit">
+                    <InsightIcon className="w-5 h-5 text-primary drop-shadow-md" />
+                  </div>
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <h3 className="font-bold text-sm md:text-base bg-gradient-to-r from-foreground via-foreground to-foreground/80 bg-clip-text text-transparent truncate">
+                        {insight.title}
+                      </h3>
+                      <span className="shrink-0 flex items-center gap-1 text-[9px] px-2 py-0.5 rounded-full bg-primary/20 border border-primary/30 text-primary uppercase font-bold tracking-tighter shadow-sm">
+                        <Zap className="w-2.5 h-2.5 fill-primary" />
+                        {stats.moodLogs + stats.journalEntries + stats.assessments} pts
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground font-medium leading-tight line-clamp-2">
+                      {insight.message}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Minimalist Quote Divider */}
+                <div className="pt-3 border-t border-white/10 mt-1">
+                  <p className="text-[12px] italic text-foreground/90 font-medium leading-relaxed tracking-tight">
+                    "{insight.quote}"
+                    <span className="text-[10px] text-muted-foreground not-italic font-bold uppercase tracking-widest ml-2 opacity-60">
+                      — {insight.author}
+                    </span>
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
 
         {/* Right Column: Recent Activity */}
         <motion.div
+          id="tour-recent-activity"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.5, duration: 0.5 }}
@@ -381,41 +430,6 @@ export function DashboardOverview({ userId, stats, moodLogs, recentActivity }: D
         </motion.div>
       </div>
 
-      {/* Premium Motivational Insight - Glassmorphism */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.9, duration: 0.5 }}
-        whileHover={{ y: -6, scale: 1.01 }}
-      >
-        <Card className={cn(
-          "border border-white/20 bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-xl overflow-hidden relative shadow-2xl",
-          insight.gradient
-        )}>
-          <div className="absolute top-[-30%] right-[-15%] w-[600px] h-[600px] bg-[radial-gradient(circle_at_center,var(--color-primary)_0%,transparent_50%)] opacity-[0.05] pointer-events-none transform-gpu" />
-          <div className="absolute bottom-[-30%] left-[-15%] w-[600px] h-[600px] bg-[radial-gradient(circle_at_center,var(--color-secondary)_0%,transparent_50%)] opacity-[0.05] pointer-events-none transform-gpu" />
-
-          <CardContent className="p-8 relative">
-            <div className="flex flex-col md:flex-row items-start gap-6">
-              <div
-                className="p-5 bg-gradient-to-br from-white/20 to-white/5 rounded-3xl border border-white/20 shadow-[0_0_30px_rgba(139,92,246,0.4)]"
-              >
-                <InsightIcon className="w-10 h-10 text-primary drop-shadow-[0_0_12px_rgba(139,92,246,0.8)]" />
-              </div>
-              <div className="flex-1 space-y-4">
-                <h3 className="font-bold bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent text-2xl">
-                  {insight.title}
-                </h3>
-                <p className="text-muted-foreground leading-relaxed">{insight.message}</p>
-                <div className="pt-4 border-t border-white/10">
-                  <p className="text-foreground italic text-lg font-medium leading-relaxed">"{insight.quote}"</p>
-                  <p className="text-muted-foreground text-sm mt-2">— {insight.author}</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
     </div>
   )
 }

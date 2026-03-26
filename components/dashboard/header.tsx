@@ -26,7 +26,6 @@ import {
 } from "@/components/ui/breadcrumb"
 
 
-import { StreakDisplay } from "@/components/dashboard/streak-display"
 import { NotificationCenter } from "@/components/dashboard/notification-center"
 import { NotificationData } from "@/actions/notifications"
 import { FileText } from "lucide-react"
@@ -38,14 +37,10 @@ interface HeaderProps {
     avatar_url?: string
     is_premium?: boolean
   }
-  streakData?: {
-    streak: number
-    history: string[]
-  }
   notificationData?: NotificationData
 }
 
-export function Header({ userProfile, streakData = { streak: 0, history: [] }, notificationData = { hasLoggedMood: false, hasJournaled: false, streak: 0 } }: HeaderProps) {
+export function Header({ userProfile, notificationData = { hasLoggedMood: false, hasJournaled: false, streak: 0 } }: HeaderProps) {
   const [isDark, setIsDark] = useState(false)
   const pathname = usePathname()
 
@@ -108,13 +103,10 @@ export function Header({ userProfile, streakData = { streak: 0, history: [] }, n
 
 
 
-          {/* Streak Indicator */}
-          {/* Streak Indicator */}
-          <StreakDisplay streak={streakData.streak} history={streakData.history} />
-
           {/* Notifications */}
-          {/* Notifications */}
-          <NotificationCenter data={notificationData} />
+          <div id="tour-notifications">
+            <NotificationCenter data={notificationData} />
+          </div>
 
           {/* Theme Toggle */}
           <button
@@ -127,30 +119,30 @@ export function Header({ userProfile, streakData = { streak: 0, history: [] }, n
 
           {/* Profile Dropdown */}
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger asChild id="tour-profile">
               <Button variant="ghost" className="relative h-10 w-auto rounded-full pl-0 pr-2 gap-2 hover:bg-muted/50 transition-all group">
                 <div className="relative">
-                  <Avatar className={`h-9 w-9 border-2 transition-all ${userProfile?.is_premium ? "border-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.3)]" : "border-primary/20 group-hover:border-primary"}`}>
+                  <Avatar className={`h-9 w-9 border-2 transition-all ${userProfile?.is_premium ? "border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.2)]" : "border-primary/20 group-hover:border-primary"}`}>
                     <AvatarImage src={userProfile?.avatar_url} alt={userProfile?.full_name || "User"} />
                     <AvatarFallback className="bg-primary/5 text-primary font-bold">{userProfile?.full_name?.[0] || "U"}</AvatarFallback>
                   </Avatar>
                   <span className="absolute bottom-0 right-0 h-2.5 w-2.5 bg-green-500 rounded-full border-2 border-background z-10"></span>
-                  {userProfile?.is_premium && (
-                    <span className="absolute -top-1 -right-1 flex h-3 w-3 z-20">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
-                    </span>
-                  )}
                 </div>
 
-                <div className="flex flex-col items-start text-left hidden sm:flex">
-                  <span className="text-sm font-semibold leading-none flex items-center gap-1">
+                <div className="flex flex-col items-start text-left hidden sm:flex justify-center">
+                  <span className="text-sm font-semibold leading-none flex items-center gap-1.5 mb-1 group-hover:text-primary transition-colors">
                     {userProfile?.full_name?.split(' ')[0] || "User"}
-                    <ChevronDown className="w-3 h-3 text-muted-foreground opacity-50 group-hover:opacity-100 transition-opacity" />
+                    <ChevronDown className="w-3.5 h-3.5 text-muted-foreground opacity-50 group-hover:opacity-100 transition-opacity" />
                   </span>
-                  <span className="text-[10px] text-muted-foreground font-medium">
-                    {userProfile?.is_premium ? 'Premium' : 'Free Plan'}
-                  </span>
+                  {userProfile?.is_premium ? (
+                    <span className="text-[10px] text-muted-foreground font-medium">
+                      Premium
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-muted-foreground font-medium">
+                      Free Plan
+                    </span>
+                  )}
                 </div>
               </Button>
             </DropdownMenuTrigger>
