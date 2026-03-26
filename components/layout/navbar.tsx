@@ -111,21 +111,21 @@ export function Navbar({ home = false }: { home?: boolean }) {
                             </button>
                         )}
 
-                        <Link href="/auth/login">
-                            <Button variant="ghost" className="text-sm font-medium hover:bg-transparent hover:text-primary transition-colors">
+                        <Link href="/auth/login" className="cursor-pointer">
+                            <button className="relative inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-medium transition-all hover:bg-white/10 hover:text-white dark:text-gray-300 dark:hover:text-white text-gray-700 active:scale-95 cursor-pointer">
                                 Sign In
-                            </Button>
+                            </button>
                         </Link>
 
-                        <Link href="/auth/sign-up">
-                            <div className="relative group">
-                                <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-lg blur opacity-60 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
-                                <Button className="relative bg-black dark:bg-white text-white dark:text-black overflow-hidden px-6 transition-all hover:scale-105 active:scale-95">
-                                    <span className="relative z-10 flex items-center gap-2 font-semibold">
-                                        Get Started <ArrowRight className="w-4 h-4" />
+                        <Link href="/auth/sign-up" className="cursor-pointer">
+                            <div className="relative cursor-pointer">
+                                <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-lg blur opacity-60 hover:opacity-100 transition duration-1000 hover:duration-200 animate-tilt cursor-pointer"></div>
+                                <Button className="relative bg-black dark:bg-white text-white dark:text-black overflow-hidden px-6 transition-all hover:scale-105 active:scale-95 cursor-pointer">
+                                    <span className="relative z-10 flex items-center font-semibold transition-all cursor-pointer">
+                                        Get Started 
                                     </span>
                                     {/* Shimmer Effect */}
-                                    <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-40 group-hover:animate-shine" />
+                                    <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-40 hover:animate-shine" />
                                 </Button>
                             </div>
                         </Link>
@@ -180,11 +180,11 @@ export function Navbar({ home = false }: { home?: boolean }) {
                             <motion.div variants={linkVariants} className="h-px w-24 bg-border mx-auto my-4" />
 
                             <motion.div variants={linkVariants} className="flex flex-col gap-4">
-                                <Link href="/auth/login" onClick={() => setIsOpen(false)}>
-                                    <Button variant="ghost" className="text-xl">Sign In</Button>
+                                <Link href="/auth/login" onClick={() => setIsOpen(false)} className="cursor-pointer">
+                                    <Button variant="ghost" className="text-xl cursor-pointer">Sign In</Button>
                                 </Link>
-                                <Link href="/auth/sign-up" onClick={() => setIsOpen(false)}>
-                                    <Button size="lg" className="text-lg bg-primary hover:bg-primary/90 rounded-full px-8">Get Started</Button>
+                                <Link href="/auth/sign-up" onClick={() => setIsOpen(false)} className="cursor-pointer">
+                                    <Button size="lg" className="text-lg bg-primary hover:bg-primary/90 rounded-full px-8 cursor-pointer">Get Started</Button>
                                 </Link>
                             </motion.div>
                         </div>

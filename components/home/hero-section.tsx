@@ -69,10 +69,9 @@ export function HeroSection() {
                         transition={{ duration: 0.8, delay: 0.3 }}
                         className="flex flex-col sm:flex-row gap-4 justify-center items-center"
                     >
-                        <Link href="/auth/sign-up">
-                            <Button size="lg" className="h-14 px-8 text-lg rounded-full bg-white text-black hover:bg-gray-100 transition-all transform hover:scale-105 shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)]">
+                        <Link href="/auth/sign-up" className="cursor-pointer">
+                            <Button size="lg" className="h-14 px-8 text-lg rounded-full bg-white text-black hover:bg-gray-100 transition-all transform hover:scale-105 shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] cursor-pointer">
                                 Start for Free
-                                <ArrowRight className="ml-2 w-5 h-5" />
                             </Button>
                         </Link>
                         <Link href="#features">

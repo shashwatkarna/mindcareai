@@ -1,15 +1,11 @@
-
-import { Suspense, lazy } from "react"
 import { Navbar } from "@/components/layout/navbar"
 import { Footer } from "@/components/layout/footer"
 import { HeroSection } from "@/components/home/hero-section"
-
-// Lazy-load below-the-fold sections — defers their JS until the user scrolls
-const FeaturesSection = lazy(() => import("@/components/home/features-section").then(m => ({ default: m.FeaturesSection })))
-const HowItWorks = lazy(() => import("@/components/home/how-it-works").then(m => ({ default: m.HowItWorks })))
-const PersonalityTest = lazy(() => import("@/components/home/personality-test").then(m => ({ default: m.PersonalityTest })))
-const Testimonials = lazy(() => import("@/components/home/testimonials").then(m => ({ default: m.Testimonials })))
-const FAQSection = lazy(() => import("@/components/home/faq-section").then(m => ({ default: m.FAQSection })))
+import { FeaturesSection } from "@/components/home/features-section"
+import { HowItWorks } from "@/components/home/how-it-works"
+import { PersonalityTest } from "@/components/home/personality-test"
+import { Testimonials } from "@/components/home/testimonials"
+import { FAQSection } from "@/components/home/faq-section"
 
 export default function HomePage() {
   return (
@@ -17,17 +13,13 @@ export default function HomePage() {
       <Navbar home={true} />
 
       <main>
-        {/* Hero is above the fold — eager load */}
+        {/* Rendered normally on the server for instant First Contentful Paint */}
         <HeroSection />
-
-        {/* All sections below the fold — lazy loaded */}
-        <Suspense fallback={null}>
-          <FeaturesSection />
-          <HowItWorks />
-          <PersonalityTest />
-          <Testimonials />
-          <FAQSection />
-        </Suspense>
+        <FeaturesSection />
+        <HowItWorks />
+        <PersonalityTest />
+        <Testimonials />
+        <FAQSection />
       </main>
 
       <Footer home={true} />
