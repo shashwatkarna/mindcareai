@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useSearchParams } from "next/navigation"
 import { BreathingTool } from "@/components/dashboard/exercises/breathing-tool"
@@ -11,25 +11,28 @@ import { GroundingTechnique } from "@/components/dashboard/exercises/grounding-t
 import { BubblePop } from "@/components/dashboard/exercises/bubble-pop"
 import { GratitudeMoments } from "@/components/dashboard/exercises/gratitude-moments"
 import { YogaStretch } from "@/components/dashboard/exercises/yoga-stretch"
+import { BoxBreathing } from "@/components/dashboard/exercises/box-breathing"
+import { MuscleRelaxation } from "@/components/dashboard/exercises/muscle-relaxation"
 import { WellnessInsights } from "@/components/dashboard/exercises/wellness-insights"
-import { Wind, Music, PlayCircle, Heart, Anchor, Smile, Trash2, Activity, ArrowLeft } from "lucide-react"
+import { Wind, Music, PlayCircle, Play, Heart, Anchor, Smile, Trash2, Activity, ArrowLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface ExercisesContainerProps {
     isPremium: boolean
 }
 
-type ToolType = "breathing" | "soundscapes" | "worry-jar" | "affirmations" | "grounding" | "bubble-pop" | "gratitude" | "yoga" | null
+type ToolType = "breathing" | "soundscapes" | "worry-jar" | "affirmations" | "grounding" | "bubble-pop" | "gratitude" | "yoga" | "box-breathing" | "muscle-relaxation" | null
 
 export function ExercisesContainer({ isPremium }: ExercisesContainerProps) {
     const searchParams = useSearchParams()
+    const containerRef = (useState<any>(null))[0] // We'll use a better way below or just a stable ID
     const [activeTool, setActiveTool] = useState<ToolType>(null)
     const [startTime, setStartTime] = useState<number | null>(null)
     const [prevTool, setPrevTool] = useState<ToolType>(null)
 
     useEffect(() => {
         const toolParam = searchParams.get('tool')
-        if (toolParam && ["breathing", "soundscapes", "worry-jar", "affirmations", "grounding", "bubble-pop", "gratitude", "yoga"].includes(toolParam)) {
+        if (toolParam && ["breathing", "soundscapes", "worry-jar", "affirmations", "grounding", "bubble-pop", "gratitude", "yoga", "box-breathing", "muscle-relaxation"].includes(toolParam)) {
             setActiveTool(toolParam as ToolType)
         }
     }, [searchParams])
@@ -140,6 +143,26 @@ export function ExercisesContainer({ isPremium }: ExercisesContainerProps) {
             component: <YogaStretch onBack={() => setActiveTool(null)} />
         },
         {
+            id: "box-breathing",
+            title: "Box Focus",
+            description: "A Navy SEAL technique for peak concentration and calm.",
+            icon: Play,
+            color: "text-blue-500",
+            bg: "bg-blue-500/10",
+            border: "hover:border-blue-500/50",
+            component: <BoxBreathing onBack={() => setActiveTool(null)} />
+        },
+        {
+            id: "muscle-relaxation",
+            title: "Muscle Release",
+            description: "Physically release deep tension through guided relaxation.",
+            icon: Activity,
+            color: "text-rose-500",
+            bg: "bg-rose-500/10",
+            border: "hover:border-rose-500/50",
+            component: <MuscleRelaxation onBack={() => setActiveTool(null)} />
+        },
+        {
             id: "soundscapes",
             title: "Ambient Soundscapes",
             description: "Immerse yourself in calming nature sounds to focus or relax.",
@@ -152,7 +175,7 @@ export function ExercisesContainer({ isPremium }: ExercisesContainerProps) {
     ]
 
     return (
-        <div className="relative min-h-[600px]">
+        <div id="exercises-container-root" className="relative min-h-[600px] bg-background">
             {activeTool === null && <WellnessInsights key={activeTool} />}
             {/* Back Button (only visible when a tool is active) */}
             <AnimatePresence>
@@ -186,7 +209,13 @@ export function ExercisesContainer({ isPremium }: ExercisesContainerProps) {
                         {tools.map((tool) => (
                             <button
                                 key={tool.id}
-                                onClick={() => setActiveTool(tool.id as ToolType)}
+                                onClick={() => {
+                                    setActiveTool(tool.id as ToolType)
+                                    if (tool.id === 'yoga' || tool.id === 'muscle-relaxation') {
+                                        const el = document.getElementById('exercises-container-root')
+                                        el?.requestFullscreen?.().catch(() => {})
+                                    }
+                                }}
                                 className={cn(
                                     "relative group flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-6 p-6 rounded-3xl border border-border bg-card transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden",
                                     tool.border
@@ -220,7 +249,7 @@ export function ExercisesContainer({ isPremium }: ExercisesContainerProps) {
                     >
                         {/* We use a key to ensure mounting/unmounting resets state if needed */}
                         <div key={activeTool} className="w-full h-full flex flex-col items-center justify-center animate-in fade-in zoom-in-95 duration-500 overflow-hidden">
-                            <div className="w-full max-h-[75vh] min-h-[400px] overflow-y-auto scrollbar-hide px-1 rounded-3xl">
+                            <div id="exercises-viewport" className="w-full max-h-[75vh] min-h-[400px] overflow-y-auto scrollbar-hide px-1 rounded-3xl bg-background">
                                 {tools.find(t => t.id === activeTool)?.component}
                             </div>
                         </div>

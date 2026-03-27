@@ -1,115 +1,184 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
+import { useState, useEffect, useCallback, useRef } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { Play, Square, ArrowLeft } from "lucide-react"
+import { ArrowLeft, Play, Square, Activity, ShieldCheck, Timer } from "lucide-react"
 
 interface BoxBreathingProps {
     onBack: () => void
 }
 
+type Phase = "inhale" | "hold1" | "exhale" | "hold2" | "idle"
+
+const phases = {
+    inhale: { label: "Inhale", color: "text-blue-400", border: "border-blue-400", shadow: "shadow-blue-500/20" },
+    hold1: { label: "Hold", color: "text-indigo-400", border: "border-indigo-400", shadow: "shadow-indigo-500/20" },
+    exhale: { label: "Exhale", color: "text-blue-400", border: "border-blue-400", shadow: "shadow-blue-500/20" },
+    hold2: { label: "Hold", color: "text-indigo-400", border: "border-indigo-400", shadow: "shadow-indigo-500/20" },
+    idle: { label: "Get Ready", color: "text-muted-foreground", border: "border-border", shadow: "shadow-none" }
+}
+
 export function BoxBreathing({ onBack }: BoxBreathingProps) {
     const [isActive, setIsActive] = useState(false)
-    const [phase, setPhase] = useState<"idle" | "inhale" | "hold1" | "exhale" | "hold2">("idle")
-    const [timeLeft, setTimeLeft] = useState(0)
+    const [phase, setPhase] = useState<Phase>("idle")
+    const [timeLeft, setTimeLeft] = useState(4)
+    const audioContextRef = useRef<AudioContext | null>(null)
 
-    // 4-4-4-4 Technique
-    const phases = {
-        inhale: { duration: 4, label: "Inhale", color: "text-blue-600", bg: "bg-blue-50" },
-        hold1: { duration: 4, label: "Hold", color: "text-indigo-600", bg: "bg-indigo-50" },
-        exhale: { duration: 4, label: "Exhale", color: "text-blue-600", bg: "bg-blue-50" },
-        hold2: { duration: 4, label: "Hold", color: "text-indigo-600", bg: "bg-indigo-50" }
-    }
+    const initAudio = useCallback(() => {
+        if (!audioContextRef.current) {
+            audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
+        }
+    }, [])
+
+    const playTick = useCallback(() => {
+        if (!audioContextRef.current) return
+        const ctx = audioContextRef.current
+        const osc = ctx.createOscillator()
+        const gain = ctx.createGain()
+        osc.type = "sine"
+        osc.frequency.setValueAtTime(440, ctx.currentTime)
+        gain.gain.setValueAtTime(0.05, ctx.currentTime)
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1)
+        osc.connect(gain)
+        gain.connect(ctx.destination)
+        osc.start()
+        osc.stop(ctx.currentTime + 0.1)
+    }, [])
 
     useEffect(() => {
         let interval: NodeJS.Timeout
-
         if (isActive) {
-            const runCycle = async () => {
-                setPhase("inhale"); setTimeLeft(4); await new Promise(r => setTimeout(r, 4000));
-                if (!isActive) return;
-                setPhase("hold1"); setTimeLeft(4); await new Promise(r => setTimeout(r, 4000));
-                if (!isActive) return;
-                setPhase("exhale"); setTimeLeft(4); await new Promise(r => setTimeout(r, 4000));
-                if (!isActive) return;
-                setPhase("hold2"); setTimeLeft(4); await new Promise(r => setTimeout(r, 4000));
-                if (!isActive) return;
-                runCycle();
-            }
-            runCycle()
-
             interval = setInterval(() => {
-                setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0))
+                setTimeLeft(prev => {
+                    if (prev <= 1) {
+                        setPhase(curr => {
+                            if (curr === "inhale") return "hold1"
+                            if (curr === "hold1") return "exhale"
+                            if (curr === "exhale") return "hold2"
+                            return "inhale"
+                        })
+                        playTick()
+                        return 4
+                    }
+                    return prev - 1
+                })
             }, 1000)
         } else {
             setPhase("idle")
-            setTimeLeft(0)
+            setTimeLeft(4)
         }
-
         return () => clearInterval(interval)
-    }, [isActive])
+    }, [isActive, playTick])
+
+    const toggleActive = () => {
+        initAudio()
+        setIsActive(!isActive)
+        if (!isActive) setPhase("inhale")
+    }
 
     return (
-        <div className="flex flex-col items-center justify-center p-4 w-full h-full flex-1">
-            <Button variant="ghost" onClick={onBack} size="sm" className="self-start mb-4 -ml-2">
-                <ArrowLeft className="w-4 h-4 mr-2" /> Back
-            </Button>
-
-            <h2 className="text-2xl font-bold mb-1">Box Breathing</h2>
-            <p className="text-muted-foreground mb-6 text-center max-w-md text-sm leading-relaxed">
-                4s Inhale, 4s Hold, 4s Exhale, 4s Hold. Navy SEAL focus technique.
-            </p>
-
-            <div className="relative w-64 h-64 flex items-center justify-center">
-                {/* The Box */}
-                <motion.div
-                    animate={{
-                        borderRadius: phase === "inhale" || phase === "exhale" ? ["20%", "40%"] : "30%",
-                        scale: phase === "inhale" ? 1.2 : phase === "exhale" ? 0.8 : 1
-                    }}
-                    transition={{ duration: 4, ease: "linear" }}
-                    className={`w-48 h-48 border-4 border-blue-500/30 rounded-3xl flex items-center justify-center relative ${phases[phase as keyof typeof phases]?.bg || "bg-gray-50"}`}
-                >
-                    {/* Progress Indicator matching the box sides could be complex, simple text is better for MVP */}
-                    <div className="text-center z-10">
-                        <div className={`text-4xl font-bold ${phases[phase as keyof typeof phases]?.color || "text-gray-400"}`}>
-                            {phases[phase as keyof typeof phases]?.label || "Ready"}
-                        </div>
-                        {isActive && <div className="text-2xl font-medium text-gray-400 mt-2">{timeLeft}s</div>}
-                    </div>
-
-                    {/* Moving Dot */}
-                    {isActive && (
-                        <motion.div
-                            animate={{
-                                pathLength: [0, 1],
-                            }}
-                            className="absolute inset-0"
-                        >
-                            {/* Getting a dot to move along a square path is tricky with simple divs. 
-                                 We'll use a simpler visual: the box filling up/emptying or just the pulsing. 
-                                 For now, the scale animation above is sufficient for "Box" breathing. 
-                             */}
-                        </motion.div>
-                    )}
-                </motion.div>
-
-                {/* External Guide Box */}
-                <div className="absolute inset-0 border-2 border-dashed border-gray-200 rounded-3xl -z-10 scale-125" />
+        <div className="flex flex-col items-center justify-center p-2 w-full max-w-4xl mx-auto h-full min-h-[400px]">
+             {/* Header */}
+            <div className="w-full flex justify-between items-center mb-6 px-4">
+                <Button variant="ghost" onClick={onBack} size="sm" className="rounded-xl h-8 hover:bg-muted/30 font-bold tracking-widest text-[9px]">
+                    <ArrowLeft className="w-3 h-3 mr-1.5" /> Back
+                </Button>
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-blue-500/5 rounded-full border border-blue-500/10">
+                   <ShieldCheck className="w-3 h-3 text-blue-500 opacity-60" />
+                   <span className="text-[10px] font-black uppercase tracking-widest text-blue-500/60">Tactical Breathing</span>
+                </div>
             </div>
 
-            <Button
-                size="lg"
-                onClick={() => setIsActive(!isActive)}
-                className="mt-12 rounded-full px-8"
-            >
-                {isActive ? (
-                    <><Square className="w-4 h-4 mr-2 fill-current" /> Stop</>
-                ) : (
-                    <><Play className="w-4 h-4 mr-2" /> Start Technique</>
-                )}
-            </Button>
+            <div className="text-center mb-8 space-y-1">
+                <h2 className="text-3xl lg:text-4xl font-black tracking-tighter italic uppercase bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">
+                    Box Focus
+                </h2>
+                <div className="flex items-center justify-center gap-2 text-[8px] font-black uppercase tracking-[0.3em] opacity-30">
+                    <span>4s Inhale</span> • <span>4s Hold</span> • <span>4s Exhale</span> • <span>4s Hold</span>
+                </div>
+            </div>
+
+            {/* Centered Box Visualizer - Zero Scroll */}
+            <div className="relative w-full max-w-sm h-[260px] flex items-center justify-center">
+                
+                {/* Outer Glow Ring */}
+                <motion.div 
+                    animate={isActive ? { scale: [1, 1.05, 1], opacity: [0.1, 0.2, 0.1] } : { scale: 1, opacity: 0.1 }}
+                    transition={{ duration: 4, repeat: Infinity }}
+                    className={`absolute w-64 h-64 rounded-[48px] bg-gradient-to-br from-blue-500 to-indigo-600 blur-3xl`}
+                />
+
+                {/* The Geometric Box */}
+                <div className="relative w-48 h-48">
+                    {/* Background Static Box */}
+                    <div className="absolute inset-0 border-2 border-border/20 rounded-[40px] backdrop-blur-sm" />
+                    
+                    {/* Dynamic Border Box */}
+                    <motion.div 
+                        initial={false}
+                        animate={{ 
+                            scale: phase === "inhale" ? 1.15 : phase === "exhale" ? 0.85 : 1,
+                            borderColor: isActive ? "rgba(96, 165, 250, 0.5)" : "rgba(255, 255, 255, 0.05)"
+                        }}
+                        transition={{ duration: 4, ease: "linear" }}
+                        className="absolute inset-0 border-[3px] rounded-[40px] shadow-2xl flex flex-col items-center justify-center overflow-hidden"
+                    >
+                        <AnimatePresence mode="wait">
+                            <motion.div 
+                                key={phase}
+                                initial={{ opacity: 0, y: 5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -5 }}
+                                className="flex flex-col items-center"
+                            >
+                                <span className={`text-4xl font-black tracking-tighter uppercase italic ${phases[phase].color}`}>
+                                    {phases[phase].label}
+                                </span>
+                                {isActive && (
+                                    <span className="text-xl font-black tabular-nums opacity-20">{timeLeft}s</span>
+                                )}
+                            </motion.div>
+                        </AnimatePresence>
+
+                        {/* Particle Stream (Subtle) */}
+                        {isActive && (
+                            <motion.div 
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 16, repeat: Infinity, ease: "linear" }}
+                                className="absolute inset-0 p-4"
+                            >
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-blue-400 rounded-full shadow-[0_0_15px_rgba(96,165,250,0.8)]" />
+                            </motion.div>
+                        )}
+                    </motion.div>
+
+                    {/* Corner Symbols */}
+                    <div className="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-blue-500/40 rounded-tl-xl" />
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-blue-500/40 rounded-br-xl" />
+                </div>
+            </div>
+
+            {/* Controls */}
+            <div className="mt-8 flex flex-col items-center gap-4">
+                <Button 
+                    onClick={toggleActive}
+                    className={`h-14 px-10 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl transition-all duration-500 ${isActive ? 'bg-rose-500 hover:bg-rose-600 shadow-rose-500/20' : 'bg-primary hover:bg-primary/90 shadow-primary/20'}`}
+                >
+                    {isActive ? <><Square className="w-4 h-4 mr-2 fill-current" /> Terminate</> : <><Play className="w-4 h-4 mr-2 fill-current" /> Begin Tactical Focus</>}
+                </Button>
+
+                <div className="flex items-center gap-6 opacity-20 group">
+                    <div className="flex flex-col items-center">
+                        <Timer className="w-4 h-4 mb-1" />
+                        <span className="text-[8px] font-black uppercase">16s / Cycle</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                        <Activity className="w-4 h-4 mb-1" />
+                        <span className="text-[8px] font-black uppercase">Peak Calm</span>
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }

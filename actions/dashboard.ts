@@ -155,7 +155,7 @@ export async function getUserProfile(userId: string) {
     return null
 }
 
-export async function updateUserProfile(userId: string, data: { fullName: string; bio: string; timezone: string }) {
+export async function updateUserProfile(userId: string, data: { fullName: string; bio: string; timezone: string; avatarUrl?: string; coverUrl?: string }) {
     const supabase = await createClient() // Use Service Role client essentially if configured correctly in actions?
     // Wait, createClient in actions/dashboard.ts uses /lib/supabase/server which uses cookie store.
     // If the standard auth cookie is missing, this might fail unless we force Service Role.
@@ -207,11 +207,16 @@ export async function updateUserProfile(userId: string, data: { fullName: string
             full_name: data.fullName,
             bio: data.bio,
             timezone: data.timezone,
+            avatar_url: data.avatarUrl,
+            cover_url: data.coverUrl,
             updated_at: new Date().toISOString(),
         })
         .eq("id", userId)
 
-    if (profileError) throw profileError
+    if (profileError) {
+        console.error("Profile update error:", profileError)
+        throw profileError
+    }
 
     return { success: true, nameChangeCount }
 }

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Send, Trash2, BarChart2, X, RefreshCw } from "lucide-react";
+import { Send, Trash2, BarChart2, X, RefreshCw, Lock } from "lucide-react";
 
 type Message = {
     role: "user" | "assistant";
@@ -22,12 +22,18 @@ export function ChatInterface() {
     const [isLoading, setIsLoading] = useState(false);
     const [showSummary, setShowSummary] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollIntoView({ behavior: "smooth" });
         }
     }, [messages]);
+    
+    useEffect(() => {
+        // Initial focus on mount
+        inputRef.current?.focus();
+    }, []);
 
     const handleSendMessage = async () => {
         if (!inputValue.trim() || isLoading) return;
@@ -78,6 +84,8 @@ export function ChatInterface() {
             setMessages((prev) => [...prev, errorMessage]);
         } finally {
             setIsLoading(false);
+            // Auto-focus the input field after sending
+            setTimeout(() => inputRef.current?.focus(), 100);
         }
     };
 
@@ -129,20 +137,23 @@ export function ChatInterface() {
     };
 
     return (
-        <div className="flex flex-col h-[calc(100vh-6rem)] w-full max-w-none px-6">
+        <div className="flex flex-col h-[calc(100vh-2.5rem)] w-full max-w-none mx-auto px-2 lg:px-4">
             <div className="flex items-center justify-between mb-4">
                 <div>
                     <h1 className="text-2xl font-bold">🧠 MindCare AI</h1>
-                    <p className="text-muted-foreground text-sm">Your empathetic mental health companion</p>
+                    <p className="text-muted-foreground text-sm flex items-center gap-1.5">
+                        <Lock className="w-3 h-3 text-emerald-500" /> 
+                        Private ephemeral session • No data stored
+                    </p>
                 </div>
                 <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={() => setShowSummary(!showSummary)}>
                         {showSummary ? <X className="w-4 h-4 mr-2" /> : <BarChart2 className="w-4 h-4 mr-2" />}
                         {showSummary ? "Close Summary" : "Summary"}
                     </Button>
-                    <Button variant="outline" size="sm" onClick={clearChat} className="text-destructive hover:text-destructive">
+                    <Button variant="outline" size="sm" onClick={clearChat} className="text-destructive hover:text-destructive border-destructive/20 hover:bg-destructive/10">
                         <Trash2 className="w-4 h-4 mr-2" />
-                        Clear
+                        End & Clear Session
                     </Button>
                 </div>
             </div>
@@ -157,7 +168,7 @@ export function ChatInterface() {
                 </Card>
             )}
 
-            <Card className="flex-1 flex flex-col shadow-lg border-primary/10 overflow-hidden">
+            <Card className="flex-1 flex flex-col shadow-2xl border-primary/10 overflow-hidden bg-card/80 backdrop-blur-sm">
                 <CardContent className="flex-1 overflow-hidden p-0 relative">
                     <ScrollArea className="h-full p-4">
                         <div className="flex flex-col gap-4 pb-4">
@@ -190,9 +201,9 @@ export function ChatInterface() {
                                             }`}
                                     >
                                         <div
-                                            className={`px-4 py-2.5 rounded-2xl shadow-sm text-sm whitespace-pre-wrap ${msg.role === "user"
-                                                ? "bg-primary text-primary-foreground rounded-tr-none"
-                                                : "bg-muted text-foreground rounded-tl-none border border-border"
+                                            className={`px-5 py-3 rounded-2xl shadow-sm text-base font-semibold whitespace-pre-wrap leading-relaxed ${msg.role === "user"
+                                                ? "bg-primary text-primary-foreground rounded-tr-none shadow-primary/10"
+                                                : "bg-muted text-foreground rounded-tl-none border border-border shadow-muted/10"
                                                 } ${msg.isCrisis ? "border-red-500 bg-red-50 dark:bg-red-950/30" : ""}`}
                                         >
                                             {msg.role === "assistant" && msg.isCrisis && (
@@ -241,11 +252,12 @@ export function ChatInterface() {
                 <CardFooter className="p-4 border-t bg-muted/20">
                     <div className="flex w-full gap-2 items-end">
                         <Input
+                            ref={inputRef}
                             placeholder="Share what's on your mind..."
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                             onKeyDown={handleKeyPress}
-                            className="flex-1 min-h-[50px] bg-background border-muted-foreground/20 focus-visible:ring-primary shadow-sm"
+                            className="flex-1 min-h-[50px] text-base bg-background border-muted-foreground/20 focus-visible:ring-primary shadow-sm px-4 rounded-xl"
                             disabled={isLoading}
                             autoComplete="off"
                         />
@@ -260,10 +272,10 @@ export function ChatInterface() {
                     </div>
                 </CardFooter>
             </Card>
+            <p className="text-[10px] text-muted-foreground/40 text-center mt-2 leading-none uppercase tracking-[0.2em] font-medium">
+                MindCare AI is a supportive companion, not a replacement for professional therapy
+            </p>
 
-            <div className="text-center text-xs text-muted-foreground/60">
-                MindCare AI is a supportive companion, not a replacement for professional therapy.
-            </div>
         </div>
     );
 }
