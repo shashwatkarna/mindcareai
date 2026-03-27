@@ -3,8 +3,7 @@ import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import { MoodTracker } from "@/components/mood/mood-tracker"
 import { MoodHistory } from "@/components/mood/mood-history"
-import { MoodCharts } from "@/components/mood/mood-charts"
-import { MoodInsights } from "@/components/mood/mood-insights"
+import { UnifiedMoodDashboard } from "@/components/mood/unified-mood-dashboard"
 // HiddenLotus removed
 
 export const metadata = {
@@ -73,15 +72,13 @@ export default async function MoodPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <MoodInsights />
-          <MoodCharts moodLogs={moodLogs || []} />
-          <MoodHistory moodLogs={moodLogs || []} />
-        </div>
-        <div>
-          <MoodTracker userId={user.id} />
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <UnifiedMoodDashboard moodLogs={moodLogs || []} />
+        <MoodTracker userId={user.id} />
+      </div>
+
+      <div className="mt-6">
+        <MoodHistory moodLogs={moodLogs || []} />
       </div>
     </div>
   )

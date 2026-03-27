@@ -4,7 +4,7 @@ import { cookies } from "next/headers"
 import { AssessmentsList } from "@/components/assessments/assessments-list"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { AssessmentChart } from "@/components/assessments/assessment-chart"
+import { UnifiedAssessmentDashboard } from "@/components/assessments/unified-assessment-dashboard"
 
 export const metadata = {
   title: "Assessments - MindCare AI",
@@ -77,7 +77,7 @@ export default async function AssessmentsPage() {
       </div>
 
       {assessments && assessments.length > 0 && (
-        <AssessmentChart assessments={assessments} />
+        <UnifiedAssessmentDashboard assessments={assessments} />
       )}
 
       <div>

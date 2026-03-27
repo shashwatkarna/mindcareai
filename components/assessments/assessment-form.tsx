@@ -12,45 +12,79 @@ import { ArrowLeft, ArrowRight, Check, CheckCircle2, ChevronRight, Loader2 } fro
 
 const assessments = {
   depression: {
-    name: "Depression Screening (PHQ-9)",
-    description: "Screen for symptoms of depression",
+    name: "Mood & Energy",
+    description: "Check if you've been feeling low or tired lately. Understanding your mood is the first step to feeling better.",
     questions: [
-      "Little interest or pleasure in doing things",
-      "Feeling down, depressed, or hopeless",
-      "Trouble falling or staying asleep, or sleeping too much",
-      "Feeling tired or having little energy",
-      "Poor appetite or overeating",
-      "Feeling bad about yourself or that you are a failure",
-      "Trouble concentrating on things",
-      "Moving or speaking so slowly that others have noticed",
-      "Thoughts that you would be better off dead",
+      "I have little interest or joy in things I usually like",
+      "I feel down, sad, or like there is no hope",
+      "I struggle to sleep well or I sleep too much",
+      "I feel tired and have very little energy",
+      "I have a poor appetite or I am eating too much",
+      "I feel bad about myself or like I have failed",
+      "I find it hard to focus on simple things like reading",
+      "I move or speak much slower or faster than usual",
+      "I have thoughts about hurting myself or not being here",
     ],
   },
   anxiety: {
-    name: "Anxiety Screening (GAD-7)",
-    description: "Screen for symptoms of anxiety disorder",
+    name: "Calmness Check",
+    description: "See if you've been feeling worried or nervous. This helps you find ways to feel more relaxed.",
     questions: [
-      "Feeling nervous, anxious, or on edge",
-      "Not being able to stop or control worrying",
-      "Worrying too much about different things",
-      "Trouble relaxing",
-      "Being so restless that it is hard to sit still",
-      "Becoming easily annoyed or irritable",
-      "Feeling afraid as if something awful might happen",
+      "I feel nervous, worried, or on edge",
+      "I find it hard to stop or control my worrying",
+      "I worry too much about many different things",
+      "I find it very difficult to relax",
+      "I am so restless that I can't sit still",
+      "I get annoyed or angry very easily",
+      "I feel afraid that something bad might happen",
     ],
   },
   stress: {
-    name: "Stress Assessment",
-    description: "Assess your current stress levels",
+    name: "Daily Pressure",
+    description: "Check how much stress you are carrying. Knowing your stress level helps you protect your health.",
     questions: [
-      "I feel overwhelmed by my responsibilities",
-      "I have difficulty sleeping due to stress",
-      "I feel tense and anxious most of the time",
-      "I have trouble concentrating at work or home",
-      "I feel irritable and impatient with others",
-      "I have physical symptoms of stress (headaches, muscle tension)",
-      "I feel unable to control important things in my life",
-      "I feel confident in my ability to handle stress",
+      "I feel like I have too much to do and can't cope",
+      "I find it hard to relax even when I have time",
+      "I feel tightness in my chest or muscles from stress",
+      "I can't stop thinking about my problems at night",
+      "I lose my patience easily with people around me",
+      "I get headaches or body pain when I am Busy",
+      "I feel like I have no control over my life right now",
+      "I feel sure that I can handle the pressure I'm under",
+    ],
+  },
+  sleep: {
+    name: "Sleep Quality",
+    description: "Assess how well you are sleeping. Good sleep helps your brain stay sharp and your mood stay steady.",
+    questions: [
+      "It takes me more than 30 minutes to fall asleep",
+      "I wake up often during the night",
+      "I feel sleepy and tired during the day",
+      "I need extra coffee or energy drinks to stay awake",
+      "I can't sleep because I'm worrying too much",
+      "I feel like my sleep has been poor lately",
+    ],
+  },
+  social: {
+    name: "Connection Check",
+    description: "See how connected you feel to others. Having people to talk to is a great way to stay strong.",
+    questions: [
+      "I have people I can really lean on when things get hard",
+      "I feel lonely even when I am with other people",
+      "I feel like I belong to a group that cares for me",
+      "I talk to friends or family about my feelings often",
+      "I feel that people around me value who I am",
+    ],
+  },
+  focus: {
+    name: "Focus & Clarity",
+    description: "Check if your mind feels clear or 'foggy.' This helps you know when you need a mental break.",
+    questions: [
+      "I find it hard to stay focused on one task",
+      "I get distracted very easily by things around me",
+      "My brain feels 'foggy' or slow today",
+      "I struggle to make simple choices or plan my day",
+      "I start many things but find it hard to finish them",
     ],
   },
 }
@@ -65,6 +99,7 @@ export function AssessmentForm({ userId }: AssessmentFormProps) {
   const [responses, setResponses] = useState<{ [key: number]: number }>({})
   const [isLoading, setIsLoading] = useState(false)
   const [showResults, setShowResults] = useState(false)
+  const [isAdvancing, setIsAdvancing] = useState(false)
   const router = useRouter()
 
   if (!selectedAssessment) {
@@ -102,10 +137,30 @@ export function AssessmentForm({ userId }: AssessmentFormProps) {
   const progress = ((currentQuestionIndex) / totalQuestions) * 100
 
   const handleResponseChange = (value: number) => {
+    // Update local response state
     setResponses((prev) => ({
       ...prev,
       [currentQuestionIndex]: value,
     }))
+
+    // If already advancing, don't trigger another jump
+    if (isAdvancing) return
+    setIsAdvancing(true)
+
+    // Auto-advance with a slight delay for better feedback
+    setTimeout(() => {
+      setCurrentQuestionIndex(prev => {
+        const nextIndex = prev + 1
+        if (nextIndex < totalQuestions) {
+          setIsAdvancing(false)
+          return nextIndex
+        } else {
+          // Last question answered
+          handleSubmit()
+          return prev
+        }
+      })
+    }, 400)
   }
 
   const handleNext = () => {
@@ -134,9 +189,11 @@ export function AssessmentForm({ userId }: AssessmentFormProps) {
   }
 
   const getScore = () => {
-    const score = calculateScore()
-    const maxScore = totalQuestions * 3
-    return Math.round((score / maxScore) * 100)
+    const values = Object.values(responses)
+    if (values.length === 0) return 0
+    const score = values.reduce((sum, val) => sum + val, 0)
+    const maxPossibleScore = values.length * 3
+    return Math.round((score / maxPossibleScore) * 100)
   }
 
   const getRiskLevel = (score: number) => {
@@ -183,33 +240,32 @@ export function AssessmentForm({ userId }: AssessmentFormProps) {
   }
 
   return (
-    <Card className="border-border shadow-lg max-w-2xl mx-auto overflow-hidden">
-      <div className="w-full bg-secondary h-2 sticky top-0">
+    <Card className="border-border shadow-lg max-w-2xl mx-auto overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="w-full bg-secondary h-1.5 sticky top-0">
         <div
           className="bg-primary h-full transition-all duration-500 ease-in-out"
           style={{ width: `${((currentQuestionIndex + 1) / totalQuestions) * 100}%` }}
         />
       </div>
 
-      <CardHeader>
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+      <CardHeader className="py-4 px-6 shrink-0">
+        <div className="flex items-center justify-between mb-1">
+          <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
             Question {currentQuestionIndex + 1} of {totalQuestions}
           </span>
-          <span className="text-xs text-muted-foreground">
+          <span className="text-[10px] text-muted-foreground font-medium bg-secondary/50 px-2 py-0.5 rounded-full">
             {currentAssessment.name}
           </span>
         </div>
-        <CardTitle className="text-xl md:text-2xl leading-relaxed">
+        <CardTitle className="text-lg md:text-xl font-bold leading-tight">
           {currentQuestion}
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="space-y-6 pt-4 min-h-[300px] flex flex-col justify-center">
+      <CardContent className="px-6 py-2 flex-1 overflow-y-auto">
         <RadioGroup
           value={responses[currentQuestionIndex]?.toString() || ""}
-          onValueChange={(value) => handleResponseChange(Number.parseInt(value))}
-          className="space-y-3"
+          className="space-y-2"
         >
           {[
             { value: 0, label: "Not at all" },
@@ -218,14 +274,14 @@ export function AssessmentForm({ userId }: AssessmentFormProps) {
             { value: 3, label: "Nearly every day" },
           ].map((option) => (
             <div key={option.value}
-              className={`flex items-center space-x-3 p-4 rounded-lg border-2 cursor-pointer transition-all ${responses[currentQuestionIndex] === option.value
+              className={`flex items-center space-x-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all ${responses[currentQuestionIndex] === option.value
                 ? "border-primary bg-primary/5 shadow-sm"
-                : "border-muted hover:border-primary/50 hover:bg-secondary/50"
+                : "border-transparent bg-white/50 dark:bg-black/5 hover:border-primary/30 hover:bg-secondary/30"
                 }`}
               onClick={() => handleResponseChange(option.value)}
             >
-              <RadioGroupItem value={option.value.toString()} id={`opt-${option.value}`} />
-              <Label htmlFor={`opt-${option.value}`} className="font-medium cursor-pointer flex-1">
+              <RadioGroupItem value={option.value.toString()} id={`opt-${option.value}`} className="border-primary" />
+              <Label htmlFor={`opt-${option.value}`} className="font-semibold text-sm cursor-pointer flex-1 py-0.5">
                 {option.label}
               </Label>
             </div>
@@ -233,24 +289,30 @@ export function AssessmentForm({ userId }: AssessmentFormProps) {
         </RadioGroup>
       </CardContent>
 
-      <CardFooter className="flex justify-between border-t bg-secondary/20 p-6">
-        <Button variant="ghost" onClick={handlePrevious} disabled={isLoading}>
-          <ArrowLeft className="w-4 h-4 mr-2" />
+      <CardFooter className="flex justify-between border-t bg-secondary/10 px-6 py-3 shrink-0">
+        <Button variant="ghost" size="sm" onClick={handlePrevious} disabled={isLoading} className="text-xs font-bold">
+          <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
           Back
         </Button>
-        <Button
-          onClick={handleNext}
-          disabled={isLoading || responses[currentQuestionIndex] === undefined}
-          className="min-w-[120px]"
-        >
-          {isLoading ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : currentQuestionIndex === totalQuestions - 1 ? (
-            <>Finish <Check className="w-4 h-4 ml-2" /></>
-          ) : (
-            <>Next <ArrowRight className="w-4 h-4 ml-2" /></>
-          )}
-        </Button>
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-tighter opacity-50">
+            Auto-Advance Enabled
+          </span>
+          <Button
+            size="sm"
+            onClick={handleNext}
+            disabled={isLoading || responses[currentQuestionIndex] === undefined}
+            className="min-w-[100px] text-xs font-bold"
+          >
+            {isLoading ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : currentQuestionIndex === totalQuestions - 1 ? (
+              <>Finish Results <Check className="w-3.5 h-3.5 ml-1.5" /></>
+            ) : (
+              <>Next <ArrowRight className="w-3.5 h-3.5 ml-1.5" /></>
+            )}
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   )
