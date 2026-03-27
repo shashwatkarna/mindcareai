@@ -171,7 +171,7 @@ export function SoundscapesFocus({ onBack }: SoundscapesFocusProps) {
     }
 
     return (
-        <div className={cn("relative w-full h-[600px] rounded-3xl overflow-hidden flex flex-col transition-colors duration-1000", currentSound.bg)}>
+        <div className={cn("relative w-full h-full flex-1 min-h-[500px] rounded-3xl overflow-hidden flex flex-col transition-colors duration-1000", currentSound.bg)}>
             {/* Ambient Animated Background */}
             <div className={cn("absolute inset-0 bg-gradient-to-br opacity-80 transition-colors duration-1000", currentSound.gradient)} />
 
@@ -183,34 +183,35 @@ export function SoundscapesFocus({ onBack }: SoundscapesFocusProps) {
             </AnimatePresence>
 
             {/* Content */}
-            <div className="relative z-10 flex-1 flex flex-col p-8">
+            <div className="relative z-10 flex-1 flex flex-col p-6">
                 <Button
                     variant="ghost"
                     onClick={onBack}
-                    className="self-start text-white/70 hover:text-white hover:bg-white/10"
+                    size="sm"
+                    className="self-start text-white/70 hover:text-white hover:bg-white/10 mb-2"
                 >
-                    <ArrowLeft className="w-5 h-5 mr-2" /> Back to Library
+                    <ArrowLeft className="w-4 h-4 mr-2" /> Back
                 </Button>
 
-                <div className="flex-1 flex flex-col items-center justify-center text-center space-y-8">
+                <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4">
                     <motion.div
                         key={activeSound}
-                        initial={{ scale: 0.9, opacity: 0 }}
+                        initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.5 }}
                         className="relative"
                     >
-                        <div className={cn("w-40 h-40 rounded-full flex items-center justify-center mb-6 shadow-[0_0_100px_rgba(255,255,255,0.1)] transition-all duration-1000", currentSound.color.replace('text-', 'bg-').replace('400', '500/20'))}>
-                            <currentSound.icon className={cn("w-20 h-20 drop-shadow-lg", currentSound.color)} />
+                        <div className={cn("w-28 h-28 md:w-32 md:h-32 rounded-full flex items-center justify-center mb-4 shadow-[0_0_100px_rgba(255,255,255,0.1)] transition-all duration-1000", currentSound.color.replace('text-', 'bg-').replace('400', '500/20'))}>
+                            <currentSound.icon className={cn("w-12 h-12 md:w-16 md:h-16 drop-shadow-lg", currentSound.color)} />
                         </div>
                         {isPlaying && (
                             <div className="absolute inset-0 rounded-full border-2 border-white/20 animate-ping" />
                         )}
                     </motion.div>
 
-                    <div className="space-y-2">
-                        <h2 className="text-4xl font-bold text-white tracking-tight">{currentSound.label}</h2>
-                        <p className="text-white/60">Immersive Sound Experience</p>
+                    <div className="space-y-1">
+                        <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">{currentSound.label}</h2>
+                        <p className="text-white/60 text-xs">Immersive Sound Experience</p>
                     </div>
 
                     <div className="flex items-center gap-6 w-full max-w-sm">

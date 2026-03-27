@@ -33,14 +33,14 @@ export function GratitudeMoments({ onBack }: ToolProps) {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center p-8 min-h-[500px] max-w-xl mx-auto">
-            <Button variant="ghost" onClick={onBack} className="self-start mb-8 -ml-4">
-                <ArrowLeft className="w-4 h-4 mr-2" /> Back to Library
+        <div className="flex flex-col items-center justify-center p-4 w-full h-full flex-1">
+            <Button variant="ghost" onClick={onBack} size="sm" className="self-start mb-4 -ml-2">
+                <ArrowLeft className="w-4 h-4 mr-2" /> Back
             </Button>
 
-            <h2 className="text-3xl font-bold mb-2">Gratitude Moments</h2>
-            <p className="text-muted-foreground mb-8 text-center">
-                Focusing on the good rewires your brain for happiness. List 3 things you are grateful for today.
+            <h2 className="text-2xl font-bold mb-1">Gratitude Moments</h2>
+            <p className="text-muted-foreground mb-6 text-center text-sm">
+                Focusing on the good rewires your brain. List 3 things today.
             </p>
 
             {isSaved ? (

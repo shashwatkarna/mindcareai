@@ -37,14 +37,14 @@ export function GroundingTechnique({ onBack }: GroundingProps) {
     const currentStep = steps[step]
 
     return (
-        <div className="flex flex-col items-center justify-center p-8 min-h-[500px] max-w-2xl mx-auto">
-            <Button variant="ghost" onClick={onBack} className="self-start mb-8 -ml-4">
-                <ArrowLeft className="w-4 h-4 mr-2" /> Back to Library
+        <div className="flex flex-col items-center justify-center p-4 w-full max-w-2xl mx-auto h-full flex-1">
+            <Button variant="ghost" onClick={onBack} size="sm" className="self-start mb-4 -ml-2">
+                <ArrowLeft className="w-4 h-4 mr-2" /> Back
             </Button>
 
-            <h2 className="text-3xl font-bold mb-2">5-4-3-2-1 Grounding</h2>
-            <p className="text-muted-foreground mb-12 text-center max-w-md">
-                A mindfulness technique to reconnect with the present moment when you feel anxious.
+            <h2 className="text-2xl font-bold mb-1">5-4-3-2-1 Grounding</h2>
+            <p className="text-muted-foreground mb-6 text-center max-w-md text-sm">
+                A mindfulness technique to reconnect with the present moment.
             </p>
 
             {completed ? (

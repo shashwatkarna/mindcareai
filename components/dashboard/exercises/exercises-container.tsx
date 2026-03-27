@@ -11,6 +11,7 @@ import { GroundingTechnique } from "@/components/dashboard/exercises/grounding-t
 import { BubblePop } from "@/components/dashboard/exercises/bubble-pop"
 import { GratitudeMoments } from "@/components/dashboard/exercises/gratitude-moments"
 import { YogaStretch } from "@/components/dashboard/exercises/yoga-stretch"
+import { WellnessInsights } from "@/components/dashboard/exercises/wellness-insights"
 import { Wind, Music, PlayCircle, Heart, Anchor, Smile, Trash2, Activity, ArrowLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -23,6 +24,8 @@ type ToolType = "breathing" | "soundscapes" | "worry-jar" | "affirmations" | "gr
 export function ExercisesContainer({ isPremium }: ExercisesContainerProps) {
     const searchParams = useSearchParams()
     const [activeTool, setActiveTool] = useState<ToolType>(null)
+    const [startTime, setStartTime] = useState<number | null>(null)
+    const [prevTool, setPrevTool] = useState<ToolType>(null)
 
     useEffect(() => {
         const toolParam = searchParams.get('tool')
@@ -30,6 +33,40 @@ export function ExercisesContainer({ isPremium }: ExercisesContainerProps) {
             setActiveTool(toolParam as ToolType)
         }
     }, [searchParams])
+
+    useEffect(() => {
+        if (activeTool) {
+            setStartTime(Date.now())
+            setPrevTool(activeTool)
+        } else if (startTime && prevTool) {
+            const duration = Math.floor((Date.now() - startTime) / 1000)
+            if (duration > 5) { // Only log if they spent more than 5 seconds
+                logActivity(prevTool, duration)
+            }
+            setStartTime(null)
+            setPrevTool(null)
+        }
+    }, [activeTool])
+
+    const logActivity = (id: string, duration: number) => {
+        const raw = localStorage.getItem("wellness_activity") || '{"logs": [], "streak": 0, "lastDate": null}'
+        const data = JSON.parse(raw)
+        const now = new Date()
+        const today = now.toISOString().split('T')[0]
+        
+        let newStreak = data.streak || 0
+        if (data.lastDate !== today) {
+             const last = data.lastDate ? new Date(data.lastDate) : null
+             const diff = last ? (now.getTime() - last.getTime()) / (1000 * 60 * 60 * 24) : 2
+             if (diff <= 1.5) newStreak += 1
+             else newStreak = 1
+        }
+
+        data.logs.push({ id, duration, timestamp: now.toISOString() })
+        data.streak = newStreak
+        data.lastDate = today
+        localStorage.setItem("wellness_activity", JSON.stringify(data))
+    }
 
     const tools = [
         {
@@ -116,6 +153,7 @@ export function ExercisesContainer({ isPremium }: ExercisesContainerProps) {
 
     return (
         <div className="relative min-h-[600px]">
+            {activeTool === null && <WellnessInsights key={activeTool} />}
             {/* Back Button (only visible when a tool is active) */}
             <AnimatePresence>
                 {activeTool && (
@@ -181,8 +219,10 @@ export function ExercisesContainer({ isPremium }: ExercisesContainerProps) {
                         className="w-full"
                     >
                         {/* We use a key to ensure mounting/unmounting resets state if needed */}
-                        <div key={activeTool} className="w-full animate-in fade-in zoom-in-95 duration-500">
-                            {tools.find(t => t.id === activeTool)?.component}
+                        <div key={activeTool} className="w-full h-full flex flex-col items-center justify-center animate-in fade-in zoom-in-95 duration-500 overflow-hidden">
+                            <div className="w-full max-h-[75vh] min-h-[400px] overflow-y-auto scrollbar-hide px-1 rounded-3xl">
+                                {tools.find(t => t.id === activeTool)?.component}
+                            </div>
                         </div>
                     </motion.div>
                 )}

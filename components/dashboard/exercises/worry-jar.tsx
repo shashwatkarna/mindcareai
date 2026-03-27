@@ -32,14 +32,14 @@ export function WorryJar({ onBack }: ToolProps) {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center p-8 min-h-[500px] max-w-2xl mx-auto">
-            <Button variant="ghost" onClick={onBack} className="self-start mb-8 -ml-4">
-                <ArrowLeft className="w-4 h-4 mr-2" /> Back to Library
+        <div className="flex flex-col items-center justify-center p-4 w-full h-full flex-1">
+            <Button variant="ghost" onClick={onBack} size="sm" className="self-start mb-4 -ml-2">
+                <ArrowLeft className="w-4 h-4 mr-2" /> Back
             </Button>
 
-            <h2 className="text-3xl font-bold mb-2">The Worry Jar</h2>
-            <p className="text-muted-foreground mb-8 text-center max-w-md">
-                Type out your worries to get them out of your head. Then seal the jar to let them go.
+            <h2 className="text-2xl font-bold mb-1">The Worry Jar</h2>
+            <p className="text-muted-foreground mb-6 text-center max-w-md text-sm leading-relaxed">
+                Type out your worries to clear your head.
             </p>
 
             <div className="relative w-64 h-80 border-4 border-slate-300 rounded-3xl rounded-t-lg bg-white/50 backdrop-blur-sm flex flex-col items-center justify-end p-4 overflow-hidden shadow-inner mb-8">

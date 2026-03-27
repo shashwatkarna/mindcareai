@@ -20,8 +20,8 @@ export function BreathingTool() {
     }
 
     useEffect(() => {
-        let interval: NodeJS.Timeout
-        let phaseTimeout: NodeJS.Timeout
+        let interval: NodeJS.Timeout | undefined
+        let phaseTimeout: NodeJS.Timeout | undefined = undefined
 
         if (isActive) {
             const runCycle = async () => {
@@ -69,7 +69,7 @@ export function BreathingTool() {
     }, [isActive])
 
     return (
-        <div className="flex flex-col items-center justify-center p-16 md:p-24 bg-white rounded-3xl shadow-xl max-w-lg mx-auto relative overflow-hidden transition-all">
+        <div className="flex flex-col items-center justify-center p-6 md:p-10 bg-white rounded-3xl shadow-xl max-w-lg mx-auto relative overflow-hidden transition-all border border-border/50 h-full flex-1 min-h-[380px]">
             {/* Background Pulse */}
             {isActive && (
                 <motion.div
@@ -86,7 +86,7 @@ export function BreathingTool() {
             )}
 
             {/* Main Circle */}
-            <div className="relative z-10 w-64 h-64 flex items-center justify-center">
+            <div className="relative z-10 w-48 h-48 md:w-56 md:h-56 flex items-center justify-center">
                 <motion.div
                     animate={{
                         scale: phase === "idle" ? 1 : phases[phase as keyof typeof phases].scale,
@@ -102,7 +102,7 @@ export function BreathingTool() {
                         backgroundColor: phase === "idle" ? "#f3f4f6" : phase === "inhale" ? "#ecfeff" : phase === "hold" ? "#eef2ff" : "#f0fdfa",
                     }}
                     transition={{ duration: phases[phase as keyof typeof phases]?.duration || 0.5, ease: "easeInOut" }}
-                    className="w-40 h-40 rounded-full flex items-center justify-center shadow-inner"
+                    className="w-32 h-32 md:w-36 md:h-36 rounded-full flex items-center justify-center shadow-inner"
                 >
                     <div className="text-center">
                         {isActive ? (
@@ -124,7 +124,7 @@ export function BreathingTool() {
                 </motion.div>
             </div>
 
-            <div className="mt-12 flex gap-4 z-10">
+            <div className="mt-8 md:mt-10 flex gap-4 z-10">
                 <Button
                     size="lg"
                     onClick={() => setIsActive(!isActive)}

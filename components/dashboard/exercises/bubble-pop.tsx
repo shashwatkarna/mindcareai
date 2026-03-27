@@ -46,20 +46,20 @@ export function BubblePop({ onBack }: ToolProps) {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center p-8 min-h-[600px] w-full">
-            <div className="w-full max-w-4xl flex justify-between items-center mb-8">
-                <Button variant="ghost" onClick={onBack} className="-ml-4">
-                    <ArrowLeft className="w-4 h-4 mr-2" /> Back to Library
+        <div className="flex flex-col items-center justify-center p-4 w-full h-full flex-1">
+            <div className="w-full max-w-4xl flex justify-between items-center mb-4">
+                <Button variant="ghost" onClick={onBack} size="sm" className="-ml-2">
+                    <ArrowLeft className="w-4 h-4 mr-2" /> Back
                 </Button>
-                <div className="text-xl font-bold text-foreground">Popped: {poppedCount}</div>
+                <div className="text-lg font-bold text-foreground">Popped: {poppedCount}</div>
             </div>
 
-            <h2 className="text-3xl font-bold mb-2">Stress Bubble Pop</h2>
-            <p className="text-muted-foreground mb-8 text-center">
-                Click the bubbles to pop them. Great for instant stress relief!
+            <h2 className="text-2xl font-bold mb-1">Stress Bubble Pop</h2>
+            <p className="text-muted-foreground mb-4 text-center text-sm">
+                Pop the bubbles for instant relief!
             </p>
 
-            <div className="relative w-full max-w-3xl h-[400px] bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl overflow-hidden shadow-inner">
+            <div className="relative w-full max-w-3xl h-[340px] md:h-[380px] bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl overflow-hidden shadow-inner">
                 <AnimatePresence>
                     {bubbles.map((bubble) => (
                         <motion.button

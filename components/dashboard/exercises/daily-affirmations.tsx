@@ -29,12 +29,12 @@ export function DailyAffirmations({ onBack }: AffirmationsProps) {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center p-8 min-h-[500px] max-w-3xl mx-auto">
-            <Button variant="ghost" onClick={onBack} className="self-start mb-8 -ml-4">
-                <ArrowLeft className="w-4 h-4 mr-2" /> Back to Library
+        <div className="flex flex-col items-center justify-center p-4 w-full h-full flex-1">
+            <Button variant="ghost" onClick={onBack} size="sm" className="self-start mb-4 -ml-2">
+                <ArrowLeft className="w-4 h-4 mr-2" /> Back
             </Button>
 
-            <h2 className="text-3xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">Daily Affirmations</h2>
+            <h2 className="text-2xl font-bold mb-4 text-center bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">Daily Affirmations</h2>
 
             <div className="relative w-full max-w-xl aspect-video md:aspect-[2/1] bg-gradient-to-br from-pink-50 to-violet-50 rounded-3xl shadow-xl flex items-center justify-center p-8 md:p-12 overflow-hidden">
                 <div className="absolute top-0 left-0 w-32 h-32 bg-pink-200/50 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
