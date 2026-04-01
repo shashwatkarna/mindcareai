@@ -29,3 +29,6 @@ next-env.d.ts
 # ignored specific files
 SEO-GUIDE.md
 supabase_setup.sql
+build_log.txt
+/tmp/
+/.vscode/
