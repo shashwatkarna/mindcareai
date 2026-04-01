@@ -3,6 +3,7 @@ import Clarity from "@/components/clarity"
 import type React from "react"
 import type { Metadata } from "next"
 import { Outfit, Audiowide } from "next/font/google"
+import Script from "next/script"
 import { ThemeProvider } from "@/components/theme-provider"
 import { CookieConsent } from "@/components/layout/cookie-consent"
 import { BackToTop } from "@/components/ui/back-to-top"
@@ -35,22 +36,22 @@ export const metadata: Metadata = {
   },
   description: "Transform your wellness journey with MindCare AI. Experience secure, AI-powered mood tracking, private journaling, and personalized clinical insights.",
   keywords: [
-    "MindCare",
     "MindCare AI",
-    "MindCareAI",
-    "MindCare AI mental health",
+    "top mental health apps",
+    "ai tool for mood tracking",
+    "best ai therapy apps 2026",
+    "private ai therapist",
     "mental health tracker",
+    "personalized ai mental health",
     "mental wellness app",
-    "mood tracking",
-    "AI mental health assistant",
-    "private mental health support",
-    "mental health journal",
-    "anxiety tracker",
-    "depression support",
-    "mental health assessment",
-    "wellness tracking",
-    "self-care app",
-    "therapy support"
+    "mood tracking app",
+    "ai mental health assistant",
+    "secure wellness journaling",
+    "mental health analytics",
+    "anxiety and depression tracker",
+    "telehealth appointments",
+    "mindfulness ai",
+    "clinical mental health assessments"
   ],
   authors: [{ name: "MindCare AI Team" }],
   creator: "MindCare AI",
@@ -161,12 +162,41 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           "priceCurrency": "USD"
         },
         "featureList": [
-          "Mood Tracking",
-          "Private Journaling",
-          "Mental Health Assessments",
-          "AI-Powered Insights",
-          "Appointment Scheduling",
-          "Wellness Resources"
+          "AI Mood Tracking",
+          "Private Secure Journaling",
+          "Standardized Clinical Assessments (PHQ-9, GAD-7)",
+          "Personalized AI Wellness Insights",
+          "Secure Telehealth Appointment Scheduling",
+          "24/7 Emotional Support Chatbot"
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What are the top apps for mental health in 2026?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "MindCare AI is a leading mental health platform that combines AI-driven mood tracking, secure journaling, and clinical assessments into one private application."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does an AI tool for mood tracking work?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Our AI mood tracking tool analyzes your daily entries and physiological markers to provide deep insights into your emotional patterns and triggers, helping you achieve better mental balance."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is my data private on MindCare AI?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, we use end-to-end encryption and are HIPAA-ready to ensure that your mental health data remains exclusively yours and accessible only to you."
+            }
+          }
         ]
       }
     ]
@@ -183,10 +213,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
         {process.env.NEXT_PUBLIC_ADSENSE_ID && (
-          <script
+          <Script
             async
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_ID}`}
             crossOrigin="anonymous"
+            strategy="afterInteractive"
           />
         )}
       </head>

@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import Image from "next/image"
 
 export function HowItWorks() {
     const steps = [
@@ -60,12 +61,14 @@ export function HowItWorks() {
                             initial={{ opacity: 0, scale: 0.9 }}
                             whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
-                            className="relative z-10 rounded-2xl overflow-hidden border border-white/10 shadow-2xl skew-y-3 hover:skew-y-0 transition-transform duration-700 ease-out"
+                            className="relative z-10 rounded-2xl overflow-hidden border border-white/10 shadow-2xl skew-y-3 hover:skew-y-0 transition-transform duration-700 ease-out aspect-video"
                         >
-                            <img
+                            <Image
                                 src="/wellness_journey_dashboard.png"
-                                alt="MindCare AI Dashboard Journey"
-                                className="w-full h-auto object-cover"
+                                alt="MindCare AI Dashboard Journey - AI tool for mood tracking"
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 768px) 100vw, 50vw"
                             />
                         </motion.div>
                     </div>
