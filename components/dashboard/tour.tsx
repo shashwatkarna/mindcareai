@@ -83,6 +83,7 @@ export function UserTour() {
     if (!hasSeenTour) {
       setCurrentStep(0)
       setIsVisible(true)
+      localStorage.setItem("mindcare_dashboard_tour_seen", "true")
     }
   }, [])
 
