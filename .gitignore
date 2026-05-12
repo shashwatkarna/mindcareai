@@ -32,3 +32,4 @@ supabase_setup.sql
 build_log.txt
 /tmp/
 /.vscode/
+/supabase/

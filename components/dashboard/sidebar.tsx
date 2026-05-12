@@ -21,6 +21,7 @@ import {
 // Using Emojis as requested, with the new color system
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: "📊", color: "text-blue-500", bgColor: "bg-blue-500/10", hoverBg: "hover:bg-blue-500/20", activeBg: "bg-blue-500", shadow: "shadow-blue-500/20" },
+  { label: "Community", href: "/dashboard/community", icon: "🤝", color: "text-rose-500", bgColor: "bg-rose-500/10", hoverBg: "hover:bg-rose-500/20", activeBg: "bg-rose-500", shadow: "shadow-rose-500/20" },
   { label: "Assessments", href: "/dashboard/assessments", icon: "📋", color: "text-violet-500", bgColor: "bg-violet-500/10", hoverBg: "hover:bg-violet-500/20", activeBg: "bg-violet-500", shadow: "shadow-violet-500/20" },
   { label: "Journal", href: "/dashboard/journal", icon: "📝", color: "text-amber-500", bgColor: "bg-amber-500/10", hoverBg: "hover:bg-amber-500/20", activeBg: "bg-amber-500", shadow: "shadow-amber-500/20" },
   { label: "Mood Tracker", href: "/dashboard/mood", icon: "😊", color: "text-yellow-500", bgColor: "bg-yellow-500/10", hoverBg: "hover:bg-yellow-500/20", activeBg: "bg-yellow-500", shadow: "shadow-yellow-500/20" },
