@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { getAllCircles, getUserCircles } from "@/actions/community"
 import { CircleCard } from "@/components/community/circle-card"
 import { CommunityOnboarding } from "@/components/community/onboarding-dialog"
@@ -10,7 +11,7 @@ export const metadata = {
   description: "Join anonymous support groups and share your journey.",
 }
 
-export default async function CommunityPage() {
+async function CirclesContent() {
   const [allCircles, myJoinedCircles] = await Promise.all([
     getAllCircles(),
     getUserCircles()
@@ -28,6 +29,67 @@ export default async function CommunityPage() {
   )
 
   return (
+    <div className="lg:col-span-2 space-y-8">
+      {myCircles.length > 0 && (
+        <section className="space-y-4">
+          <h2 className="text-2xl font-semibold text-foreground">My Circles</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {myCircles.map((data: any) => (
+              <CircleCard 
+                key={data.circle.id} 
+                circle={data.circle} 
+                isJoined={true}
+                pseudonym={data.pseudonym}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold text-foreground">Discover Circles</h2>
+        {discoverCircles.length === 0 ? (
+          <p className="text-muted-foreground">You have joined all available circles!</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {discoverCircles.map((circle: any) => (
+              <CircleCard 
+                key={circle.id} 
+                circle={circle} 
+              />
+            ))}
+          </div>
+        )}
+      </section>
+    </div>
+  )
+}
+
+function CirclesSkeleton() {
+  return (
+    <div className="lg:col-span-2 space-y-8">
+      <section className="space-y-4">
+        <div className="h-8 w-40 bg-muted/50 rounded-md animate-pulse"></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="h-32 bg-muted/30 rounded-xl animate-pulse"></div>
+          <div className="h-32 bg-muted/30 rounded-xl animate-pulse"></div>
+        </div>
+      </section>
+      <section className="space-y-4">
+        <div className="h-8 w-48 bg-muted/50 rounded-md animate-pulse mt-4"></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="h-32 bg-muted/30 rounded-xl animate-pulse"></div>
+          <div className="h-32 bg-muted/30 rounded-xl animate-pulse"></div>
+          <div className="h-32 bg-muted/30 rounded-xl animate-pulse"></div>
+          <div className="h-32 bg-muted/30 rounded-xl animate-pulse"></div>
+        </div>
+      </section>
+    </div>
+  )
+}
+
+export default function CommunityPage() {
+  return (
     <div className="space-y-8 animate-fade-in pb-10">
       <CommunityOnboarding />
       <div className="flex justify-between items-end">
@@ -44,41 +106,10 @@ export default async function CommunityPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        {/* Main Content: Circles */}
-        <div className="lg:col-span-2 space-y-8">
-          {myCircles.length > 0 && (
-            <section className="space-y-4">
-              <h2 className="text-2xl font-semibold text-foreground">My Circles</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {myCircles.map((data: any) => (
-                  <CircleCard 
-                    key={data.circle.id} 
-                    circle={data.circle} 
-                    isJoined={true}
-                    pseudonym={data.pseudonym}
-                  />
-                ))}
-              </div>
-            </section>
-          )}
-
-          <section className="space-y-4">
-            <h2 className="text-2xl font-semibold text-foreground">Discover Circles</h2>
-            {discoverCircles.length === 0 ? (
-              <p className="text-muted-foreground">You have joined all available circles!</p>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {discoverCircles.map((circle: any) => (
-                  <CircleCard 
-                    key={circle.id} 
-                    circle={circle} 
-                  />
-                ))}
-              </div>
-            )}
-          </section>
-        </div>
+        {/* Main Content: Circles wrapped in Suspense */}
+        <Suspense fallback={<CirclesSkeleton />}>
+          <CirclesContent />
+        </Suspense>
 
         {/* Sidebar: Info */}
         <div className="space-y-6">
@@ -103,7 +134,6 @@ export default async function CommunityPage() {
             </CardContent>
           </Card>
         </div>
-
       </div>
     </div>
   )

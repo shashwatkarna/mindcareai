@@ -1,6 +1,7 @@
 "use client"
 
 import { Card } from "@/components/ui/card"
+import Image from "next/image"
 
 const testimonials = [
     {
@@ -97,11 +98,13 @@ function TestimonialCard({ name, role, company, content, ariaHidden }: { name: s
     return (
         <Card className="w-[350px] shrink-0 p-6 border-white/10 bg-[#140b2e] hover:border-purple-500/30 transition-colors shadow-xl" aria-hidden={ariaHidden}>
             <div className="flex items-start gap-4 mb-4">
-                <div className="rounded-full overflow-hidden border border-white/10 w-12 h-12 shrink-0 ring-2 ring-purple-500/20">
-                    <img
+                <div className="rounded-full overflow-hidden border border-white/10 w-12 h-12 shrink-0 ring-2 ring-purple-500/20 relative">
+                    <Image
                         src={`https://ui-avatars.com/api/?name=${name.replace(" ", "+")}&background=random`}
                         alt={name}
-                        className="w-full h-full object-cover"
+                        fill
+                        sizes="48px"
+                        className="object-cover"
                     />
                 </div>
                 <div>

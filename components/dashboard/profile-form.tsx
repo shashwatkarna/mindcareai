@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { User, Mail, FileText, Loader2, Globe, Save, Camera } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { motion, AnimatePresence } from "framer-motion"
+import Image from "next/image"
 
 interface ProfileData {
   id: string
@@ -164,7 +165,7 @@ export function ProfileForm({ initialData, userId, initialNameChangeCount }: { i
                           coverUrl === cover.url ? "border-primary scale-105 shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]" : "border-transparent opacity-50 hover:opacity-100"
                         }`}
                       >
-                        <img src={cover.url} className="w-full h-full object-cover" />
+                        <Image src={cover.url} alt={cover.label} fill className="object-cover" sizes="100px" />
                       </button>
                     ))}
                   </div>

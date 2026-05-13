@@ -6,6 +6,16 @@ const nextConfig = {
   // Enable Next.js built-in image optimization (WebP/AVIF conversion, lazy loading)
   images: {
     formats: ["image/avif", "image/webp"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "ui-avatars.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+    ],
   },
   // Gzip/Brotli compression for server responses
   compress: true,

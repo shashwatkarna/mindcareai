@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
@@ -70,7 +71,7 @@ export function Sidebar() {
         {isCollapsed ? (
           <div className="relative shrink-0 group">
             <div className="absolute inset-0 bg-primary/30 blur-xl rounded-full animate-pulse group-hover:bg-primary/50 transition-colors" />
-            <img src="/logo.png" alt="MindCare AI" className="w-12 h-12 object-contain drop-shadow-xl relative z-10" />
+            <Image src="/logo.png" alt="MindCare AI" width={48} height={48} className="w-12 h-12 object-contain drop-shadow-xl relative z-10" />
           </div>
         ) : (
           <AnimatedLogo size="lg" showSubtitle={true} />

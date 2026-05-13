@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Star, MapPin, Clock, ShieldCheck, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
+import Image from "next/image"
 
 export type Doctor = {
     id: string
@@ -96,11 +97,13 @@ export function DoctorSelection({ onSelect, selectedDoctorId }: DoctorSelectionP
 
                     <CardContent className="p-4 flex gap-4">
                         {/* Image */}
-                        <div className="relative shrink-0">
-                            <img
+                        <div className="relative shrink-0 w-20 h-20">
+                            <Image
                                 src={doctor.image}
                                 alt={doctor.name}
-                                className="w-20 h-20 rounded-full object-cover border-2 border-background shadow-sm group-hover:scale-105 transition-transform"
+                                fill
+                                sizes="80px"
+                                className="rounded-full object-cover border-2 border-background shadow-sm group-hover:scale-105 transition-transform"
                             />
                             <div className="absolute bottom-0 right-0 bg-green-500 w-4 h-4 rounded-full border-2 border-white" title="Available"></div>
                         </div>
