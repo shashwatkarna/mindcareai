@@ -9,6 +9,7 @@ import { CookieConsent } from "@/components/layout/cookie-consent"
 import { BackToTop } from "@/components/ui/back-to-top"
 import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
+import { SmoothScroll } from "@/components/smooth-scroll"
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -229,7 +230,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           defaultTheme="dark"
           disableTransitionOnChange
         >
-          {children}
+          <SmoothScroll>
+            {children}
+          </SmoothScroll>
         </ThemeProvider>
         {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />

@@ -8,8 +8,6 @@ export const metadata: Metadata = {
 
 export default function ChatbotPage() {
     return (
-        <div className="p-4 h-full">
-            <ChatInterface />
-        </div>
+        <ChatInterface />
     );
 }

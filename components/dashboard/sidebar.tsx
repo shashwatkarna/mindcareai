@@ -40,9 +40,8 @@ export function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   useEffect(() => {
-    // Auto-collapse sidebar when entering a chat room (path has 3 or more segments and is community)
-    const segments = pathname.split("/").filter(Boolean)
-    if (segments.length >= 3 && segments[0] === "dashboard" && segments[1] === "community") {
+    // Auto-collapse if entering a chat room or full-screen UI
+    if (pathname.includes("/dashboard/community/") || pathname.includes("/dashboard/chatbot")) {
       setIsCollapsed(true)
     }
   }, [pathname])

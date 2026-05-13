@@ -6,6 +6,7 @@ import { getUserProfile } from "@/actions/dashboard"
 import { getNotificationData, NotificationData } from "@/actions/notifications"
 import { UserTour } from "@/components/dashboard/tour"
 import { CommandMenu } from "@/components/dashboard/command-menu"
+import { SmoothScroll } from "@/components/smooth-scroll"
 import { cookies } from "next/headers"
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -64,7 +65,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <div className="print:hidden">
           <Header userProfile={userProfile} notificationData={notificationData} />
         </div>
-        <main className="flex-1 overflow-auto p-4 md:p-6 print:overflow-visible print:p-0 print:m-0">{children}</main>
+        <SmoothScroll root={false} className="flex-1 overflow-auto p-4 md:p-6 print:overflow-visible print:p-0 print:m-0">
+          {children}
+        </SmoothScroll>
         <UserTour />
         <CommandMenu />
       </div>
