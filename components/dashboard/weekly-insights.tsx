@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Brain, RefreshCw, ChevronRight } from "lucide-react"
+import { BarChart3, RefreshCw, ChevronRight } from "lucide-react"
 import { generateWeeklyInsights, getLatestInsight } from "@/actions/insights"
 import { toast } from "sonner"
 import ReactMarkdown from 'react-markdown'
@@ -55,14 +55,14 @@ export function WeeklyInsights({ userId }: { userId: string }) {
     )
 
     return (
-        <Card className="border-primary/20 bg-card/50 backdrop-blur-sm relative overflow-hidden group h-full flex flex-col">
+        <Card className="border-primary/20 bg-background/95 backdrop-blur-2xl relative overflow-hidden group h-full flex flex-col shadow-2xl">
             {/* Ambient Background Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none opacity-50" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 pointer-events-none" />
             
-            <CardHeader className="relative z-10 pb-2">
+            <CardHeader className="relative z-10 pb-2 border-b border-border/50">
                 <div className="flex items-center justify-between">
-                    <CardTitle className="text-xl flex items-center gap-2">
-                        <Brain className="w-5 h-5 text-primary" />
+                    <CardTitle className="text-xl flex items-center gap-2 text-foreground">
+                        <BarChart3 className="w-5 h-5 text-primary" />
                         AI Weekly Insights
                     </CardTitle>
                     <Button 
@@ -81,27 +81,21 @@ export function WeeklyInsights({ userId }: { userId: string }) {
                 </CardDescription>
             </CardHeader>
 
-            <CardContent className="relative z-10 flex-1 overflow-auto">
+            <CardContent className="relative z-10 flex-1 overflow-auto p-6">
                 {!insight ? (
-                    <div className="flex flex-col items-center justify-center py-8 text-center space-y-4">
-                        <div className="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center">
-                             <Brain className="w-6 h-6 text-primary/40" />
+                    <div className="flex flex-col items-center justify-center py-12 text-center space-y-4">
+                        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                             <BarChart3 className="w-8 h-8 text-primary" />
                         </div>
-                        <p className="text-sm text-muted-foreground px-4">
-                            No insights generated yet. Click the refresh icon to see what the AI thinks of your week!
-                        </p>
-                        <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={handleGenerate} 
-                            disabled={isLoading}
-                            className="border-primary/20 hover:bg-primary/5"
-                        >
-                            Generate Insight
-                        </Button>
+                        <div className="space-y-2">
+                            <h3 className="font-semibold text-lg">No Insights Yet</h3>
+                            <p className="text-sm text-muted-foreground max-w-[280px]">
+                                Click the refresh icon at the top to generate your weekly wellness report!
+                            </p>
+                        </div>
                     </div>
                 ) : (
-                    <div className="prose dark:prose-invert prose-sm max-w-none text-muted-foreground leading-relaxed animate-in fade-in slide-in-from-bottom-2">
+                    <div className="prose dark:prose-invert prose-sm max-w-none text-foreground/90 leading-relaxed animate-in fade-in slide-in-from-bottom-2 prose-headings:text-primary prose-strong:text-foreground">
                         <ReactMarkdown>{insight}</ReactMarkdown>
                     </div>
                 )}

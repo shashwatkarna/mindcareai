@@ -5,11 +5,10 @@ import { GoogleGenerativeAI } from "@google/generative-ai"
 import { cookies } from "next/headers"
 import { createServerClient } from "@supabase/ssr"
 
-const API_KEY = process.env.GEMINI_API_KEY || ""
+const GROQ_API_KEY = process.env.GROQ_API_KEY || ""
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || ""
 
 export async function generateWeeklyInsights(userId: string) {
-    if (!API_KEY) throw new Error("AI API Key not configured")
-
     const cookieStore = await cookies()
     const supabaseAdmin = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -43,7 +42,7 @@ export async function generateWeeklyInsights(userId: string) {
         .eq("user_id", userId)
         .gte("created_at", lastWeekIso)
 
-    // Fallback: If no data in last 7 days, fetch the most recent 10 entries regardless of date
+    // Fallback: If no data in last 7 days, fetch the most recent entries
     if ((!moodLogs || moodLogs.length === 0) && (!journalEntries || journalEntries.length === 0)) {
         const { data: recentMoods } = await supabaseAdmin
             .from("mood_logs")
@@ -71,25 +70,68 @@ export async function generateWeeklyInsights(userId: string) {
     const moodSummary = moodLogs?.map(m => `Mood: ${m.mood} (Intensity: ${m.intensity}), Notes: ${m.notes || 'none'}`).join("\n") || "No mood logs."
     const journalSummary = journalEntries?.map(j => `Journal: ${j.content}, Mood: ${j.mood || 'none'}`).join("\n") || "No journal entries."
 
-    const prompt = `You are a professional mental health AI analyst for the MindCare platform.
-Analyze the following user data from the past 7 days and provide a "Weekly Mental Health Insight".
-Data:
-${moodSummary}
-${journalSummary}
-
+    const systemPrompt = `You are a professional mental health AI analyst for the MindCare platform.
+Analyze the provided user data and provide a "Weekly Mental Health Insight".
 Instructions:
 1. Be empathetic, supportive, and professional.
-2. Identify patterns (e.g., "I noticed you feel more anxious in the mornings").
+2. Identify patterns (e.g., correlations between mood and notes).
 3. Provide 2-3 actionable suggestions for the next week.
-4. Keep the tone warm and non-clinical.
-5. Format the response in clear Markdown with a "Summary" and "Suggestions" section.
+4. Format in clear Markdown with "Summary" and "Suggestions" sections.
+5. Keep the tone warm and non-clinical.
 6. Max length: 250 words.`;
 
-    // 3. Generate with Gemini
-    const genAI = new GoogleGenerativeAI(API_KEY)
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
-    const result = await model.generateContent(prompt)
-    const insightContent = result.response.text()
+    const userPrompt = `User Data for Analysis:
+Mood Logs:
+${moodSummary}
+
+Journal Entries:
+${journalSummary}`;
+
+    let insightContent = ""
+
+    // 3. Try Groq first, fallback to Gemini
+    if (GROQ_API_KEY) {
+        try {
+            const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${GROQ_API_KEY}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    model: "llama-3.3-70b-versatile",
+                    messages: [
+                        { role: "system", content: systemPrompt },
+                        { role: "user", content: userPrompt }
+                    ],
+                    temperature: 0.7,
+                    max_tokens: 1024
+                })
+            })
+
+            const data = await response.json()
+            insightContent = data.choices[0].message.content
+        } catch (error) {
+            console.error("Groq Error, trying Gemini fallback:", error)
+        }
+    }
+
+    // Fallback to Gemini if Groq failed or key is missing
+    if (!insightContent && GEMINI_API_KEY) {
+        try {
+            const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
+            const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
+            const result = await model.generateContent(`${systemPrompt}\n\n${userPrompt}`)
+            insightContent = result.response.text()
+        } catch (error) {
+            console.error("Gemini Fallback Error:", error)
+            return { success: false, error: "AI service currently unavailable. Please try again later." }
+        }
+    }
+
+    if (!insightContent) {
+        return { success: false, error: "AI configuration missing. Please check your API keys." }
+    }
 
     // 4. Store in DB
     const { error: storeError } = await supabaseAdmin

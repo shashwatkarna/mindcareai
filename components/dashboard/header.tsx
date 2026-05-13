@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Moon, Sun, Bell, User, LogOut, Settings, Flame, Sparkles, BarChart, HelpCircle, Keyboard, Zap, ChevronDown, ArrowRight, Brain } from "lucide-react"
+import { Moon, Sun, Bell, User, LogOut, Settings, Flame, Sparkles, BarChart, HelpCircle, Keyboard, Zap, ChevronDown, ArrowRight, BarChart3 } from "lucide-react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
@@ -120,10 +120,10 @@ export function Header({ userId, userProfile, notificationData = { hasLoggedMood
                 className="h-9 w-9 rounded-full hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all duration-200"
                 title="Weekly Insights"
               >
-                <Brain className="w-5 h-5" />
+                <BarChart3 className="w-5 h-5" />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-hidden p-0 bg-transparent border-none">
+            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto p-0 border-primary/20 shadow-2xl">
               <WeeklyInsights userId={userId} />
             </DialogContent>
           </Dialog>

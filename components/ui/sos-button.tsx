@@ -44,7 +44,7 @@ export function SosButton() {
       </motion.div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-[425px] bg-background/95 backdrop-blur-xl border-destructive/20">
+        <DialogContent className="sm:max-w-[425px] max-h-[95vh] overflow-y-auto bg-background/95 backdrop-blur-xl border-destructive/20 shadow-2xl">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-destructive flex items-center gap-2">
               <Heart className="w-6 h-6 fill-destructive" />

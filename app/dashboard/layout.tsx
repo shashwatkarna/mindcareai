@@ -29,7 +29,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     }
   }
 
-  const effectiveUserId = user?.id || mindcareUserId
+  const effectiveUserId = mindcareUserId || user?.id
 
   if (effectiveUserId) {
     const profile = await getUserProfile(effectiveUserId)
