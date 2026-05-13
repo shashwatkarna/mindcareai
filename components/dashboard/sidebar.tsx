@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
@@ -37,6 +37,14 @@ export function Sidebar() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(false)
+
+  useEffect(() => {
+    // Auto-collapse sidebar when entering a chat room (path has 3 or more segments and is community)
+    const segments = pathname.split("/").filter(Boolean)
+    if (segments.length >= 3 && segments[0] === "dashboard" && segments[1] === "community") {
+      setIsCollapsed(true)
+    }
+  }, [pathname])
 
   const handleLogout = async () => {
     setIsLoading(true)

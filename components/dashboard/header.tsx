@@ -103,18 +103,15 @@ export function Header({ userProfile, notificationData = { hasLoggedMood: false,
 
 
 
-          {/* Notifications */}
-          <div id="tour-notifications">
-            <NotificationCenter data={notificationData} />
-          </div>
 
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-full hover:bg-muted transition-colors duration-200 text-muted-foreground hover:text-foreground hidden sm:block"
+            className="relative p-2 h-9 w-9 rounded-full hover:bg-muted transition-colors duration-200 text-muted-foreground hover:text-foreground hidden sm:flex items-center justify-center overflow-hidden"
             aria-label="Toggle theme"
           >
-            {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            <Sun className={`absolute w-5 h-5 transition-all duration-500 ease-in-out ${isDark ? "rotate-0 scale-100 opacity-100" : "rotate-90 scale-0 opacity-0"}`} />
+            <Moon className={`absolute w-5 h-5 transition-all duration-500 ease-in-out ${isDark ? "-rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"}`} />
           </button>
 
           {/* Profile Dropdown */}
