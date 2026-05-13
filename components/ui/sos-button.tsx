@@ -44,8 +44,8 @@ export function SosButton() {
       </motion.div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-[425px] max-h-[95vh] overflow-y-auto bg-background/95 backdrop-blur-xl border-destructive/20 shadow-2xl">
-          <DialogHeader>
+        <DialogContent className="sm:max-w-[425px] h-[80vh] flex flex-col bg-background/95 backdrop-blur-xl border-destructive/20 shadow-2xl">
+          <DialogHeader className="flex-shrink-0">
             <DialogTitle className="text-2xl font-bold text-destructive flex items-center gap-2">
               <Heart className="w-6 h-6 fill-destructive" />
               You're Not Alone
@@ -55,13 +55,13 @@ export function SosButton() {
             </DialogDescription>
           </DialogHeader>
 
-          <Tabs defaultValue="hotlines" className="mt-4">
+          <Tabs defaultValue="hotlines" className="mt-4 flex-1 flex flex-col overflow-hidden">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="hotlines">Hotlines</TabsTrigger>
               <TabsTrigger value="grounding">Grounding</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="hotlines" className="space-y-4 pt-4">
+            <TabsContent value="hotlines" className="space-y-4 pt-4 overflow-y-auto flex-1 pr-2 scrollbar-thin scrollbar-thumb-destructive/20" data-lenis-prevent>
               {crisisResources.map((resource) => (
                 <div key={resource.name} className="p-3 rounded-lg bg-muted/50 border border-border/50 hover:border-destructive/30 transition-colors">
                   <div className="flex items-center justify-between mb-1">
@@ -78,7 +78,7 @@ export function SosButton() {
               ))}
             </TabsContent>
 
-            <TabsContent value="grounding" className="pt-4">
+            <TabsContent value="grounding" className="pt-4 overflow-y-auto flex-1 pr-2 scrollbar-thin scrollbar-thumb-primary/20" data-lenis-prevent>
                <div className="flex flex-col items-center justify-center space-y-8 py-4">
                   <p className="text-sm text-center text-muted-foreground">Focus on your breath. Follow the circle.</p>
                   

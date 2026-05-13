@@ -123,7 +123,7 @@ export function Header({ userId, userProfile, notificationData = { hasLoggedMood
                 <BarChart3 className="w-5 h-5" />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto p-0 border-primary/20 shadow-2xl">
+            <DialogContent className="sm:max-w-[600px] h-[80vh] p-0 border-primary/20 shadow-2xl">
               <WeeklyInsights userId={userId} />
             </DialogContent>
           </Dialog>

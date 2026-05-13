@@ -81,7 +81,7 @@ export function WeeklyInsights({ userId }: { userId: string }) {
                 </CardDescription>
             </CardHeader>
 
-            <CardContent className="relative z-10 flex-1 overflow-auto p-6">
+            <CardContent className="relative z-10 flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-primary/20" data-lenis-prevent>
                 {!insight ? (
                     <div className="flex flex-col items-center justify-center py-12 text-center space-y-4">
                         <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
