@@ -11,7 +11,37 @@ export const metadata = {
   description: "Track your daily mood and emotions",
 }
 
+import { Suspense } from "react"
+import { HistorySkeleton } from "@/components/ui/history-skeleton"
+
 export default async function MoodPage() {
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
+            Mood Tracker
+          </h1>
+          <p className="text-muted-foreground mt-1">Monitor your emotional patterns over time</p>
+        </div>
+      </div>
+
+      <Suspense fallback={
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+             <div className="h-64 bg-muted animate-pulse rounded-xl" />
+             <div className="h-64 bg-muted animate-pulse rounded-xl" />
+          </div>
+          <HistorySkeleton count={3} />
+        </div>
+      }>
+         <MoodDashboardContent />
+      </Suspense>
+    </div>
+  )
+}
+
+async function MoodDashboardContent() {
   const cookieStore = await cookies()
   const sessionToken = cookieStore.get("mindcare_session")?.value
 
@@ -21,20 +51,15 @@ export default async function MoodPage() {
 
   const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
     cookies: {
-      getAll() {
-        return cookieStore.getAll()
-      },
+      getAll() { return cookieStore.getAll() },
       setAll(cookiesToSet) {
         try {
           cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
-        } catch {
-          // Handle errors during cookie setting
-        }
+        } catch { }
       },
     },
   })
 
-  // Safe decoding of base64 token
   let userId
   try {
     const decoded = Buffer.from(sessionToken, "base64").toString()
@@ -43,43 +68,24 @@ export default async function MoodPage() {
     redirect("/auth/login")
   }
 
-  if (!userId) {
-    redirect("/auth/login")
-  }
-
-  const { data: user } = await supabase.from("users").select("*").eq("id", userId).single()
-
-  if (!user) {
-    redirect("/auth/login")
-  }
-
   const { data: moodLogs } = await supabase
     .from("mood_logs")
     .select("*")
-    .eq("user_id", user.id)
+    .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(30)
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-[#3d3d3d] flex items-center gap-2">
-            Mood Tracker
-
-          </h1>
-          <p className="text-[#6b6b6b] mt-1">Monitor your emotional patterns over time</p>
-        </div>
-      </div>
-
+    <>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         <UnifiedMoodDashboard moodLogs={moodLogs || []} />
-        <MoodTracker userId={user.id} />
+        <MoodTracker userId={userId} />
       </div>
 
       <div className="mt-6">
         <MoodHistory moodLogs={moodLogs || []} />
       </div>
-    </div>
+    </>
   )
 }
+

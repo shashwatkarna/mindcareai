@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Moon, Sun, Bell, User, LogOut, Settings, Flame, Sparkles, BarChart, HelpCircle, Keyboard, Zap, ChevronDown, ArrowRight } from "lucide-react"
+import { Moon, Sun, Bell, User, LogOut, Settings, Flame, Sparkles, BarChart, HelpCircle, Keyboard, Zap, ChevronDown, ArrowRight, Brain } from "lucide-react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
@@ -29,8 +29,17 @@ import {
 import { NotificationCenter } from "@/components/dashboard/notification-center"
 import { NotificationData } from "@/actions/notifications"
 import { FileText } from "lucide-react"
+import { WeeklyInsights } from "@/components/dashboard/weekly-insights"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 interface HeaderProps {
+  userId: string
   userProfile?: {
     full_name?: string
     email?: string
@@ -40,9 +49,10 @@ interface HeaderProps {
   notificationData?: NotificationData
 }
 
-export function Header({ userProfile, notificationData = { hasLoggedMood: false, hasJournaled: false, streak: 0 } }: HeaderProps) {
+export function Header({ userId, userProfile, notificationData = { hasLoggedMood: false, hasJournaled: false, streak: 0 } }: HeaderProps) {
   const [isDark, setIsDark] = useState(false)
   const pathname = usePathname()
+  const [showInsights, setShowInsights] = useState(false)
 
   // Generate breadcrumbs from pathname
   const pathSegments = pathname.split("/").filter((segment) => segment)
@@ -101,7 +111,22 @@ export function Header({ userProfile, notificationData = { hasLoggedMood: false,
         {/* Right: Actions & Profile */}
         <div className="flex items-center gap-2 sm:gap-4 ml-auto">
 
-
+          {/* Weekly Insights Popup */}
+          <Dialog open={showInsights} onOpenChange={setShowInsights}>
+            <DialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 rounded-full hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all duration-200"
+                title="Weekly Insights"
+              >
+                <Brain className="w-5 h-5" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-hidden p-0 bg-transparent border-none">
+              <WeeklyInsights userId={userId} />
+            </DialogContent>
+          </Dialog>
 
 
           {/* Theme Toggle */}
@@ -221,3 +246,4 @@ export function Header({ userProfile, notificationData = { hasLoggedMood: false,
     </header>
   )
 }
+

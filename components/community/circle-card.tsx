@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
+import { HapticButton } from "@/components/ui/haptic-button"
 import { Users, LogIn } from "lucide-react"
 import { toast } from "sonner"
 import { joinCircle } from "@/actions/community"
@@ -79,15 +80,15 @@ export function CircleCard({ circle, isJoined, pseudonym }: CircleProps) {
             <div className="text-xs text-center text-muted-foreground bg-muted/30 py-1.5 rounded-md">
               Posting as <span className="font-semibold text-foreground">"{pseudonym}"</span>
             </div>
-            <Button 
+            <HapticButton 
               onClick={handleEnter}
               className="w-full bg-secondary/80 hover:bg-secondary text-secondary-foreground"
             >
               Enter Group
-            </Button>
+            </HapticButton>
           </div>
         ) : (
-          <Button 
+          <HapticButton 
             onClick={handleJoin} 
             disabled={isLoading}
             className="w-full bg-gradient-to-r from-primary/80 to-primary hover:from-primary hover:to-primary text-primary-foreground font-semibold"
@@ -100,7 +101,7 @@ export function CircleCard({ circle, isJoined, pseudonym }: CircleProps) {
                 Join Group
               </>
             )}
-          </Button>
+          </HapticButton>
         )}
       </div>
     </motion.div>

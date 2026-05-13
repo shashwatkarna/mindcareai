@@ -7,6 +7,7 @@ import { getNotificationData, NotificationData } from "@/actions/notifications"
 import { UserTour } from "@/components/dashboard/tour"
 import { CommandMenu } from "@/components/dashboard/command-menu"
 import { SmoothScroll } from "@/components/smooth-scroll"
+import { SosButton } from "@/components/ui/sos-button"
 import { cookies } from "next/headers"
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -63,13 +64,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
       <div className="flex flex-col flex-1 relative z-10 print:w-full print:h-full print:absolute print:inset-0 print:z-50">
         <div className="print:hidden">
-          <Header userProfile={userProfile} notificationData={notificationData} />
+          <Header userId={effectiveUserId || ""} userProfile={userProfile} notificationData={notificationData} />
         </div>
         <SmoothScroll root={false} className="flex-1 overflow-auto p-4 md:p-6 print:overflow-visible print:p-0 print:m-0">
           {children}
         </SmoothScroll>
         <UserTour />
         <CommandMenu />
+        <SosButton />
       </div>
     </div>
   )
