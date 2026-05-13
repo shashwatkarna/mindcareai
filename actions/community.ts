@@ -1,11 +1,35 @@
 "use server"
 
 import { createClient } from "@/lib/supabase/server"
+import { createServerClient } from "@supabase/ssr"
 import { revalidatePath } from "next/cache"
 import { cookies } from "next/headers"
 
+// Helper to create a service role client to bypass RLS since we use custom auth
+export async function createServiceClient() {
+  const cookieStore = await cookies()
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
+          } catch {
+            // ignore
+          }
+        },
+      },
+    }
+  )
+}
+
 // Helper to get effective user ID securely
-async function getUserId() {
+export async function getUserId() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   
@@ -24,170 +48,170 @@ async function getUserId() {
   return null
 }
 
-export async function getActiveChallenges() {
-  const supabase = await createClient()
+const ADJECTIVES = ["Brave", "Calm", "Gentle", "Wise", "Peaceful", "Joyful", "Strong", "Kind", "Silent", "Radiant"]
+const NOUNS = ["Panda", "River", "Oak", "Mountain", "Cloud", "Tiger", "Owl", "Breeze", "Sun", "Moon"]
+
+function generatePseudonym() {
+  const adj = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)]
+  const noun = NOUNS[Math.floor(Math.random() * NOUNS.length)]
+  return `${adj} ${noun}`
+}
+
+export async function getAllCircles() {
+  const supabase = await createServiceClient()
   const { data, error } = await supabase
-    .from("challenges")
-    .select("*")
-    .eq("is_active", true)
+    .from("circles")
+    .select("*, circle_members(count)")
     .order("created_at", { ascending: false })
 
   if (error) {
-    console.error("Error fetching challenges:", error)
+    console.error("Error fetching circles:", error)
     return []
   }
   return data
 }
 
-export async function getUserEnrollments() {
+export async function getUserCircles() {
   const userId = await getUserId()
   if (!userId) return []
 
-  const supabase = await createClient()
+  const supabase = await createServiceClient()
   const { data, error } = await supabase
-    .from("challenge_enrollments")
+    .from("circle_members")
     .select(`
       *,
-      challenges (*)
+      circles (*)
     `)
     .eq("user_id", userId)
 
   if (error) {
-    console.error("Error fetching enrollments:", error)
+    console.error("Error fetching user circles:", error)
     return []
   }
   return data
 }
 
-export async function enrollInChallenge(challengeId: string) {
+export async function joinCircle(circleId: string) {
   const userId = await getUserId()
   if (!userId) return { success: false, error: "Not authenticated" }
 
-  const supabase = await createClient()
+  const supabase = await createServiceClient()
+  
+  // Assign a random pseudonym
+  const pseudonym = generatePseudonym()
+
   const { error } = await supabase
-    .from("challenge_enrollments")
+    .from("circle_members")
     .insert({
       user_id: userId,
-      challenge_id: challengeId,
-      progress_days: 0,
-      is_completed: false
+      circle_id: circleId,
+      pseudonym
     })
 
   if (error) {
-    console.error("Error enrolling:", error)
+    console.error("Error joining circle:", error)
     return { success: false, error: error.message }
   }
 
   revalidatePath("/dashboard/community")
-  return { success: true }
+  return { success: true, pseudonym }
 }
 
-export async function checkInChallenge(enrollmentId: string) {
+export async function createCircle(name: string, description: string) {
   const userId = await getUserId()
   if (!userId) return { success: false, error: "Not authenticated" }
 
-  const supabase = await createClient()
+  const supabase = await createServiceClient()
   
-  // Get current progress
-  const { data: enrollment } = await supabase
-    .from("challenge_enrollments")
-    .select("*, challenges(duration_days)")
-    .eq("id", enrollmentId)
+  // 1. Create the circle
+  const { data: circle, error: createError } = await supabase
+    .from("circles")
+    .insert({
+      name,
+      description,
+      creator_id: userId,
+      icon: '👥',
+      color_gradient: 'from-violet-500/20 to-fuchsia-500/20',
+      is_official: false
+    })
+    .select()
     .single()
 
-  if (!enrollment) return { success: false, error: "Enrollment not found" }
-
-  const today = new Date().toISOString().split('T')[0]
-  if (enrollment.last_checkin_date === today) {
-    return { success: false, error: "Already checked in today" }
+  if (createError || !circle) {
+    return { success: false, error: createError?.message || "Failed to create circle" }
   }
 
-  const newProgress = enrollment.progress_days + 1
-  const duration = enrollment.challenges.duration_days
-  const isCompleted = newProgress >= duration
-
-  const { error } = await supabase
-    .from("challenge_enrollments")
-    .update({
-      progress_days: newProgress,
-      is_completed: isCompleted,
-      last_checkin_date: today
-    })
-    .eq("id", enrollmentId)
-
-  if (error) {
-    console.error("Error checking in:", error)
-    return { success: false, error: error.message }
-  }
+  // 2. Automatically join the creator as a member
+  const pseudonym = generatePseudonym()
+  await supabase.from("circle_members").insert({
+    user_id: userId,
+    circle_id: circle.id,
+    pseudonym
+  })
 
   revalidatePath("/dashboard/community")
-  return { success: true, completed: isCompleted }
+  return { success: true, circleId: circle.id }
 }
 
-export async function getChallengeParticipants(challengeId: string) {
-    const userId = await getUserId()
-    if (!userId) return []
+export async function getCirclePosts(circleId: string) {
+  const supabase = await createServiceClient()
   
-    const supabase = await createClient()
-    const { data, error } = await supabase
-      .from("challenge_enrollments")
-      .select(`
-        user_id,
-        progress_days,
-        profiles (full_name)
-      `)
-      .eq("challenge_id", challengeId)
-      .neq("user_id", userId) // Exclude self
-      .limit(10)
+  // 1. Fetch posts
+  const { data: posts, error: postsError } = await supabase
+    .from("circle_posts")
+    .select("*")
+    .eq("circle_id", circleId)
+    .order("created_at", { ascending: false })
+    .limit(50)
+
+  if (postsError || !posts) {
+    console.error("Error fetching circle posts:", postsError)
+    return []
+  }
+
+  // 2. Fetch members of this circle to get their pseudonyms
+  const userIds = [...new Set(posts.map(p => p.user_id))]
   
-    if (error) {
-      console.error("Error fetching participants:", error)
-      return []
+  if (userIds.length === 0) return []
+
+  const { data: members, error: membersError } = await supabase
+    .from("circle_members")
+    .select("user_id, pseudonym")
+    .eq("circle_id", circleId)
+    .in("user_id", userIds)
+
+  if (membersError) {
+    console.error("Error fetching members:", membersError)
+  }
+  
+  // 3. Map pseudonyms to posts
+  return posts.map(post => {
+    const member = members?.find(m => m.user_id === post.user_id)
+    return {
+      ...post,
+      pseudonym: member?.pseudonym || 'Anonymous User'
     }
-    return data
+  })
 }
 
-export async function sendNudge(receiverId: string, challengeId: string, emoji: string) {
-  const senderId = await getUserId()
-  if (!senderId) return { success: false, error: "Not authenticated" }
+export async function createCirclePost(circleId: string, content: string) {
+  const userId = await getUserId()
+  if (!userId) return { success: false, error: "Not authenticated" }
 
-  const supabase = await createClient()
+  const supabase = await createServiceClient()
   const { error } = await supabase
-    .from("challenge_nudges")
+    .from("circle_posts")
     .insert({
-      sender_id: senderId,
-      receiver_id: receiverId,
-      challenge_id: challengeId,
-      nudge_type: 'emoji',
-      message: emoji
+      circle_id: circleId,
+      user_id: userId,
+      content
     })
 
   if (error) {
-    console.error("Error sending nudge:", error)
+    console.error("Error creating post:", error)
     return { success: false, error: error.message }
   }
 
+  revalidatePath(`/dashboard/community/${circleId}`)
   return { success: true }
-}
-
-export async function getRecentNudges() {
-  const userId = await getUserId()
-  if (!userId) return []
-
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from("challenge_nudges")
-    .select(`
-      *,
-      challenges (title)
-    `)
-    .eq("receiver_id", userId)
-    .order("created_at", { ascending: false })
-    .limit(5)
-
-  if (error) {
-    console.error("Error fetching nudges:", error)
-    return []
-  }
-  return data
 }

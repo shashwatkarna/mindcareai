@@ -60,11 +60,11 @@ export function CommunityOnboarding() {
             className="flex items-start gap-4"
           >
             <div className="mt-1 bg-blue-500/10 p-2 rounded-lg">
-              <Sparkles className="w-5 h-5 text-blue-500" />
+              <Users className="w-5 h-5 text-blue-500" />
             </div>
             <div>
-              <h4 className="font-semibold text-foreground">Join Challenges</h4>
-              <p className="text-sm text-muted-foreground mt-1">Enroll in shared goals like 7-Day Gratitude or Digital Detox. Check in daily to track progress!</p>
+              <h4 className="font-semibold text-foreground">Find Your Circle</h4>
+              <p className="text-sm text-muted-foreground mt-1">Join topic-based support groups like Anxiety Support or Productivity, or create your own!</p>
             </div>
           </motion.div>
 
@@ -74,12 +74,12 @@ export function CommunityOnboarding() {
             transition={{ delay: 0.2 }}
             className="flex items-start gap-4"
           >
-            <div className="mt-1 bg-pink-500/10 p-2 rounded-lg">
-              <HeartPulse className="w-5 h-5 text-pink-500" />
+            <div className="mt-1 bg-purple-500/10 p-2 rounded-lg">
+              <ShieldCheck className="w-5 h-5 text-purple-500" />
             </div>
             <div>
-              <h4 className="font-semibold text-foreground">Send Nudges</h4>
-              <p className="text-sm text-muted-foreground mt-1">Send pre-set emojis (🔥 👏 💪) to cheer on your peers without the pressure of typing messages.</p>
+              <h4 className="font-semibold text-foreground">100% Anonymous</h4>
+              <p className="text-sm text-muted-foreground mt-1">When you join a circle, you get a unique, randomly assigned pseudonym (e.g., "Brave Panda"). Your real identity is never shown.</p>
             </div>
           </motion.div>
 
@@ -89,12 +89,12 @@ export function CommunityOnboarding() {
             transition={{ delay: 0.3 }}
             className="flex items-start gap-4"
           >
-            <div className="mt-1 bg-emerald-500/10 p-2 rounded-lg">
-              <ShieldCheck className="w-5 h-5 text-emerald-500" />
+            <div className="mt-1 bg-pink-500/10 p-2 rounded-lg">
+              <HeartPulse className="w-5 h-5 text-pink-500" />
             </div>
             <div>
-              <h4 className="font-semibold text-foreground">100% Private & Safe</h4>
-              <p className="text-sm text-muted-foreground mt-1">No DMs, no full names. Others only see your first name and your challenge progress. Zero toxicity.</p>
+              <h4 className="font-semibold text-foreground">Kindness Only</h4>
+              <p className="text-sm text-muted-foreground mt-1">This is a highly moderated, safe space. Please be respectful, supportive, and kind to your peers.</p>
             </div>
           </motion.div>
         </div>

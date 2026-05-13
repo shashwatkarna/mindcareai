@@ -7,6 +7,7 @@ import Script from "next/script"
 import { ThemeProvider } from "@/components/theme-provider"
 import { CookieConsent } from "@/components/layout/cookie-consent"
 import { BackToTop } from "@/components/ui/back-to-top"
+import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
 
 const outfit = Outfit({
@@ -236,6 +237,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <CookieConsent />
         <Clarity />
         <BackToTop />
+        <Toaster />
       </body>
     </html>
   )
