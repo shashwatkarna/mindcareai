@@ -81,8 +81,27 @@ export default async function AssessmentsPage() {
       )}
 
       <div>
-        <h2 className="text-xl font-semibold mb-4">Recent History</h2>
-        <AssessmentsList assessments={assessments || []} />
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold">Recent History</h2>
+          {assessments && assessments.length > 0 && (
+            <Link href="/dashboard/assessments/archive">
+              <Button variant="outline" size="sm" className="text-muted-foreground hover:text-primary border-border/50">
+                View Archives
+              </Button>
+            </Link>
+          )}
+        </div>
+        <AssessmentsList assessments={assessments?.slice(0, 12) || []} />
+        
+        {assessments && assessments.length > 12 && (
+          <div className="mt-6 text-center">
+            <Link href="/dashboard/assessments/archive">
+              <Button variant="ghost" className="text-primary font-medium hover:bg-primary/5">
+                Show more in Archives...
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   )
