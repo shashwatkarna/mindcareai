@@ -7,10 +7,22 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Send, Users, Circle as CircleIcon, ArrowLeft } from "lucide-react"
-import { createCirclePost } from "@/actions/community"
+import { createCirclePost, leaveCircle } from "@/actions/community"
 import { toast } from "sonner"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
+import { LogOut } from "lucide-react"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 interface ChatRoomProps {
   circle: any
@@ -24,6 +36,7 @@ export function ChatRoom({ circle, initialPosts, currentUserId, currentUserPseud
   const [posts, setPosts] = useState(initialPosts)
   const [content, setContent] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [isLeaving, setIsLeaving] = useState(false)
   const [onlineCount, setOnlineCount] = useState(1)
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set())
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -107,6 +120,18 @@ export function ChatRoom({ circle, initialPosts, currentUserId, currentUserPseud
     }
   }
 
+  const handleLeave = async () => {
+    setIsLeaving(true)
+    const res = await leaveCircle(circle.id)
+    if (res.success) {
+      toast.success("Successfully left the group")
+      router.push("/dashboard/community")
+    } else {
+      toast.error(res.error || "Failed to leave group")
+    }
+    setIsLeaving(false)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!content.trim()) return
@@ -169,6 +194,38 @@ export function ChatRoom({ circle, initialPosts, currentUserId, currentUserPseud
               <span className="truncate opacity-80">{circle.description}</span>
             </div>
           </div>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={isLeaving}
+                className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-1.5 h-8 px-2.5 rounded-lg transition-colors shrink-0 ml-auto"
+              >
+                <LogOut className={`w-4 h-4 ${isLeaving ? 'animate-pulse' : ''}`} />
+                <span className="text-xs font-medium hidden sm:inline">Leave Group</span>
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Leave this circle?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to leave <span className="font-semibold">"{circle.name}"</span>? 
+                  Your history in this group will no longer be visible on your dashboard.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction 
+                  onClick={handleLeave}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Leave Group
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 

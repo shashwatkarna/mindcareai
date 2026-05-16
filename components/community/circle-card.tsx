@@ -6,8 +6,20 @@ import { Button } from "@/components/ui/button"
 import { HapticButton } from "@/components/ui/haptic-button"
 import { Users, LogIn } from "lucide-react"
 import { toast } from "sonner"
-import { joinCircle } from "@/actions/community"
+import { joinCircle, leaveCircle } from "@/actions/community"
 import { useRouter } from "next/navigation"
+import { LogOut } from "lucide-react"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 interface CircleProps {
   circle: any
@@ -17,6 +29,7 @@ interface CircleProps {
 
 export function CircleCard({ circle, isJoined, pseudonym }: CircleProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const [isLeaving, setIsLeaving] = useState(false)
   const router = useRouter()
 
   const handleJoin = async () => {
@@ -35,6 +48,17 @@ export function CircleCard({ circle, isJoined, pseudonym }: CircleProps) {
       toast.error(res.error || "Failed to join group")
     }
     setIsLoading(false)
+  }
+
+  const handleLeave = async () => {
+    setIsLeaving(true)
+    const res = await leaveCircle(circle.id)
+    if (res.success) {
+      toast.success("Successfully left the group")
+    } else {
+      toast.error(res.error || "Failed to leave group")
+    }
+    setIsLeaving(false)
   }
 
   const handleEnter = () => {
@@ -80,12 +104,45 @@ export function CircleCard({ circle, isJoined, pseudonym }: CircleProps) {
             <div className="text-xs text-center text-muted-foreground bg-muted/30 py-1.5 rounded-md">
               Posting as <span className="font-semibold text-foreground">"{pseudonym}"</span>
             </div>
-            <HapticButton 
-              onClick={handleEnter}
-              className="w-full bg-secondary/80 hover:bg-secondary text-secondary-foreground"
-            >
-              Enter Group
-            </HapticButton>
+            <div className="flex gap-2">
+              <HapticButton 
+                onClick={handleEnter}
+                className="flex-[3] bg-secondary/80 hover:bg-secondary text-secondary-foreground"
+              >
+                Enter Group
+              </HapticButton>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    disabled={isLeaving}
+                    className="flex-1 rounded-xl border border-border/50 hover:bg-destructive/10 hover:text-destructive transition-colors"
+                    title="Leave Circle"
+                  >
+                    <LogOut className={`w-4 h-4 ${isLeaving ? 'animate-pulse' : ''}`} />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will remove you from <span className="font-semibold">"{circle.name}"</span>. 
+                      Your pseudonym and history in this group will be removed from your profile.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction 
+                      onClick={handleLeave}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      Leave Group
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </div>
         ) : (
           <HapticButton 

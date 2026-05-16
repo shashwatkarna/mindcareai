@@ -215,3 +215,25 @@ export async function createCirclePost(circleId: string, content: string) {
   revalidatePath(`/dashboard/community/${circleId}`)
   return { success: true }
 }
+
+export async function leaveCircle(circleId: string) {
+  const userId = await getUserId()
+  if (!userId) return { success: false, error: "Not authenticated" }
+
+  const supabase = await createServiceClient()
+  
+  const { error } = await supabase
+    .from("circle_members")
+    .delete()
+    .eq("user_id", userId)
+    .eq("circle_id", circleId)
+
+  if (error) {
+    console.error("Error leaving circle:", error)
+    return { success: false, error: error.message }
+  }
+
+  revalidatePath("/dashboard/community")
+  return { success: true }
+}
+
