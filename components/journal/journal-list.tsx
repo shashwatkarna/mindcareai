@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent } from "@/components/ui/card"
@@ -11,6 +12,8 @@ import { Calendar } from "@/components/ui/calendar"
 import { Search, Filter, Calendar as CalendarIcon, List as ListIcon, Trash2, Edit2, BookOpen, Briefcase, Home, Moon, Heart, Users, Book, Dumbbell, Sun } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
+import { toast } from "sonner"
+import { DeleteJournalButton } from "./delete-journal-button"
 
 interface JournalEntry {
   id: string
@@ -34,10 +37,10 @@ const ACTIVITY_ICONS: Record<string, any> = {
 }
 
 export function JournalList({ entries }: { entries: JournalEntry[] }) {
+  const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
   const [moodFilter, setMoodFilter] = useState<string>("all")
   const [viewMode, setViewMode] = useState<"list" | "calendar">("list")
-  const [deletingId, setDeletingId] = useState<string | null>(null)
   const [date, setDate] = useState<Date | undefined>(new Date())
 
   // --- Filtering Logic ---
@@ -59,16 +62,18 @@ export function JournalList({ entries }: { entries: JournalEntry[] }) {
   }, [entries, searchQuery, moodFilter, viewMode, date])
 
   const handleDelete = async (entryId: string) => {
-    if (!confirm("Are you sure you want to delete this entry?")) return
-
     setDeletingId(entryId)
     try {
       const supabase = createClient()
-      await supabase.from("journal_entries").delete().eq("id", entryId)
-      window.location.reload()
+      const { error } = await supabase.from("journal_entries").delete().eq("id", entryId)
+      
+      if (error) throw error
+      
+      toast.success("Entry deleted successfully")
+      router.refresh()
     } catch (error) {
       console.error("Error deleting entry:", error)
-      alert("Failed to delete entry")
+      toast.error("Failed to delete entry")
     } finally {
       setDeletingId(null)
     }
@@ -202,7 +207,7 @@ export function JournalList({ entries }: { entries: JournalEntry[] }) {
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <Link href={`/dashboard/journal/${entry.id}`}>
+                    <div onClick={() => router.push(`/dashboard/journal/${entry.id}`)} className="h-full">
                       <Card className="h-full hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-primary/50 overflow-hidden group">
                         <CardContent className="p-5 flex flex-col h-full gap-3">
                           <div className="flex justify-between items-start">
@@ -242,29 +247,29 @@ export function JournalList({ entries }: { entries: JournalEntry[] }) {
                             </Badge>
 
                             <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <Button variant="ghost" size="icon" className="h-7 w-7" asChild onClick={(e) => e.stopPropagation()}>
-                                <Link href={`/dashboard/journal/${entry.id}/edit`}>
-                                  <Edit2 className="w-3.5 h-3.5 text-muted-foreground hover:text-primary" />
-                                </Link>
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-7 w-7"
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-7 w-7" 
                                 onClick={(e) => {
-                                  e.preventDefault()
                                   e.stopPropagation()
-                                  handleDelete(entry.id)
+                                  router.push(`/dashboard/journal/${entry.id}/edit`)
                                 }}
-                                disabled={deletingId === entry.id}
                               >
-                                <Trash2 className="w-3.5 h-3.5 text-muted-foreground hover:text-destructive" />
+                                <Edit2 className="w-3.5 h-3.5 text-muted-foreground hover:text-primary" />
                               </Button>
+                              
+                              <div onClick={(e) => e.stopPropagation()}>
+                                <DeleteJournalButton 
+                                  entryId={entry.id} 
+                                  title={entry.title} 
+                                />
+                              </div>
                             </div>
                           </div>
                         </CardContent>
                       </Card>
-                    </Link>
+                    </div>
                   </motion.div>
                 ))}
               </div>

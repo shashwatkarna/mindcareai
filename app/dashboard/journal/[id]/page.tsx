@@ -3,7 +3,8 @@ import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Calendar, GripHorizontal, Lock, Unlock } from "lucide-react"
+import { ArrowLeft, Calendar, GripHorizontal, Lock, Unlock, Edit2 } from "lucide-react"
+import { DeleteJournalButton } from "@/components/journal/delete-journal-button"
 
 export const metadata = {
     title: "Journal Entry - MindCare AI",
@@ -85,6 +86,18 @@ export default async function JournalEntryPage({ params }: { params: Promise<{ i
                         </h1>
                     </div>
                     <div className="flex flex-col items-end gap-2">
+                        <div className="flex items-center gap-2 mb-2">
+                            <Link href={`/dashboard/journal/${entry.id}/edit`}>
+                                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors">
+                                    <Edit2 className="w-5 h-5" />
+                                </Button>
+                            </Link>
+                            <DeleteJournalButton 
+                                entryId={entry.id} 
+                                title={entry.title} 
+                                redirectTo="/dashboard/journal" 
+                            />
+                        </div>
                         <div className="text-4xl" title={entry.mood}>
                             {getMoodEmoji(entry.mood)}
                         </div>

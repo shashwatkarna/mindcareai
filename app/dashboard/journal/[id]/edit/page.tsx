@@ -1,93 +1,72 @@
-"use client"
-
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Card } from "@/components/ui/card"
-import { ArrowLeft, Loader2 } from "lucide-react"
-import { toast } from "sonner"
+import { redirect } from "next/navigation"
+import { createServerClient } from "@supabase/ssr"
+import { cookies } from "next/headers"
 import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { EditJournalForm } from "@/components/journal/edit-journal-form"
 
-export default function EditJournalPage({ params }: { params: { id: string } }) {
-    const [title, setTitle] = useState("")
-    const [content, setContent] = useState("")
-    const [loading, setLoading] = useState(true)
-    const [saving, setSaving] = useState(false)
-    const router = useRouter()
+export const metadata = {
+  title: "Edit Journal - MindCare AI",
+}
 
-    useEffect(() => {
-        const fetchEntry = async () => {
-            const supabase = createClient()
-            const { data, error } = await supabase.from("journal_entries").select("*").eq("id", params.id).single()
+export default async function EditJournalPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params
+    const cookieStore = await cookies()
+    const sessionToken = cookieStore.get("mindcare_session")?.value
 
-            if (error) {
-                toast.error("Failed to load entry")
-                router.push("/dashboard/journal")
-                return
-            }
+    if (!sessionToken) redirect("/auth/login")
 
-            setTitle(data.title)
-            setContent(data.content)
-            setLoading(false)
-        }
-        fetchEntry()
-    }, [params.id, router])
+    const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+        cookies: {
+            getAll() { return cookieStore.getAll() },
+            setAll(cookiesToSet) {
+                try {
+                    cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
+                } catch { }
+            },
+        },
+    })
 
-    const handleSave = async () => {
-        setSaving(true)
-        const supabase = createClient()
-        const { error } = await supabase
-            .from("journal_entries")
-            .update({ title, content })
-            .eq("id", params.id)
-
-        if (error) {
-            toast.error("Failed to update entry")
-        } else {
-            toast.success("Entry updated!")
-            router.push("/dashboard/journal")
-            router.refresh()
-        }
-        setSaving(false)
+    // Safe decoding of base64 token
+    let userId
+    try {
+        const decoded = Buffer.from(sessionToken, "base64").toString()
+        userId = decoded.split(":")[0]
+    } catch (e) {
+        redirect("/auth/login")
     }
 
-    if (loading) return <div className="flex justify-center p-10"><Loader2 className="animate-spin" /></div>
+    if (!userId) redirect("/auth/login")
 
-    return (
-        <div className="max-w-2xl mx-auto space-y-6">
-            <div className="flex items-center gap-4">
+    const { data: entry, error } = await supabase
+        .from("journal_entries")
+        .select("*")
+        .eq("id", id)
+        .single()
+
+    if (error) {
+        return (
+            <div className="flex flex-col items-center justify-center p-12">
+                <h1 className="text-2xl font-bold">Error Loading Entry</h1>
+                <p className="text-muted-foreground mt-2">{error.message}</p>
                 <Link href="/dashboard/journal">
-                    <Button variant="ghost" size="icon"><ArrowLeft className="w-5 h-5" /></Button>
+                    <Button className="mt-4">Return to Journal</Button>
                 </Link>
-                <h1 className="text-2xl font-bold">Edit Entry</h1>
             </div>
+        )
+    }
 
-            <Card className="p-6 space-y-4">
-                <div className="space-y-2">
-                    <label className="text-sm font-medium">Title</label>
-                    <Input value={title} onChange={(e) => setTitle(e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                    <label className="text-sm font-medium">Content</label>
-                    <Textarea
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                        className="min-h-[300px]"
-                    />
-                </div>
-                <div className="flex justify-end gap-2">
-                    <Link href="/dashboard/journal">
-                        <Button variant="outline">Cancel</Button>
-                    </Link>
-                    <Button onClick={handleSave} disabled={saving}>
-                        {saving ? <Loader2 className="animate-spin mr-2" /> : null}
-                        Save Changes
-                    </Button>
-                </div>
-            </Card>
-        </div>
-    )
+    if (!entry || entry.user_id !== userId) {
+        return (
+            <div className="flex flex-col items-center justify-center p-12">
+                <h1 className="text-2xl font-bold">Unauthorized</h1>
+                <p className="text-muted-foreground mt-2">You do not have permission to edit this entry.</p>
+                <Link href="/dashboard/journal">
+                    <Button className="mt-4">Return to Journal</Button>
+                </Link>
+            </div>
+        )
+    }
+
+    return <EditJournalForm entry={entry} />
 }
