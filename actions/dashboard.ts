@@ -220,3 +220,63 @@ export async function updateUserProfile(userId: string, data: { fullName: string
 
     return { success: true, nameChangeCount }
 }
+
+export async function storeUserFeedback(userId: string, data: { rating: string; comment: string; context: string }) {
+    const cookieStore = await cookies()
+    const supabaseAdmin = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!,
+        {
+            cookies: {
+                getAll() { return cookieStore.getAll() },
+                setAll(cookiesToSet) {
+                    try {
+                        cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
+                    } catch { }
+                },
+            },
+        }
+    )
+
+    const feedbackRecord = {
+        user_id: userId,
+        rating: data.rating,
+        comment: data.comment,
+        context: data.context,
+        created_at: new Date().toISOString(),
+    }
+
+    // 1. Try to save to Supabase "feedbacks" table
+    try {
+        const { error } = await supabaseAdmin
+            .from("feedbacks")
+            .insert([feedbackRecord])
+        
+        if (error) {
+            console.warn("Supabase insert warning (falling back to JSON store):", error.message)
+        }
+    } catch (e) {
+        console.warn("Supabase database insert failed, falling back to local file storage:", e)
+    }
+
+    // 2. Also append to local feedbacks.json file as a fail-safe backup
+    try {
+        const { promises: fs } = require("fs")
+        const path = require("path")
+        const filePath = path.join(process.cwd(), "feedbacks.json")
+        let existingFeedbacks: any[] = []
+        try {
+            const fileData = await fs.readFile(filePath, "utf-8")
+            existingFeedbacks = JSON.parse(fileData)
+        } catch (e) {
+            // File does not exist, initialize empty
+        }
+        existingFeedbacks.push(feedbackRecord)
+        await fs.writeFile(filePath, JSON.stringify(existingFeedbacks, null, 2), "utf-8")
+    } catch (e) {
+        console.error("Local file feedback backup failed:", e)
+    }
+
+    return { success: true }
+}
+

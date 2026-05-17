@@ -9,6 +9,7 @@ import { CommandMenu } from "@/components/dashboard/command-menu"
 import { SmoothScroll } from "@/components/smooth-scroll"
 import { SosButton } from "@/components/ui/sos-button"
 import { cookies } from "next/headers"
+import { GlobalFeedbackPrompt } from "@/components/dashboard/global-feedback-prompt"
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -70,6 +71,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           {children}
         </SmoothScroll>
         <UserTour />
+        <GlobalFeedbackPrompt userId={effectiveUserId || ""} />
         <CommandMenu />
         <SosButton />
       </div>
