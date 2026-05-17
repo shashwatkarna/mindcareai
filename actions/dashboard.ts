@@ -246,35 +246,18 @@ export async function storeUserFeedback(userId: string, data: { rating: string; 
         created_at: new Date().toISOString(),
     }
 
-    // 1. Try to save to Supabase "feedbacks" table
     try {
         const { error } = await supabaseAdmin
             .from("feedbacks")
             .insert([feedbackRecord])
         
         if (error) {
-            console.warn("Supabase insert warning (falling back to JSON store):", error.message)
+            console.error("Supabase feedback insert error:", error.message)
+            return { success: false, error: error.message }
         }
-    } catch (e) {
-        console.warn("Supabase database insert failed, falling back to local file storage:", e)
-    }
-
-    // 2. Also append to local feedbacks.json file as a fail-safe backup
-    try {
-        const { promises: fs } = require("fs")
-        const path = require("path")
-        const filePath = path.join(process.cwd(), "feedbacks.json")
-        let existingFeedbacks: any[] = []
-        try {
-            const fileData = await fs.readFile(filePath, "utf-8")
-            existingFeedbacks = JSON.parse(fileData)
-        } catch (e) {
-            // File does not exist, initialize empty
-        }
-        existingFeedbacks.push(feedbackRecord)
-        await fs.writeFile(filePath, JSON.stringify(existingFeedbacks, null, 2), "utf-8")
-    } catch (e) {
-        console.error("Local file feedback backup failed:", e)
+    } catch (e: any) {
+        console.error("Supabase database insert failed:", e)
+        return { success: false, error: e?.message || "Unknown error" }
     }
 
     return { success: true }
