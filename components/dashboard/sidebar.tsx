@@ -78,7 +78,7 @@ export function Sidebar() {
       </div>
 
       <TooltipProvider delayDuration={0}>
-        <nav className="flex-1 overflow-y-auto p-4 space-y-2 no-scrollbar">
+        <nav data-lenis-prevent className="flex-1 overflow-y-auto p-4 space-y-2 no-scrollbar">
           {navItems.map((item) => {
             const isActive = pathname === item.href
 

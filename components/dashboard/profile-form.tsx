@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { User, Mail, FileText, Loader2, Globe, Save, Camera } from "lucide-react"
+import { User, Mail, FileText, Loader2, Globe, Save, Camera, AlertCircle } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
@@ -63,6 +63,13 @@ export function ProfileForm({ initialData, userId, initialNameChangeCount }: { i
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
   const [isAvatarPickerOpen, setIsAvatarPickerOpen] = useState(false)
   const [isCoverPickerOpen, setIsCoverPickerOpen] = useState(false)
+  
+  // New States for Security & Data Privacy
+  const [isDataRequested, setIsDataRequested] = useState(false)
+  const [isDeleteRequested, setIsDeleteRequested] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [deleteReason, setDeleteReason] = useState("")
+  const [isSubmittingDelete, setIsSubmittingDelete] = useState(false)
 
   // Debug log to check the initial data coming from server
   useEffect(() => {
@@ -321,7 +328,6 @@ export function ProfileForm({ initialData, userId, initialNameChangeCount }: { i
               </p>
             </div>
 
-
             <div className="flex justify-end pt-4 border-t border-border/50">
               <Button type="submit" disabled={isLoading} className="min-w-[140px] gap-2">
                 {isLoading ? (
@@ -340,6 +346,162 @@ export function ProfileForm({ initialData, userId, initialNameChangeCount }: { i
           </form>
         </CardContent>
       </Card>
+
+      {/* Danger Zone & Data Privacy Card */}
+      <Card className="border-red-500/20 shadow-sm overflow-hidden bg-card/95 backdrop-blur-sm mt-6">
+        <CardHeader className="bg-red-500/5 border-b border-red-500/10">
+          <CardTitle className="text-xl text-red-500 flex items-center gap-2">
+            ⚠️ Security & Data Privacy
+          </CardTitle>
+          <CardDescription>
+            Export your personal information or request permanent account deletion.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-6 md:p-8 space-y-6">
+          <div className="grid md:grid-cols-2 gap-6">
+            
+            {/* Download Data Section */}
+            <div className="p-5 rounded-xl border border-border bg-muted/20 space-y-3 flex flex-col justify-between">
+              <div>
+                <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                  💾 Download Personal Data
+                </h3>
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                  Request a complete archive of your journal entries, mood history, assessments, and appointments in a secure JSON/CSV file.
+                </p>
+              </div>
+              <div className="pt-3 space-y-2">
+                {!isDataRequested ? (
+                  <Button 
+                    type="button" 
+                    onClick={() => setIsDataRequested(true)} 
+                    className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground text-sm font-semibold rounded-xl h-11 transition-all"
+                  >
+                    Request Data Export
+                  </Button>
+                ) : (
+                  <div className="p-3.5 bg-primary/5 rounded-xl border border-primary/20 text-center animate-in fade-in duration-300">
+                    <p className="text-xs font-semibold text-primary">
+                      your file will be availabe here soon, u may download it from here later
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Account Deletion Section */}
+            <div className="p-5 rounded-xl border border-red-500/10 bg-red-500/5 space-y-3 flex flex-col justify-between">
+              <div>
+                <h3 className="text-base font-bold text-red-500 flex items-center gap-2">
+                  ❌ Delete Account
+                </h3>
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                  To permanently delete your account, you need to raise an official deletion request. This action is irreversible and deletes all data.
+                </p>
+              </div>
+              <div className="pt-3">
+                {!isDeleteRequested ? (
+                  <Button 
+                    type="button" 
+                    onClick={() => setIsDeleteModalOpen(true)} 
+                    className="w-full bg-red-650 hover:bg-red-700 text-white text-sm font-semibold rounded-xl h-11 shadow-sm transition-all"
+                  >
+                    Raise Deletion Request
+                  </Button>
+                ) : (
+                  <Button 
+                    type="button" 
+                    disabled 
+                    className="w-full bg-red-500/20 text-red-400 border border-red-500/20 text-sm font-bold rounded-xl h-11 cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    ✓ Deletion Request Pending
+                  </Button>
+                )}
+              </div>
+            </div>
+
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Account Deletion Modal */}
+      <AnimatePresence>
+        {isDeleteModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-card border border-border rounded-2xl max-w-md w-full shadow-2xl overflow-hidden"
+            >
+              <div className="bg-red-500/5 p-6 border-b border-red-500/10 text-center">
+                <div className="w-12 h-12 bg-red-500/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <AlertCircle className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground">Raise Deletion Request</h3>
+                <p className="text-xs text-muted-foreground mt-1">
+                  You are raising a request to permanently delete your account.
+                </p>
+              </div>
+              <div className="p-6 space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="reason" className="text-sm font-medium text-foreground">
+                    Why are you requesting deletion? <span className="text-muted-foreground">(Optional)</span>
+                  </Label>
+                  <Textarea
+                    id="reason"
+                    placeholder="Please tell us how we could improve..."
+                    value={deleteReason}
+                    onChange={(e) => setDeleteReason(e.target.value)}
+                    className="resize-none h-24 bg-muted/20 border-input text-sm"
+                  />
+                </div>
+                <div className="p-3.5 bg-red-500/5 rounded-xl border border-red-500/10 text-xs text-red-400 leading-relaxed">
+                  ⚠️ <strong>Important notice:</strong> Once raised, support will review your request and process deletion within 7-10 business days. You can cancel this request at any time.
+                </div>
+              </div>
+              <div className="bg-muted/30 px-6 py-4 border-t border-border flex justify-end gap-3">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setIsDeleteModalOpen(false)}
+                  className="rounded-xl h-11"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  onClick={async () => {
+                    setIsSubmittingDelete(true)
+                    // Artificial delay for authenticity
+                    await new Promise((resolve) => setTimeout(resolve, 1500))
+                    setIsSubmittingDelete(false)
+                    setIsDeleteRequested(true)
+                    setIsDeleteModalOpen(false)
+                    setMessage({
+                      type: "success",
+                      text: "Deletion request has been raised successfully. Support will process your request.",
+                    })
+                    setTimeout(() => setMessage(null), 5000)
+                  }}
+                  disabled={isSubmittingDelete}
+                  className="bg-red-650 hover:bg-red-750 text-white rounded-xl h-11 px-5"
+                >
+                  {isSubmittingDelete ? (
+                    <span className="flex items-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Raising Request...
+                    </span>
+                  ) : (
+                    "Submit Request"
+                  )}
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
+

@@ -20,7 +20,7 @@ export function WorryJar({ onBack }: ToolProps) {
     const maxWorries = 24
     const scaleFactor = worries.length > 8 ? Math.max(0.6, 1 - (worries.length - 8) * 0.05) : 1
 
-    const playZenSound = (type: 'seal' | 'release') => {
+    const playZenSound = (type: 'seal' | 'release' | 'put') => {
         try {
             const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
             const ctx = new AudioContextClass();
@@ -52,7 +52,7 @@ export function WorryJar({ onBack }: ToolProps) {
                 click.start();
                 osc.stop(ctx.currentTime + 0.2);
                 click.stop(ctx.currentTime + 0.2);
-            } else {
+            } else if (type === 'release') {
                 // Celestial, rising "Swish"
                 const filter = ctx.createBiquadFilter();
                 filter.type = 'highpass';
@@ -75,6 +75,23 @@ export function WorryJar({ onBack }: ToolProps) {
 
                 noise.start();
                 noise.stop(ctx.currentTime + 2.6);
+            } else if (type === 'put') {
+                // Gentle bubble/droplet sound
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(900, ctx.currentTime + 0.12);
+                
+                gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+                
+                osc.connect(gain);
+                gain.connect(masterGain);
+                
+                osc.start();
+                osc.stop(ctx.currentTime + 0.13);
             }
         } catch (e) {
             console.warn("Audio synthesis not supported or blocked", e);
@@ -86,6 +103,7 @@ export function WorryJar({ onBack }: ToolProps) {
         if (worry.trim() && worries.length < maxWorries) {
             setWorries([...worries, worry])
             setWorry("")
+            playZenSound('put')
         }
     }
 

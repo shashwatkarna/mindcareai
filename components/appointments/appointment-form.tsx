@@ -3,14 +3,17 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Doctor, DOCTORS } from "@/components/appointments/doctor-selection"
 import { AppointmentTicket } from "@/components/appointments/appointment-ticket"
-import { Calendar as CalendarIcon, Clock, Loader2, Sparkles, User, Video, Phone, CheckCircle2, AlertCircle } from "lucide-react"
+import { Calendar as CalendarIcon, Clock, Sparkles, User, Video, Phone, CheckCircle2, AlertCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { format } from "date-fns"
 
 interface AppointmentFormProps {
   userId: string
@@ -22,6 +25,30 @@ const appointmentTypes = [
   { id: "in-person", label: "In-Person", icon: User, desc: "Visit our MindCare Center" }
 ]
 
+const sessionOptions = [
+  "Anxiety Check-in",
+  "Stress & Burnout Support",
+  "Mindfulness & Meditation Coaching",
+  "Depression & Mood Therapy",
+  "Cognitive Behavioral Therapy (CBT)",
+  "Self-Esteem & Personal Growth",
+  "Relationship & Family Counseling",
+  "Grief & Loss Support",
+  "Career or Academic Stress Counseling",
+  "General Mental Health Support"
+]
+
+const timeSlots = [
+  { value: "09:00", label: "09:00 AM" },
+  { value: "10:00", label: "10:00 AM" },
+  { value: "11:00", label: "11:00 AM" },
+  { value: "13:00", label: "01:00 PM" },
+  { value: "14:00", label: "02:00 PM" },
+  { value: "15:00", label: "03:00 PM" },
+  { value: "16:00", label: "04:00 PM" },
+  { value: "17:00", label: "05:00 PM" },
+]
+
 export function AppointmentForm({ userId }: AppointmentFormProps) {
   const [step, setStep] = useState<1 | 2>(1) // 1: Details, 2: Success
   const [allocationStep, setAllocationStep] = useState<0 | 1 | 2>(0) // 0: None, 1: Searching, 2: Found
@@ -29,9 +56,10 @@ export function AppointmentForm({ userId }: AppointmentFormProps) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [appointmentType, setAppointmentType] = useState("video")
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
   const [date, setDate] = useState("")
   const [time, setTime] = useState("")
-  const [duration, setDuration] = useState(60)
+  const [duration] = useState(60) // Removed session length option, default to 60 minutes
   const [notes, setNotes] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -40,12 +68,20 @@ export function AppointmentForm({ userId }: AppointmentFormProps) {
 
   const router = useRouter()
 
+  useEffect(() => {
+    if (selectedDate) {
+      setDate(format(selectedDate, "yyyy-MM-dd"))
+    } else {
+      setDate("")
+    }
+  }, [selectedDate])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
 
     if (!title.trim() || !date || !time) {
-      setError("Please fill in all required fields")
+      setError("Please fill in all required fields (Topic, Date, and Time Slot)")
       return
     }
 
@@ -53,7 +89,7 @@ export function AppointmentForm({ userId }: AppointmentFormProps) {
     setAllocationStep(1) // Start visual allocation
 
     try {
-      // PRO: Randomly assign a doctor from the pool
+      // Randomly assign a doctor from the pool
       const randomDoctor = DOCTORS[Math.floor(Math.random() * DOCTORS.length)]
 
       // Artificial delay for "Finding Specialist" effect
@@ -105,9 +141,6 @@ export function AppointmentForm({ userId }: AppointmentFormProps) {
       setIsLoading(false)
     }
   }
-
-  // Get minimum date (today)
-  const today = new Date().toISOString().split("T")[0]
 
   // Step 2: Success Ticket
   if (step === 2 && appointmentId && assignedDoctor) {
@@ -182,56 +215,84 @@ export function AppointmentForm({ userId }: AppointmentFormProps) {
       <CardContent className="p-6 md:p-8">
         <form onSubmit={handleSubmit} className="space-y-8">
 
-          {/* Title Section */}
+          {/* Title Section (Dropdown / Dropbox Selection) */}
           <div className="space-y-3">
             <Label htmlFor="title" className="text-base font-semibold text-foreground">What's this session for?</Label>
-            <Input
-              id="title"
-              placeholder="e.g., Anxiety Check-in, Stress Management..."
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              disabled={isLoading}
-              className="h-12 text-lg bg-background border-input focus:bg-background transition-all"
-              required
-            />
+            <Select value={title} onValueChange={setTitle} disabled={isLoading}>
+              <SelectTrigger className="h-12 w-full text-base bg-background border-input focus:bg-background rounded-xl">
+                <SelectValue placeholder="Select what this session is for" />
+              </SelectTrigger>
+              <SelectContent className="bg-card border-border rounded-xl">
+                {sessionOptions.map((option) => (
+                  <SelectItem key={option} value={option} className="py-2.5">
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Date & Time Grid */}
           <div className="grid md:grid-cols-2 gap-6">
+            {/* Calendar-only Date Selection */}
             <div className="space-y-3">
-              <Label htmlFor="date" className="text-base font-semibold text-foreground">Date</Label>
-              <div className="relative group">
-                <Input
-                  id="date"
-                  type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  disabled={isLoading}
-                  min={today}
-                  className="h-12 pl-12 bg-background border-input focus:bg-background transition-all"
-                  required
-                />
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1.5 bg-background rounded-md shadow-sm border border-border group-hover:border-primary/50 transition-colors pointer-events-none">
-                  <CalendarIcon className="w-4 h-4 text-primary" />
-                </div>
-              </div>
+              <Label className="text-base font-semibold text-foreground">Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    className={cn(
+                      "w-full h-12 justify-start text-left font-normal pl-4 text-base bg-background border-input hover:bg-muted/50 rounded-xl",
+                      !selectedDate && "text-muted-foreground"
+                    )}
+                    disabled={isLoading}
+                  >
+                    <CalendarIcon className="mr-3 h-5 w-5 text-primary" />
+                    {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 rounded-xl border border-border shadow-xl bg-card" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={setSelectedDate}
+                    disabled={(date) => {
+                      const todayDate = new Date()
+                      todayDate.setHours(0, 0, 0, 0)
+                      return date < todayDate
+                    }}
+                    initialFocus
+                    className="rounded-xl"
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
 
+            {/* Time Slot-only Selection */}
             <div className="space-y-3">
-              <Label htmlFor="time" className="text-base font-semibold text-foreground">Time</Label>
-              <div className="relative group">
-                <Input
-                  id="time"
-                  type="time"
-                  value={time}
-                  onChange={(e) => setTime(e.target.value)}
-                  disabled={isLoading}
-                  className="h-12 pl-12 bg-background border-input focus:bg-background transition-all"
-                  required
-                />
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1.5 bg-background rounded-md shadow-sm border border-border group-hover:border-primary/50 transition-colors pointer-events-none">
-                  <Clock className="w-4 h-4 text-primary" />
-                </div>
+              <Label className="text-base font-semibold text-foreground">Available Time Slot</Label>
+              <div className="grid grid-cols-2 gap-2.5">
+                {timeSlots.map((slot) => {
+                  const isSelected = time === slot.value
+                  return (
+                    <button
+                      key={slot.value}
+                      type="button"
+                      disabled={isLoading}
+                      onClick={() => setTime(slot.value)}
+                      className={cn(
+                        "h-12 flex items-center justify-center rounded-xl border-2 transition-all font-medium text-sm hover:shadow-sm",
+                        isSelected
+                          ? "border-primary bg-primary/10 text-primary font-bold ring-1 ring-primary/20"
+                          : "border-border bg-background text-foreground hover:border-primary/45"
+                      )}
+                    >
+                      <Clock className={cn("w-4 h-4 mr-2", isSelected ? "text-primary" : "text-muted-foreground")} />
+                      {slot.label}
+                    </button>
+                  )
+                })}
               </div>
             </div>
           </div>
@@ -267,33 +328,7 @@ export function AppointmentForm({ userId }: AppointmentFormProps) {
             </div>
           </div>
 
-          {/* Duration Slider */}
-          <div className="space-y-4 p-5 bg-muted/20 rounded-xl border border-dashed border-border">
-            <div className="flex justify-between items-center">
-              <Label className="text-base font-semibold text-foreground">Session Length</Label>
-              <span className="text-sm font-bold text-primary bg-background px-3 py-1 rounded-full border border-border shadow-sm">
-                {duration} minutes
-              </span>
-            </div>
-            <input
-              id="duration"
-              type="range"
-              min="30"
-              max="180"
-              step="15"
-              value={duration}
-              onChange={(e) => setDuration(Number.parseInt(e.target.value))}
-              disabled={isLoading}
-              className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
-            />
-            <div className="flex justify-between text-xs text-muted-foreground font-medium px-1">
-              <span>Quick (30m)</span>
-              <span>Standard (60m)</span>
-              <span>Deep Dive (3h)</span>
-            </div>
-          </div>
-
-          {/* Notes */}
+          {/* Notes (Kept "Anything else we should know?" text area exactly as requested) */}
           <div className="space-y-3">
             <Label htmlFor="notes" className="text-base font-semibold text-foreground">
               Anything else we should know? <span className="text-muted-foreground font-normal text-sm">(Optional)</span>
@@ -323,3 +358,4 @@ export function AppointmentForm({ userId }: AppointmentFormProps) {
     </Card>
   )
 }
+
