@@ -1,11 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
-import { Send, Loader2, BellRing } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
 export function PushNotificationForm() {
@@ -47,71 +43,51 @@ export function PushNotificationForm() {
   }
 
   return (
-    <Card className="max-w-2xl mx-auto shadow-md border-border/50">
-      <CardHeader className="bg-muted/30 pb-6 border-b border-border/50">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 text-primary rounded-lg">
-            <BellRing className="w-6 h-6" />
-          </div>
-          <div>
-            <CardTitle className="text-2xl">Broadcast Notification</CardTitle>
-            <CardDescription className="mt-1.5">
-              Send a push notification to all users who have enabled them.
-            </CardDescription>
-          </div>
-        </div>
-      </CardHeader>
+    <div className="bg-white p-8 shadow-sm">
+      <h2 className="text-2xl font-bold mb-1">Broadcast Notification</h2>
+      <p className="text-black/60 text-sm mb-8">Send a push notification to all users.</p>
       
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-6 pt-6">
-          <div className="space-y-2.5">
-            <label className="text-sm font-semibold text-foreground">Notification Title</label>
-            <Input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. MindCare Update"
-              className="bg-background shadow-sm"
-            />
-          </div>
-          
-          <div className="space-y-2.5">
-            <label className="text-sm font-semibold text-foreground">Message Body</label>
-            <Textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="e.g. We just added a new meditation exercise!"
-              className="min-h-[120px] bg-background shadow-sm resize-y"
-            />
-          </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label className="block text-sm font-semibold mb-2">Title</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full border border-black/20 p-2 focus:outline-none focus:border-[#1d2a5a] transition-colors bg-transparent"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-semibold mb-2">Message</label>
+          <textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            className="w-full border border-black/20 p-2 min-h-[100px] focus:outline-none focus:border-[#1d2a5a] transition-colors bg-transparent resize-y"
+          />
+        </div>
 
-          <div className="space-y-2.5">
-            <label className="text-sm font-semibold text-foreground">Click Destination URL</label>
-            <Input
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="e.g. /dashboard/exercises"
-              className="bg-background shadow-sm font-mono text-sm"
-            />
-            <p className="text-xs text-muted-foreground pl-1">Where the user is taken when they tap the notification.</p>
-          </div>
-        </CardContent>
+        <div>
+          <label className="block text-sm font-semibold mb-2">Destination URL</label>
+          <input
+            type="text"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            className="w-full border border-black/20 p-2 focus:outline-none focus:border-[#1d2a5a] transition-colors bg-transparent"
+          />
+        </div>
 
-        <CardFooter className="bg-muted/10 border-t border-border/50 pt-6">
-          <Button 
+        <div className="pt-4 border-t border-black/10">
+          <button 
             type="submit" 
-            size="lg" 
-            className="w-full sm:w-auto"
+            className="bg-[#1d2a5a] hover:bg-[#152044] text-white px-6 py-2 transition-colors flex items-center justify-center font-medium w-full sm:w-auto"
             disabled={isLoading}
           >
-            {isLoading ? (
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            ) : (
-              <Send className="mr-2 h-5 w-5" />
-            )}
+            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             Send Broadcast
-          </Button>
-        </CardFooter>
+          </button>
+        </div>
       </form>
-    </Card>
+    </div>
   )
 }

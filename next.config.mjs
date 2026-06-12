@@ -5,6 +5,8 @@ const nextConfig = {
   },
   // Enable Next.js built-in image optimization (WebP/AVIF conversion, lazy loading)
   images: {
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
