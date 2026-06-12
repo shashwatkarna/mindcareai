@@ -10,6 +10,7 @@ import { BackToTop } from "@/components/ui/back-to-top"
 import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
 import { SmoothScroll } from "@/components/smooth-scroll"
+import { PushManager } from "@/components/push-manager"
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -239,6 +240,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         )}
         <CookieConsent />
         <Clarity />
+        <PushManager />
         <BackToTop />
         <Toaster />
       </body>

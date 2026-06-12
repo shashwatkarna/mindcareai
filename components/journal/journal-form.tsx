@@ -1,13 +1,13 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
-import { Save, Loader2, Sparkles, Briefcase, Home, Moon, Heart, Users, Book, Dumbbell, Sun } from "lucide-react"
+import { Save, Loader2, Sparkles, Briefcase, Home, Moon, Heart, Users, Book, Dumbbell, Sun, Mic, MicOff } from "lucide-react"
 
 interface JournalFormProps {
   userId: string
@@ -80,6 +80,8 @@ export function JournalForm({ userId }: JournalFormProps) {
   const [moodIntensity, setMoodIntensity] = useState<number>(5) // 3=Mild, 6=Mod, 9=Intense
   const [selectedActivities, setSelectedActivities] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [isListening, setIsListening] = useState(false)
+  const recognitionRef = useRef<any>(null)
   const router = useRouter()
 
   const toggleActivity = (activityId: string) => {
@@ -94,6 +96,61 @@ export function JournalForm({ userId }: JournalFormProps) {
     const randomPrompt = PROMPTS[Math.floor(Math.random() * PROMPTS.length)]
     const newContent = content ? `${content}\n\n${randomPrompt}\n` : `${randomPrompt}\n`
     setContent(newContent)
+  }
+
+  const toggleListening = () => {
+    if (isListening) {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop()
+      }
+      setIsListening(false)
+      return
+    }
+
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    if (!SpeechRecognition) {
+      alert("Your browser does not support Voice-to-Text. Please use Chrome or Safari.")
+      return
+    }
+
+    const recognition = new SpeechRecognition()
+    recognitionRef.current = recognition
+
+    recognition.continuous = true
+    recognition.interimResults = false
+    recognition.lang = 'en-IN' // Works wonderfully for Indian English and Hinglish (Hindi words written in English)
+
+    recognition.onstart = () => {
+      setIsListening(true)
+    }
+
+    recognition.onresult = (event: any) => {
+      let finalTranscript = ''
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript
+        }
+      }
+      if (finalTranscript) {
+        setContent((prev) => prev + (prev ? " " : "") + finalTranscript)
+      }
+    }
+
+    recognition.onerror = (event: any) => {
+      console.error("Speech recognition error", event.error)
+      setIsListening(false)
+    }
+
+    recognition.onend = () => {
+      setIsListening(false)
+    }
+
+    try {
+      recognition.start()
+    } catch (err) {
+      console.error("Could not start recognition:", err)
+      setIsListening(false)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -204,16 +261,37 @@ export function JournalForm({ userId }: JournalFormProps) {
                 onChange={(e) => setTitle(e.target.value)}
                 className="text-2xl font-bold border-none shadow-none px-0 focus-visible:ring-0 bg-transparent placeholder:text-muted-foreground/50 flex-1"
               />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={insertPrompt}
-                className="text-muted-foreground hover:text-primary gap-2"
-              >
-                <Sparkles className="w-4 h-4" />
-                Spark
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={toggleListening}
+                  className={`gap-2 transition-all ${isListening ? "border-red-500 text-red-500 bg-red-500/10 hover:bg-red-500/20" : "text-muted-foreground hover:text-primary"}`}
+                >
+                  {isListening ? (
+                    <>
+                      <Mic className="w-4 h-4 animate-pulse" />
+                      Listening...
+                    </>
+                  ) : (
+                    <>
+                      <Mic className="w-4 h-4" />
+                      Dictate
+                    </>
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={insertPrompt}
+                  className="text-muted-foreground hover:text-primary gap-2"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Spark
+                </Button>
+              </div>
             </div>
 
             <div className="relative flex-1">

@@ -84,8 +84,8 @@ export default function AboutPage() {
                             <div className="grid md:grid-cols-3 gap-8">
                                 {[
                                     { name: "Shashwat Karna", role: "Full Stack Developer", github: "https://github.com/shashwatkarna", linkedin: "https://linkedin.com/in/shashwatkarna" },
-                                    { name: "Jyoti Sutradhar", role: "Frontend Developer", github: "https://github.com/jsutradhar76", linkedin: "https://linkedin.com/in/jyoti-sutradhar-9b075525a" },
-                                    { name: "Manjul Sharma", role: "Backend Developer", github: "https://github.com", linkedin: "https://linkedin.com/in/manjul-sharma-08960825a" }
+                                    { name: "Jyoti Sutradhar", role: "Frontend Developer", github: "https://github.com/shashwatkarna", linkedin: "https://linkedin.com/in/shashwatkarna" },
+                                    { name: "Manjul Sharma", role: "Backend Developer", github: "https://github.com/shashwatkarna", linkedin: "https://linkedin.com/in/shashwatkarna" }
                                 ].map((member, i) => (
                                     <motion.div
                                         key={i}
