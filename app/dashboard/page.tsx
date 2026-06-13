@@ -2,7 +2,7 @@ import { redirect } from "next/navigation"
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import { DashboardOverview } from "@/components/dashboard/overview"
-import { MediaNetBanner } from "@/components/ads/media-net-banner"
+import { AdsterraBanner } from "@/components/ads/adsterra-banner"
 
 import { Greeting } from "@/components/dashboard/greeting"
 
@@ -123,9 +123,9 @@ export default async function DashboardPage() {
         recentActivity={recentActivity}
       />
 
-      {/* Monetization: Media.net Banner */}
+      {/* Monetization: Adsterra Banner */}
       <div className="mt-8">
-        <MediaNetBanner id="medianet_dashboard_bottom" className="my-4" />
+        <AdsterraBanner adKey={process.env.NEXT_PUBLIC_ADSTERRA_KEY || ""} className="my-4" />
       </div>
     </div>
   )

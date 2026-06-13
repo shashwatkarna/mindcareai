@@ -223,26 +223,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             strategy="lazyOnload"
           />
         )}
-        {process.env.NEXT_PUBLIC_MEDIANET_CID && (
-          <Script
-            id="medianet-script"
-            strategy="lazyOnload"
-            dangerouslySetInnerHTML={{
-              __html: `
-                window._mNHandle = window._mNHandle || {};
-                window._mNHandle.queue = window._mNHandle.queue || [];
-                medianet_versionId = "3121199";
-              `
-            }}
-          />
-        )}
-        {process.env.NEXT_PUBLIC_MEDIANET_CID && (
-          <Script
-            src={`https://contextual.media.net/dmedianet.js?cid=${process.env.NEXT_PUBLIC_MEDIANET_CID}`}
-            async
-            strategy="lazyOnload"
-          />
-        )}
       </head>
       <body className={`${outfit.className} ${audiowide.variable} antialiased`}>
         <div style={{ display: 'none' }} dangerouslySetInnerHTML={{ __html: `<!--\n  So you came here do you wanna know a secret, analyze this website properly you'll find it\n  Once again Thank you for visiting us give us a star on our github repo\n-->` }} />

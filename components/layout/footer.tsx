@@ -3,7 +3,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { VisitorCounter } from "@/components/layout/visitor-counter"
-import { AAdsBanner } from "@/components/ads/a-ads-banner"
+import { AdsterraBanner } from "@/components/ads/adsterra-banner"
 
 export function Footer({ home = false }: { home?: boolean }) {
     const footerClass = home
@@ -70,9 +70,9 @@ export function Footer({ home = false }: { home?: boolean }) {
                     </div>
                 </div>
                 
-                {/* Monetization: A-ADS Banner */}
+                {/* Monetization: Adsterra Banner (Footer) */}
                 <div className="mt-8 flex justify-center">
-                    <AAdsBanner adUnitId={process.env.NEXT_PUBLIC_AADS_ID || ""} />
+                    <AdsterraBanner adKey={process.env.NEXT_PUBLIC_ADSTERRA_KEY || ""} />
                 </div>
 
                 <div className="mt-8 flex justify-center">
