@@ -16,6 +16,7 @@ import { MuscleRelaxation } from "@/components/dashboard/exercises/muscle-relaxa
 import { WellnessInsights } from "@/components/dashboard/exercises/wellness-insights"
 import { Wind, Music, PlayCircle, Play, Heart, Anchor, Smile, Trash2, Activity, ArrowLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { AdSenseBanner } from "@/components/ads/ad-sense-banner"
 
 interface ExercisesContainerProps {
     isPremium: boolean
@@ -256,6 +257,11 @@ export function ExercisesContainer({ isPremium }: ExercisesContainerProps) {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Monetization: AdSense Banner */}
+            <div className="mt-12">
+                <AdSenseBanner dataAdSlot="exercises_bottom" className="my-4" />
+            </div>
         </div>
     )
 }

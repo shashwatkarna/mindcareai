@@ -2,6 +2,7 @@ import { redirect } from "next/navigation"
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import { DashboardOverview } from "@/components/dashboard/overview"
+import { MediaNetBanner } from "@/components/ads/media-net-banner"
 
 import { Greeting } from "@/components/dashboard/greeting"
 
@@ -121,6 +122,11 @@ export default async function DashboardPage() {
         moodLogs={recentMoods.data || []}
         recentActivity={recentActivity}
       />
+
+      {/* Monetization: Media.net Banner */}
+      <div className="mt-8">
+        <MediaNetBanner id="medianet_dashboard_bottom" className="my-4" />
+      </div>
     </div>
   )
 }
