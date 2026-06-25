@@ -71,7 +71,9 @@ const TOUR_STEPS: TourStep[] = [
   }
 ]
 
-export function UserTour() {
+import { createClient } from "@/lib/supabase/client"
+
+export function UserTour({ userId, initialHasSeen }: { userId?: string; initialHasSeen?: boolean }) {
   const [currentStep, setCurrentStep] = useState(-1) // -1 means checking status
   const [isVisible, setIsVisible] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -79,13 +81,18 @@ export function UserTour() {
 
   useEffect(() => {
     setMounted(true)
-    const hasSeenTour = localStorage.getItem("mindcare_dashboard_tour_seen")
-    if (!hasSeenTour) {
+    const localSeen = localStorage.getItem("mindcare_dashboard_tour_seen")
+    
+    // If the server says they haven't seen it, AND they haven't seen it locally
+    if (!initialHasSeen && !localSeen) {
       setCurrentStep(0)
       setIsVisible(true)
       localStorage.setItem("mindcare_dashboard_tour_seen", "true")
+    } else if (initialHasSeen && !localSeen) {
+      // Sync server state to local storage to prevent future checks
+      localStorage.setItem("mindcare_dashboard_tour_seen", "true")
     }
-  }, [])
+  }, [initialHasSeen])
 
   const updateTargetRect = useCallback(() => {
     if (currentStep < 0 || currentStep >= TOUR_STEPS.length) return
@@ -129,9 +136,16 @@ export function UserTour() {
     }
   }
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     setIsVisible(false)
     localStorage.setItem("mindcare_dashboard_tour_seen", "true")
+    
+    if (userId) {
+      const supabase = createClient()
+      await supabase.auth.updateUser({
+        data: { has_seen_tour: true }
+      })
+    }
   }
 
   if (!mounted || !isVisible) return null

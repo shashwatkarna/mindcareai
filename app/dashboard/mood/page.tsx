@@ -13,6 +13,7 @@ export const metadata = {
 
 import { Suspense } from "react"
 import { HistorySkeleton } from "@/components/ui/history-skeleton"
+import { AdsterraBanner } from "@/components/ads/adsterra-banner"
 
 export default async function MoodPage() {
   return (
@@ -25,6 +26,9 @@ export default async function MoodPage() {
           <p className="text-muted-foreground mt-1">Monitor your emotional patterns over time</p>
         </div>
       </div>
+
+      {/* Monetization: Adsterra Banner */}
+      <AdsterraBanner adKey={process.env.NEXT_PUBLIC_ADSTERRA_KEY || ""} className="my-4" />
 
       <Suspense fallback={
         <div className="space-y-6">

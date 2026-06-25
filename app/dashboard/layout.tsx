@@ -70,7 +70,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <SmoothScroll root={false} className="flex-1 overflow-auto p-4 md:p-6 print:overflow-visible print:p-0 print:m-0">
           {children}
         </SmoothScroll>
-        <UserTour />
+        <UserTour userId={user?.id} initialHasSeen={user?.user_metadata?.has_seen_tour === true} />
         <GlobalFeedbackPrompt userId={effectiveUserId || ""} />
         <CommandMenu />
         <SosButton />

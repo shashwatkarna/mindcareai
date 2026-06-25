@@ -90,9 +90,13 @@ export default async function DashboardPage() {
       <div className="relative">
         <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
           <Greeting name={profile?.full_name || user.full_name || "User"} />
-
         </h1>
         <p className="text-muted-foreground mt-1">Here&apos;s your wellness snapshot for today</p>
+      </div>
+
+      {/* Top Monetization: Adsterra Banner */}
+      <div className="mb-6">
+        <AdsterraBanner adKey={process.env.NEXT_PUBLIC_ADSTERRA_KEY || ""} />
       </div>
 
       {/* Premium CTA Banner */}

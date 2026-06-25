@@ -5,6 +5,7 @@ import { Lock } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ExercisesContainer } from "@/components/dashboard/exercises/exercises-container"
+import { AdsterraBanner } from "@/components/ads/adsterra-banner"
 
 export const metadata = {
     title: "Exercises - MindCare AI",
@@ -60,6 +61,8 @@ export default async function ExercisesPage() {
                 <h1 className="text-3xl font-bold text-foreground">Wellness Exercises</h1>
                 <p className="text-muted-foreground mt-1">Tools to calm your mind and body</p>
             </div>
+
+            <AdsterraBanner adKey={process.env.NEXT_PUBLIC_ADSTERRA_KEY || ""} className="my-6" />
 
             {isPremium ? (
                 <ExercisesContainer isPremium={isPremium} />

@@ -12,6 +12,7 @@ export const metadata = {
 
 import { Suspense } from "react"
 import { HistorySkeleton } from "@/components/ui/history-skeleton"
+import { AdsterraBanner } from "@/components/ads/adsterra-banner"
 
 export default async function JournalPage() {
   return (
@@ -25,6 +26,9 @@ export default async function JournalPage() {
           <Button className="bg-primary hover:bg-primary/90 text-white">New Entry</Button>
         </Link>
       </div>
+
+      {/* Monetization: Adsterra Banner */}
+      <AdsterraBanner adKey={process.env.NEXT_PUBLIC_ADSTERRA_KEY || ""} className="my-4" />
 
       <Suspense fallback={<HistorySkeleton count={5} />}>
          <JournalContainer />
